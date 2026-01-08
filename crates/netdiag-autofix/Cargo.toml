@@ -1,0 +1,43 @@
+[package]
+name = "netdiag-autofix"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Auto-remediation engine with rollback capability for network issues"
+keywords = ["network", "autofix", "remediation", "rollback"]
+categories = ["network-programming"]
+
+[dependencies]
+# Async runtime
+tokio = { workspace = true }
+async-trait = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Time
+chrono = { workspace = true }
+
+# Utilities
+uuid = { workspace = true }
+
+# Internal crates
+netdiag-types = { workspace = true }
+netdiag-platform = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3.15"
+tokio-test = "0.4"
+
+[lints]
+workspace = true

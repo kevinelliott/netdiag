@@ -1,0 +1,43 @@
+[package]
+name = "netdiag-speed"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Speed testing module for netdiag network diagnostics"
+keywords = ["network", "diagnostics", "speed", "bandwidth", "iperf"]
+categories = ["network-programming"]
+
+[dependencies]
+netdiag-types = { workspace = true }
+
+# Async
+tokio = { workspace = true }
+futures = { workspace = true }
+async-trait = { workspace = true }
+
+# HTTP client
+reqwest = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Time
+chrono = { workspace = true }
+
+# Utilities
+uuid = { workspace = true }
+bytes = { workspace = true }
+rand = "0.8"
+
+# Logging
+tracing = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util", "macros"] }

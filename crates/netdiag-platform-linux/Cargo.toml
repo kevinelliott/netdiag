@@ -1,0 +1,29 @@
+[package]
+name = "netdiag-platform-linux"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Linux platform implementation for netdiag"
+keywords = ["network", "diagnostics", "linux", "platform"]
+categories = ["os::linux-apis"]
+
+[target.'cfg(target_os = "linux")'.dependencies]
+netdiag-types = { workspace = true }
+netdiag-platform = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+chrono = { workspace = true }
+
+# Linux networking
+netdev = "0.31"
+
+# System access
+libc = "0.2"
+nix = { version = "0.29", features = ["fs", "net", "user"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util", "macros"] }

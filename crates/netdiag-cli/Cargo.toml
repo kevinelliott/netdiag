@@ -1,0 +1,64 @@
+[package]
+name = "netdiag-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Command-line interface for netdiag network diagnostics"
+keywords = ["network", "diagnostics", "cli", "ping", "traceroute"]
+categories = ["command-line-utilities"]
+
+[[bin]]
+name = "netdiag"
+path = "src/main.rs"
+
+[dependencies]
+netdiag-types = { workspace = true }
+netdiag-platform = { workspace = true }
+netdiag-connectivity = { workspace = true }
+netdiag-reports = { path = "../netdiag-reports" }
+netdiag-speed = { path = "../netdiag-speed" }
+netdiag-capture = { path = "../netdiag-capture" }
+netdiag-tui = { path = "../netdiag-tui" }
+netdiag-daemon = { path = "../netdiag-daemon" }
+netdiag-autofix = { path = "../netdiag-autofix" }
+
+# CLI
+clap = { workspace = true }
+clap_complete = { workspace = true }
+dialoguer = { workspace = true }
+indicatif = { workspace = true }
+console = { workspace = true }
+comfy-table = { workspace = true }
+
+# Async
+tokio = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+# Error handling
+color-eyre = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Utilities
+hostname = "0.4"
+netdev = { workspace = true }
+libc = "0.2"
+
+# Platform-specific implementations
+[target.'cfg(target_os = "macos")'.dependencies]
+netdiag-platform-macos = { path = "../netdiag-platform-macos" }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+netdiag-platform-linux = { path = "../netdiag-platform-linux" }
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "3.1"

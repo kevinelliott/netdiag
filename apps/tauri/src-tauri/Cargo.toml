@@ -1,0 +1,62 @@
+[package]
+name = "netdiag-gui"
+version = "0.1.0"
+description = "NetDiag - Comprehensive Network Diagnostics GUI"
+authors = ["Kevin Elliott"]
+license = "MIT"
+repository = "https://github.com/kevinelliott/netdiag"
+edition = "2021"
+rust-version = "1.77.2"
+
+[lib]
+name = "netdiag_gui_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.5.3", features = [] }
+
+[dependencies]
+# Tauri
+tauri = { version = "2.9.5", features = [] }
+tauri-plugin-log = "2"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Async
+tokio = { version = "1.43", features = ["rt-multi-thread", "macros"] }
+
+# Logging
+log = "0.4"
+tracing = "0.1"
+
+# Error handling
+thiserror = "2.0"
+
+# Utilities
+hostname = "0.4"
+
+# NetDiag crates (using relative paths)
+netdiag-types = { path = "../../../crates/netdiag-types" }
+netdiag-platform = { path = "../../../crates/netdiag-platform" }
+netdiag-connectivity = { path = "../../../crates/netdiag-connectivity" }
+
+# Platform-specific
+[target.'cfg(target_os = "macos")'.dependencies]
+netdiag-platform-macos = { path = "../../../crates/netdiag-platform-macos" }
+netdev = "0.31"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+netdiag-platform-linux = { path = "../../../crates/netdiag-platform-linux" }
+netdev = "0.31"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+# netdiag-platform-windows = { path = "../../../crates/netdiag-platform-windows" }
+netdev = "0.31"
+
+[target.'cfg(target_os = "ios")'.dependencies]
+netdiag-platform-ios = { path = "../../../crates/netdiag-platform-ios" }
+
+[target.'cfg(target_os = "android")'.dependencies]
+netdiag-platform-android = { path = "../../../crates/netdiag-platform-android" }

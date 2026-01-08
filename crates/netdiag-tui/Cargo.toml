@@ -1,0 +1,45 @@
+[package]
+name = "netdiag-tui"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Terminal user interface for netdiag network diagnostics"
+keywords = ["network", "diagnostics", "tui", "terminal", "ratatui"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+# Core
+netdiag-types = { workspace = true }
+netdiag-platform = { workspace = true }
+netdiag-connectivity = { workspace = true }
+
+# TUI
+ratatui = { workspace = true }
+crossterm = { workspace = true }
+
+# Async
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+futures = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+color-eyre = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Utilities
+chrono = { workspace = true }
+netdev = { workspace = true }
+hostname = "0.4"
+
+# Platform-specific implementations
+[target.'cfg(target_os = "macos")'.dependencies]
+netdiag-platform-macos = { path = "../netdiag-platform-macos" }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+netdiag-platform-linux = { path = "../netdiag-platform-linux" }

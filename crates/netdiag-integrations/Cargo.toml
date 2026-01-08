@@ -1,0 +1,37 @@
+[package]
+name = "netdiag-integrations"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "External API integrations for network diagnostics"
+keywords = ["network", "diagnostics", "ipinfo", "shodan", "ssl"]
+categories = ["network-programming"]
+
+[dependencies]
+# Core
+netdiag-types = { workspace = true }
+
+# Async
+tokio = { workspace = true }
+
+# HTTP
+reqwest = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Utilities
+chrono = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

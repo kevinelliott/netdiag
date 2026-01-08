@@ -1,0 +1,22 @@
+[package]
+name = "netdiag-platform"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Platform abstraction traits for netdiag"
+keywords = ["network", "diagnostics", "platform", "abstraction"]
+categories = ["os"]
+
+[dependencies]
+netdiag-types = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+cfg-if = { workspace = true }
+chrono = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util"] }

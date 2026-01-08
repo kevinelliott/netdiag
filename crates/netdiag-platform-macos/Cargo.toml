@@ -1,0 +1,29 @@
+[package]
+name = "netdiag-platform-macos"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "macOS platform implementation for netdiag"
+keywords = ["network", "diagnostics", "macos", "platform"]
+categories = ["os::macos-apis"]
+
+[target.'cfg(target_os = "macos")'.dependencies]
+netdiag-types = { workspace = true }
+netdiag-platform = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+chrono = { workspace = true }
+
+# macOS-specific networking
+netdev = "0.31"
+system-configuration = "0.6"
+
+# System access
+libc = "0.2"
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util", "macros"] }

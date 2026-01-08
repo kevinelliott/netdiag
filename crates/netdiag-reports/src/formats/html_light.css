@@ -1,0 +1,315 @@
+/* netdiag HTML Report - Light Theme */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-card: #ffffff;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --accent-color: #0d6efd;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    background: var(--bg-card);
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+}
+
+.metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag {
+    background: var(--bg-secondary);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+section {
+    background: var(--bg-card);
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+section h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Health Section */
+.health-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.health-card.status-good { background: linear-gradient(135deg, #d1e7dd, #badbcc); }
+.health-card.status-warning { background: linear-gradient(135deg, #fff3cd, #ffe69c); }
+.health-card.status-critical { background: linear-gradient(135deg, #f8d7da, #f5c2c7); }
+.health-card.status-unknown { background: linear-gradient(135deg, #e2e3e5, #d3d6d8); }
+
+.health-score {
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.health-status {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.issues, .recommendations {
+    margin-top: 15px;
+}
+
+.issues ul, .recommendations ul {
+    list-style: none;
+    padding: 0;
+}
+
+.issues li, .recommendations li {
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 4px;
+}
+
+.issues li { background: #f8d7da; }
+.recommendations li { background: #cff4fc; }
+
+/* Cards */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.status-indicator {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.interface-card.status-up .status-indicator {
+    background: var(--success-color);
+    color: white;
+}
+
+.interface-card.status-down .status-indicator {
+    background: var(--danger-color);
+    color: white;
+}
+
+.badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.badge.default {
+    background: var(--accent-color);
+    color: white;
+}
+
+.ip-list {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0;
+}
+
+.ip-list li {
+    padding: 2px 0;
+}
+
+/* Tables */
+.results-table, .hops-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.results-table th, .results-table td,
+.hops-table th, .hops-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.results-table th, .hops-table th {
+    background: var(--bg-secondary);
+    font-weight: 600;
+}
+
+.results-table tr.success { background: rgba(25, 135, 84, 0.1); }
+.results-table tr.failure { background: rgba(220, 53, 69, 0.1); }
+
+.status-cell {
+    font-weight: bold;
+}
+
+.success .status-cell { color: var(--success-color); }
+.failure .status-cell { color: var(--danger-color); }
+
+.hops-table tr.timeout td { color: var(--text-secondary); }
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 15px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.quality-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--bg-secondary);
+}
+
+.ping-card.quality-good .quality-badge { background: var(--success-color); color: white; }
+.ping-card.quality-fair .quality-badge { background: var(--warning-color); color: black; }
+.ping-card.quality-poor .quality-badge { background: var(--danger-color); color: white; }
+
+/* Traceroute */
+.traceroute-result {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.traceroute-result.reached { border-left: 4px solid var(--success-color); }
+.traceroute-result.not-reached { border-left: 4px solid var(--danger-color); }
+
+.traceroute-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 10px 0 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.traceroute-meta .status {
+    font-weight: 600;
+}
+
+.reached .traceroute-meta .status { color: var(--success-color); }
+.not-reached .traceroute-meta .status { color: var(--danger-color); }
+
+/* Code */
+code {
+    background: var(--bg-secondary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Monaco, Consolas, monospace;
+    font-size: 13px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+/* Print styles */
+@media print {
+    body { background: white; }
+    .container { max-width: 100%; padding: 0; }
+    section, header { box-shadow: none; page-break-inside: avoid; }
+}

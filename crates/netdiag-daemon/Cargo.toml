@@ -1,0 +1,65 @@
+[package]
+name = "netdiag-daemon"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Background daemon service for continuous network monitoring"
+keywords = ["network", "daemon", "monitoring", "service"]
+categories = ["network-programming"]
+
+[dependencies]
+# Async runtime
+tokio = { workspace = true, features = ["full", "signal"] }
+futures = { workspace = true }
+async-trait = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+toml = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-appender = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Time
+chrono = { workspace = true }
+humantime-serde = "1.1"
+
+# Utilities
+uuid = { workspace = true }
+dirs = "5.0"
+
+# IPC
+interprocess = { version = "2.2", features = ["tokio"] }
+
+# Scheduling
+tokio-cron-scheduler = "0.13"
+
+# Internal crates
+netdiag-types = { workspace = true }
+netdiag-platform = { workspace = true }
+netdiag-connectivity = { workspace = true }
+netdiag-storage = { workspace = true }
+
+# Platform-specific
+[target.'cfg(unix)'.dependencies]
+nix = { version = "0.29", features = ["signal", "process"] }
+daemonize = "0.5"
+
+[target.'cfg(windows)'.dependencies]
+windows-service = "0.7"
+
+[dev-dependencies]
+tempfile = "3.15"
+tokio-test = "0.4"
+
+[lints]
+workspace = true

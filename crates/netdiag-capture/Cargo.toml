@@ -1,0 +1,44 @@
+[package]
+name = "netdiag-capture"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Packet capture and protocol analysis module for netdiag"
+keywords = ["network", "diagnostics", "pcap", "capture", "packets"]
+categories = ["network-programming"]
+
+[dependencies]
+netdiag-types = { workspace = true }
+
+# Async
+tokio = { workspace = true }
+async-trait = { workspace = true }
+
+# Packet capture
+pcap = "2.2"
+etherparse = "0.16"
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Time
+chrono = { workspace = true }
+
+# Utilities
+bytes = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util", "macros"] }
+
+[features]
+default = []

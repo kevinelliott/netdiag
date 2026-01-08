@@ -1,0 +1,43 @@
+[package]
+name = "netdiag-storage"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Storage and persistence layer for netdiag network diagnostics"
+keywords = ["network", "diagnostics", "storage", "sqlite"]
+categories = ["database"]
+
+[dependencies]
+netdiag-types = { workspace = true }
+netdiag-connectivity = { workspace = true }
+
+# Database
+sqlx = { workspace = true }
+
+# Async
+tokio = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Time
+chrono = { workspace = true }
+
+# Utilities
+uuid = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Directories
+dirs = "5.0"
+
+[dev-dependencies]
+tokio-test = "0.4"

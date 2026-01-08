@@ -1,0 +1,27 @@
+[package]
+name = "netdiag-connectivity"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Connectivity testing module for netdiag (ping, traceroute, jitter)"
+keywords = ["network", "diagnostics", "ping", "traceroute", "jitter"]
+categories = ["network-programming"]
+
+[dependencies]
+netdiag-types = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+hickory-resolver = { workspace = true }
+
+# For raw socket ping (optional, requires root)
+socket2 = { workspace = true }
+
+# System access
+libc = "0.2"
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["test-util", "macros"] }

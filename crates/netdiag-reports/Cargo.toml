@@ -1,0 +1,35 @@
+[package]
+name = "netdiag-reports"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Report generation for netdiag network diagnostics"
+keywords = ["network", "diagnostics", "reports", "json"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+netdiag-types = { workspace = true }
+netdiag-connectivity = { workspace = true }
+netdiag-storage = { path = "../netdiag-storage" }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Time
+chrono = { workspace = true }
+
+# Utilities
+uuid = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
