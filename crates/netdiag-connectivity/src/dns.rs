@@ -109,7 +109,7 @@ impl DnsResolver {
                 Ok(DnsResult::success(target.to_string(), addresses, duration))
             }
             Err(e) => {
-                let duration = start.elapsed();
+                let _duration = start.elapsed();
                 debug!("DNS resolution failed for {}: {}", target, e);
 
                 Err(Error::DnsResolution {

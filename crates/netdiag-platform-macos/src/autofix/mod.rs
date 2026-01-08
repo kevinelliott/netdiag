@@ -33,6 +33,7 @@ struct StoredRollback {
 
 /// A change that can be rolled back.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 enum RollbackChange {
     DnsServers {
         interface: String,
@@ -307,7 +308,7 @@ impl AutofixProvider for MacosAutofixProvider {
         info!("Setting DNS servers for {} to {:?}", service, servers);
 
         // Store current DNS for rollback
-        let current_servers = self.get_current_dns_servers(&service)?;
+        let _current_servers = self.get_current_dns_servers(&service)?;
 
         if servers.is_empty() {
             // Reset to DHCP

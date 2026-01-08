@@ -206,6 +206,7 @@ struct BgpViewPrefix {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct BgpViewAsnShort {
     asn: u32,
     name: Option<String>,
@@ -214,6 +215,7 @@ struct BgpViewAsnShort {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct BgpViewParent {
     prefix: Option<String>,
     name: Option<String>,
@@ -221,6 +223,7 @@ struct BgpViewParent {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct BgpViewRirAllocation {
     rir_name: Option<String>,
     country_code: Option<String>,
@@ -248,6 +251,7 @@ struct BgpViewAsn {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct BgpViewAsnRir {
     rir_name: Option<String>,
     country_code: Option<String>,
@@ -264,6 +268,7 @@ struct BgpViewAsnPrefixes {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct BgpViewPrefixShort {
     prefix: String,
     name: Option<String>,

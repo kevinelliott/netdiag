@@ -152,6 +152,7 @@ struct ShodanServiceResponse {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct ShodanSslInfo {
     cert: Option<ShodanCertInfo>,
     cipher: Option<ShodanCipherInfo>,
@@ -159,6 +160,7 @@ struct ShodanSslInfo {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct ShodanCertInfo {
     subject: Option<ShodanCertSubject>,
     issuer: Option<ShodanCertSubject>,
@@ -166,6 +168,7 @@ struct ShodanCertInfo {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct ShodanCertSubject {
     #[serde(rename = "CN")]
     cn: Option<String>,
@@ -174,12 +177,14 @@ struct ShodanCertSubject {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct ShodanCipherInfo {
     name: Option<String>,
     version: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct ShodanHttpInfo {
     host: Option<String>,
     title: Option<String>,
@@ -189,6 +194,7 @@ struct ShodanHttpInfo {
 
 /// Shodan search response.
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct ShodanSearchResponse {
     matches: Vec<ShodanHostResponse>,
     total: u64,

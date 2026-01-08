@@ -7,6 +7,7 @@ use tokio::sync::mpsc;
 
 /// Application events.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub enum AppEvent {
     /// Terminal tick (for animations/updates).
     Tick,

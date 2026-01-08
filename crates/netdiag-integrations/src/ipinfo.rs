@@ -106,6 +106,7 @@ impl IpInfoClient {
 
 /// IPinfo API response.
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct IpInfoResponse {
     ip: String,
     hostname: Option<String>,
@@ -123,6 +124,7 @@ struct IpInfoResponse {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct IpInfoAsn {
     asn: String,
     name: String,
@@ -133,6 +135,7 @@ struct IpInfoAsn {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct IpInfoCompany {
     name: String,
     domain: Option<String>,
@@ -141,6 +144,7 @@ struct IpInfoCompany {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct IpInfoCarrier {
     name: String,
     mcc: Option<String>,
@@ -148,6 +152,7 @@ struct IpInfoCarrier {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct IpInfoPrivacy {
     vpn: bool,
     proxy: bool,
@@ -267,6 +272,7 @@ struct AsnInfoResponse {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct AsnPrefix {
     netblock: String,
     id: String,

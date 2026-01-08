@@ -43,7 +43,7 @@ impl Pinger {
     /// Creates a new pinger.
     pub fn new() -> Self {
         // Check if we have raw socket capability
-        let has_raw_socket = unsafe { libc::geteuid() == 0 };
+        let _has_raw_socket = unsafe { libc::geteuid() == 0 };
 
         Self {
             // For now, always use system ping

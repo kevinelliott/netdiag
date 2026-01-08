@@ -523,7 +523,7 @@ impl WifiProvider for MacosWifiProvider {
     }
 
     async fn analyze_channels(&self, _interface: &str) -> Result<Vec<ChannelUtilization>> {
-        let aps = self.scan_access_points("en0").await?;
+        let _aps = self.scan_access_points("en0").await?;
         let mut utilizations = Vec::new();
 
         // Common 2.4GHz channels
