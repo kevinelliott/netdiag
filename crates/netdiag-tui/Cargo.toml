@@ -37,6 +37,9 @@ chrono = { workspace = true }
 netdev = { workspace = true }
 hostname = "0.4"
 
+# DNS
+hickory-resolver = { workspace = true }
+
 # Platform-specific implementations
 [target.'cfg(target_os = "macos")'.dependencies]
 netdiag-platform-macos = { path = "../netdiag-platform-macos" }

@@ -2,7 +2,7 @@
 
 use crate::{
     DnsResult, InterfaceInfo, PingResult, SystemInfo, TracerouteHop, TracerouteResult,
-    AppState,
+    WifiConnectionInfo, WifiInterfaceInfo, AppState,
 };
 use netdiag_connectivity::{DnsResolver, PingConfig, Pinger, TracerouteConfig, Tracer};
 use std::time::Duration;
@@ -291,4 +291,103 @@ pub async fn dns_lookup(hostname: String) -> Result<DnsResult, String> {
 #[tauri::command]
 pub async fn check_connectivity(target: String) -> Result<PingResult, String> {
     ping_target(target, Some(3), Some(2000)).await
+}
+
+/// Get WiFi interfaces.
+#[tauri::command]
+pub async fn get_wifi_interfaces(state: State<'_, AppState>) -> Result<Vec<WifiInterfaceInfo>, String> {
+    let interfaces = state
+        .providers
+        .wifi
+        .list_wifi_interfaces()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    Ok(interfaces
+        .into_iter()
+        .map(|iface| WifiInterfaceInfo {
+            name: iface.name.clone(),
+            powered_on: iface.powered_on,
+            mac_address: iface.mac_address.map(|m| m.to_string()),
+        })
+        .collect())
+}
+
+/// Get current WiFi connection info.
+#[tauri::command]
+pub async fn get_wifi_connection(state: State<'_, AppState>) -> Result<Option<WifiConnectionInfo>, String> {
+    let interfaces = state
+        .providers
+        .wifi
+        .list_wifi_interfaces()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if interfaces.is_empty() {
+        return Ok(None);
+    }
+
+    let iface = &interfaces[0];
+    if !iface.powered_on {
+        return Ok(Some(WifiConnectionInfo {
+            interface: iface.name.clone(),
+            ssid: None,
+            bssid: None,
+            rssi: None,
+            noise: None,
+            snr: None,
+            channel: None,
+            band: None,
+            security: None,
+            tx_rate: None,
+            wifi_standard: None,
+            signal_quality: "WiFi Off".to_string(),
+        }));
+    }
+
+    match state.providers.wifi.get_current_connection(&iface.name).await {
+        Ok(Some(conn)) => {
+            let rssi = conn.access_point.rssi;
+            let noise = conn.access_point.noise;
+            let snr = noise.map(|n| rssi - n);
+
+            let signal_quality = match rssi {
+                r if r >= -50 => "Excellent".to_string(),
+                r if r >= -60 => "Good".to_string(),
+                r if r >= -70 => "Fair".to_string(),
+                r if r >= -80 => "Weak".to_string(),
+                _ => "Very Weak".to_string(),
+            };
+
+            Ok(Some(WifiConnectionInfo {
+                interface: iface.name.clone(),
+                ssid: Some(conn.access_point.ssid.as_str().to_string()),
+                bssid: Some(conn.access_point.bssid.to_string()),
+                rssi: Some(rssi),
+                noise,
+                snr,
+                channel: Some(conn.access_point.channel.number),
+                band: Some(format!("{:?}", conn.access_point.channel.band)),
+                security: Some(format!("{:?}", conn.access_point.security)),
+                tx_rate: conn.tx_rate,
+                wifi_standard: Some(format!("{:?}", conn.access_point.wifi_standard)),
+                signal_quality,
+            }))
+        }
+        Ok(None) => Ok(Some(WifiConnectionInfo {
+            interface: iface.name.clone(),
+            ssid: None,
+            bssid: None,
+            rssi: None,
+            noise: None,
+            snr: None,
+            channel: None,
+            band: None,
+            security: None,
+            tx_rate: None,
+            wifi_standard: None,
+            signal_quality: "Not Connected".to_string(),
+        })),
+        Err(e) => Err(e.to_string()),
+    }
 }

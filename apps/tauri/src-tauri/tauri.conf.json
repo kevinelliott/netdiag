@@ -41,6 +41,13 @@
     "longDescription": "A comprehensive network diagnostics tool that helps troubleshoot network issues. Combines ping, traceroute, speed tests, WiFi analysis, and more.",
     "macOS": {
       "minimumSystemVersion": "10.15"
+    },
+    "iOS": {
+      "developmentTeam": "",
+      "minimumSystemVersion": "14.0"
+    },
+    "android": {
+      "minSdkVersion": 24
     }
   }
 }

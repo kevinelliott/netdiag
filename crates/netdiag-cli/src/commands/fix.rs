@@ -31,7 +31,7 @@ pub async fn run(args: &FixArgs, format: &OutputFormat) -> Result<()> {
     engine.init().await?;
 
     match &args.command {
-        Some(FixCommands::Analyze { verbose }) => analyze_issues(&engine, *verbose, format).await,
+        Some(FixCommands::Analyze { detailed }) => analyze_issues(&engine, *detailed, format).await,
         Some(FixCommands::Apply {
             dry_run,
             safe_only,

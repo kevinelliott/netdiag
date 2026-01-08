@@ -94,7 +94,7 @@ pub enum OutputFormat {
 #[derive(Parser, Debug)]
 pub struct DiagnoseArgs {
     /// Quick diagnostics (skip slow tests)
-    #[arg(short, long)]
+    #[arg(short = 'Q', long)]
     pub quick: bool,
 
     /// Include speed test
@@ -402,7 +402,7 @@ pub enum FixCommands {
     Analyze {
         /// Show detailed analysis
         #[arg(short, long)]
-        verbose: bool,
+        detailed: bool,
     },
     /// Apply automatic fixes
     Apply {

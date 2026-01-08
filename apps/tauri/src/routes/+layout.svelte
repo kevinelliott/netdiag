@@ -1,11 +1,28 @@
 <script lang="ts">
   import '../app.css';
+  import { page } from '$app/stores';
 
   let { children } = $props();
+  let menuOpen = $state(false);
+
+  function toggleMenu() {
+    menuOpen = !menuOpen;
+  }
+
+  function closeMenu() {
+    menuOpen = false;
+  }
+
+  // Close menu when route changes
+  $effect(() => {
+    $page.url;
+    menuOpen = false;
+  });
 </script>
 
 <svelte:head>
   <title>NetDiag - Network Diagnostics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 </svelte:head>
 
 <div class="app">
@@ -15,12 +32,20 @@
         <span class="brand-icon">🌐</span>
         <span class="brand-text">NetDiag</span>
       </a>
-      <div class="nav-links">
-        <a href="/" class="nav-link">Dashboard</a>
-        <a href="/interfaces" class="nav-link">Interfaces</a>
-        <a href="/ping" class="nav-link">Ping</a>
-        <a href="/traceroute" class="nav-link">Traceroute</a>
-        <a href="/dns" class="nav-link">DNS</a>
+
+      <!-- Mobile menu button -->
+      <button class="menu-toggle" onclick={toggleMenu} aria-label="Toggle menu">
+        <span class="menu-icon" class:open={menuOpen}></span>
+      </button>
+
+      <!-- Navigation links -->
+      <div class="nav-links" class:open={menuOpen}>
+        <a href="/" class="nav-link" class:active={$page.url.pathname === '/'} onclick={closeMenu}>Dashboard</a>
+        <a href="/interfaces" class="nav-link" class:active={$page.url.pathname === '/interfaces'} onclick={closeMenu}>Interfaces</a>
+        <a href="/wifi" class="nav-link" class:active={$page.url.pathname === '/wifi'} onclick={closeMenu}>WiFi</a>
+        <a href="/ping" class="nav-link" class:active={$page.url.pathname === '/ping'} onclick={closeMenu}>Ping</a>
+        <a href="/traceroute" class="nav-link" class:active={$page.url.pathname === '/traceroute'} onclick={closeMenu}>Traceroute</a>
+        <a href="/dns" class="nav-link" class:active={$page.url.pathname === '/dns'} onclick={closeMenu}>DNS</a>
       </div>
     </nav>
   </header>
@@ -34,6 +59,11 @@
   </footer>
 </div>
 
+<!-- Mobile menu overlay -->
+{#if menuOpen}
+  <button class="menu-overlay" onclick={closeMenu} aria-label="Close menu"></button>
+{/if}
+
 <style>
   .app {
     display: flex;
@@ -45,6 +75,9 @@
     background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
     padding: 0 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
 
   .nav {
@@ -70,6 +103,59 @@
     font-size: 1.5rem;
   }
 
+  /* Mobile menu toggle button */
+  .menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .menu-icon {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: var(--text-primary);
+    position: relative;
+    transition: background-color 0.2s ease;
+  }
+
+  .menu-icon::before,
+  .menu-icon::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 2px;
+    background-color: var(--text-primary);
+    left: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .menu-icon::before {
+    top: -7px;
+  }
+
+  .menu-icon::after {
+    top: 7px;
+  }
+
+  .menu-icon.open {
+    background-color: transparent;
+  }
+
+  .menu-icon.open::before {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .menu-icon.open::after {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
   .nav-links {
     display: flex;
     gap: 0.5rem;
@@ -89,6 +175,11 @@
     color: var(--text-primary);
   }
 
+  .nav-link.active {
+    background-color: var(--accent);
+    color: white;
+  }
+
   .main {
     flex: 1;
     padding: 1.5rem;
@@ -105,5 +196,76 @@
     text-align: center;
     color: var(--text-secondary);
     font-size: 0.875rem;
+  }
+
+  /* Menu overlay for mobile */
+  .menu-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 90;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* Mobile styles */
+  @media (max-width: 768px) {
+    .menu-toggle {
+      display: flex;
+    }
+
+    .nav-links {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem;
+      gap: 0.25rem;
+      transform: translateY(-100%);
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      z-index: 95;
+    }
+
+    .nav-links.open {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .nav-link {
+      padding: 0.75rem 1rem;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+
+    .menu-overlay {
+      display: block;
+    }
+
+    .main {
+      padding: 1rem;
+    }
+  }
+
+  /* Small mobile */
+  @media (max-width: 480px) {
+    .brand-text {
+      display: none;
+    }
+
+    .nav-brand {
+      font-size: 1.5rem;
+    }
+
+    .main {
+      padding: 0.75rem;
+    }
   }
 </style>

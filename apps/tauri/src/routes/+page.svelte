@@ -207,6 +207,10 @@
         <span class="action-icon">🔍</span>
         <span class="action-label">DNS Lookup</span>
       </a>
+      <a href="/wifi" class="action-card">
+        <span class="action-icon">📶</span>
+        <span class="action-label">WiFi Status</span>
+      </a>
       <a href="/interfaces" class="action-card">
         <span class="action-icon">🔌</span>
         <span class="action-label">Interfaces</span>

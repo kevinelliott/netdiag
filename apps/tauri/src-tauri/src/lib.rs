@@ -80,6 +80,31 @@ pub struct DnsResult {
     pub error: Option<String>,
 }
 
+/// WiFi interface information for the frontend.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct WifiInterfaceInfo {
+    pub name: String,
+    pub powered_on: bool,
+    pub mac_address: Option<String>,
+}
+
+/// WiFi connection info for the frontend.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct WifiConnectionInfo {
+    pub interface: String,
+    pub ssid: Option<String>,
+    pub bssid: Option<String>,
+    pub rssi: Option<i32>,
+    pub noise: Option<i32>,
+    pub snr: Option<i32>,
+    pub channel: Option<u8>,
+    pub band: Option<String>,
+    pub security: Option<String>,
+    pub tx_rate: Option<f32>,
+    pub wifi_standard: Option<String>,
+    pub signal_quality: String,
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -103,6 +128,8 @@ pub fn run() {
             commands::traceroute_target,
             commands::dns_lookup,
             commands::check_connectivity,
+            commands::get_wifi_interfaces,
+            commands::get_wifi_connection,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
