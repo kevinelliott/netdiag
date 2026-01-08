@@ -1,0 +1,48 @@
+[package]
+name = "netdiag-platform-windows"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Windows platform implementation for netdiag"
+keywords = ["network", "diagnostics", "windows"]
+categories = ["network-programming", "os::windows-apis"]
+
+[dependencies]
+# Async
+async-trait = { workspace = true }
+tokio = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+
+# Internal crates
+netdiag-types = { workspace = true }
+netdiag-platform = { workspace = true }
+
+# Windows-specific
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.58", features = [
+    "Win32_Foundation",
+    "Win32_NetworkManagement_IpHelper",
+    "Win32_NetworkManagement_Ndis",
+    "Win32_NetworkManagement_WiFi",
+    "Win32_Networking_WinSock",
+    "Win32_System_Com",
+    "Win32_System_Ole",
+    "Win32_System_Registry",
+    "Win32_System_SystemInformation",
+    "Win32_Security",
+]}
+widestring = "1.1"
+
+[dev-dependencies]
+tokio-test = "0.4"
+
+[lints]
+workspace = true

@@ -1,15 +1,16 @@
 //! IPC (Inter-Process Communication) for daemon.
 //!
-//! Provides socket-based communication between the daemon and CLI/GUI clients.
+//! Provides cross-platform socket-based communication between the daemon and CLI/GUI clients.
+//! Uses Unix domain sockets on Unix platforms and named pipes on Windows.
 
 use crate::error::{DaemonError, Result};
 use crate::service::ServiceState;
+use interprocess::local_socket::{
+    tokio::{prelude::*, Stream},
+    GenericFilePath, GenericNamespaced, ListenerOptions, ToFsName, ToNsName,
+};
 use serde::{Deserialize, Serialize};
-use std::path::Path;
-use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
-
-#[cfg(unix)]
-use tokio::net::{UnixListener, UnixStream};
+use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader, BufWriter};
 
 /// IPC request from client to daemon.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -78,11 +79,26 @@ pub enum IpcResponse {
     Pong,
 }
 
+/// Gets the socket name for the given path.
+/// On Unix, uses filesystem path. On Windows, uses named pipe namespace.
+fn get_socket_name(path: &str) -> Result<interprocess::local_socket::Name<'static>> {
+    let path_owned = path.to_string();
+
+    // Try namespaced name first (works on both platforms)
+    if let Ok(name) = path_owned.clone().to_ns_name::<GenericNamespaced>() {
+        return Ok(name);
+    }
+
+    // Fall back to filesystem path (Unix only)
+    path_owned
+        .to_fs_name::<GenericFilePath>()
+        .map_err(|e| DaemonError::ipc(&format!("Invalid socket path: {}", e)))
+}
+
 /// IPC server that listens for client connections.
 pub struct IpcServer {
     socket_path: String,
-    #[cfg(unix)]
-    listener: Option<UnixListener>,
+    listener: Option<interprocess::local_socket::tokio::Listener>,
 }
 
 impl IpcServer {
@@ -90,89 +106,90 @@ impl IpcServer {
     pub fn new(socket_path: String) -> Self {
         Self {
             socket_path,
-            #[cfg(unix)]
             listener: None,
         }
     }
 
     /// Starts listening for connections.
-    #[cfg(unix)]
     pub async fn start(&mut self) -> Result<()> {
-        // Remove existing socket if it exists
-        let path = Path::new(&self.socket_path);
-        if path.exists() {
-            std::fs::remove_file(path)?;
+        // Clean up existing socket on Unix
+        #[cfg(unix)]
+        {
+            let path = std::path::Path::new(&self.socket_path);
+            if path.exists() {
+                let _ = std::fs::remove_file(path);
+            }
+            if let Some(parent) = path.parent() {
+                let _ = std::fs::create_dir_all(parent);
+            }
         }
 
-        // Ensure parent directory exists
-        if let Some(parent) = path.parent() {
-            std::fs::create_dir_all(parent)?;
-        }
+        let name = get_socket_name(&self.socket_path)?;
+        let opts = ListenerOptions::new().name(name);
 
-        let listener = UnixListener::bind(&self.socket_path)?;
+        let listener = opts
+            .create_tokio()
+            .map_err(|e| DaemonError::ipc(&format!("Failed to create listener: {}", e)))?;
+
         tracing::info!("IPC server listening on {}", self.socket_path);
         self.listener = Some(listener);
         Ok(())
     }
 
-    /// Starts listening for connections (Windows stub).
-    #[cfg(windows)]
-    pub async fn start(&mut self) -> Result<()> {
-        tracing::info!("IPC server starting on {}", self.socket_path);
-        // Windows would use named pipes
-        Ok(())
-    }
-
     /// Accepts a client connection.
-    #[cfg(unix)]
     pub async fn accept(&self) -> Result<IpcConnection> {
-        let listener = self.listener.as_ref().ok_or_else(|| {
-            DaemonError::ipc("Server not started")
-        })?;
+        let listener = self
+            .listener
+            .as_ref()
+            .ok_or_else(|| DaemonError::ipc("Server not started"))?;
 
-        let (stream, _addr) = listener.accept().await?;
-        Ok(IpcConnection { stream })
-    }
+        let stream = listener
+            .accept()
+            .await
+            .map_err(|e| DaemonError::ipc(&format!("Accept failed: {}", e)))?;
 
-    /// Accepts a client connection (Windows stub).
-    #[cfg(windows)]
-    pub async fn accept(&self) -> Result<IpcConnection> {
-        // Windows implementation would use named pipes
-        Err(DaemonError::ipc("Windows IPC not yet implemented"))
+        Ok(IpcConnection::new(stream))
     }
 
     /// Shuts down the server.
-    #[cfg(unix)]
     pub async fn shutdown(&mut self) -> Result<()> {
         self.listener.take();
-        let _ = std::fs::remove_file(&self.socket_path);
-        Ok(())
-    }
 
-    /// Shuts down the server (Windows stub).
-    #[cfg(windows)]
-    pub async fn shutdown(&mut self) -> Result<()> {
+        // Clean up socket file on Unix
+        #[cfg(unix)]
+        {
+            let _ = std::fs::remove_file(&self.socket_path);
+        }
+
         Ok(())
     }
 }
 
 /// An IPC connection to a client.
-#[cfg(unix)]
 pub struct IpcConnection {
-    stream: UnixStream,
+    reader: BufReader<interprocess::local_socket::tokio::RecvHalf>,
+    writer: BufWriter<interprocess::local_socket::tokio::SendHalf>,
 }
 
-#[cfg(unix)]
 impl IpcConnection {
+    /// Creates a new IPC connection from a stream.
+    fn new(stream: Stream) -> Self {
+        let (recv, send) = stream.split();
+        Self {
+            reader: BufReader::new(recv),
+            writer: BufWriter::new(send),
+        }
+    }
+
     /// Reads a request from the client.
     pub async fn read_request(&mut self) -> Result<Option<IpcRequest>> {
-        let mut reader = BufReader::new(&mut self.stream);
         let mut line = String::new();
 
-        match reader.read_line(&mut line).await {
+        match self.reader.read_line(&mut line).await {
             Ok(0) => Ok(None), // EOF
             Ok(_) => {
-                let request: IpcRequest = serde_json::from_str(line.trim())?;
+                let request: IpcRequest = serde_json::from_str(line.trim())
+                    .map_err(|e| DaemonError::ipc(&format!("Invalid request: {}", e)))?;
                 Ok(Some(request))
             }
             Err(e) => Err(DaemonError::Io(e)),
@@ -182,35 +199,17 @@ impl IpcConnection {
     /// Sends a response to the client.
     pub async fn send_response(&mut self, response: &IpcResponse) -> Result<()> {
         let json = serde_json::to_string(response)?;
-        self.stream.write_all(json.as_bytes()).await?;
-        self.stream.write_all(b"\n").await?;
-        self.stream.flush().await?;
+        self.writer.write_all(json.as_bytes()).await?;
+        self.writer.write_all(b"\n").await?;
+        self.writer.flush().await?;
         Ok(())
-    }
-}
-
-/// Dummy IPC connection for Windows.
-#[cfg(windows)]
-pub struct IpcConnection;
-
-#[cfg(windows)]
-impl IpcConnection {
-    /// Reads a request from the client.
-    pub async fn read_request(&mut self) -> Result<Option<IpcRequest>> {
-        Err(DaemonError::ipc("Windows IPC not yet implemented"))
-    }
-
-    /// Sends a response to the client.
-    pub async fn send_response(&mut self, _response: &IpcResponse) -> Result<()> {
-        Err(DaemonError::ipc("Windows IPC not yet implemented"))
     }
 }
 
 /// IPC client for connecting to the daemon.
 pub struct IpcClient {
     socket_path: String,
-    #[cfg(unix)]
-    stream: Option<UnixStream>,
+    connection: Option<IpcConnection>,
 }
 
 impl IpcClient {
@@ -218,50 +217,39 @@ impl IpcClient {
     pub fn new(socket_path: String) -> Self {
         Self {
             socket_path,
-            #[cfg(unix)]
-            stream: None,
+            connection: None,
         }
     }
 
     /// Connects to the daemon.
-    #[cfg(unix)]
     pub async fn connect(&mut self) -> Result<()> {
-        let stream = UnixStream::connect(&self.socket_path).await?;
-        self.stream = Some(stream);
+        let name = get_socket_name(&self.socket_path)?;
+        let stream = Stream::connect(name)
+            .await
+            .map_err(|e| DaemonError::ipc(&format!("Connection failed: {}", e)))?;
+        self.connection = Some(IpcConnection::new(stream));
         Ok(())
     }
 
-    /// Connects to the daemon (Windows stub).
-    #[cfg(windows)]
-    pub async fn connect(&mut self) -> Result<()> {
-        Err(DaemonError::ipc("Windows IPC not yet implemented"))
-    }
-
     /// Sends a request and waits for response.
-    #[cfg(unix)]
     pub async fn request(&mut self, request: &IpcRequest) -> Result<IpcResponse> {
-        let stream = self.stream.as_mut().ok_or_else(|| {
-            DaemonError::ipc("Not connected")
-        })?;
+        let conn = self
+            .connection
+            .as_mut()
+            .ok_or_else(|| DaemonError::ipc("Not connected"))?;
 
         // Send request
         let json = serde_json::to_string(request)?;
-        stream.write_all(json.as_bytes()).await?;
-        stream.write_all(b"\n").await?;
-        stream.flush().await?;
+        conn.writer.write_all(json.as_bytes()).await?;
+        conn.writer.write_all(b"\n").await?;
+        conn.writer.flush().await?;
 
         // Read response
-        let mut reader = BufReader::new(stream);
         let mut line = String::new();
-        reader.read_line(&mut line).await?;
-        let response: IpcResponse = serde_json::from_str(line.trim())?;
+        conn.reader.read_line(&mut line).await?;
+        let response: IpcResponse = serde_json::from_str(line.trim())
+            .map_err(|e| DaemonError::ipc(&format!("Invalid response: {}", e)))?;
         Ok(response)
-    }
-
-    /// Sends a request and waits for response (Windows stub).
-    #[cfg(windows)]
-    pub async fn request(&mut self, _request: &IpcRequest) -> Result<IpcResponse> {
-        Err(DaemonError::ipc("Windows IPC not yet implemented"))
     }
 
     /// Checks if the daemon is running.

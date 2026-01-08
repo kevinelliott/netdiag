@@ -59,6 +59,9 @@ netdiag-platform-macos = { path = "../netdiag-platform-macos" }
 [target.'cfg(target_os = "linux")'.dependencies]
 netdiag-platform-linux = { path = "../netdiag-platform-linux" }
 
+[target.'cfg(target_os = "windows")'.dependencies]
+netdiag-platform-windows = { path = "../netdiag-platform-windows" }
+
 [dev-dependencies]
 assert_cmd = "2.0"
 predicates = "3.1"

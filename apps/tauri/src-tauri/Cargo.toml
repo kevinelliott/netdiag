@@ -52,7 +52,7 @@ netdiag-platform-linux = { path = "../../../crates/netdiag-platform-linux" }
 netdev = "0.31"
 
 [target.'cfg(target_os = "windows")'.dependencies]
-# netdiag-platform-windows = { path = "../../../crates/netdiag-platform-windows" }
+netdiag-platform-windows = { path = "../../../crates/netdiag-platform-windows" }
 netdev = "0.31"
 
 [target.'cfg(target_os = "ios")'.dependencies]

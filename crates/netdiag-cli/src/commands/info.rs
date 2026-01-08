@@ -14,7 +14,11 @@ fn create_providers() -> PlatformProviders {
     {
         netdiag_platform_linux::create_providers()
     }
-    #[cfg(not(any(target_os = "macos", target_os = "linux")))]
+    #[cfg(target_os = "windows")]
+    {
+        netdiag_platform_windows::create_providers()
+    }
+    #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
     {
         PlatformProviders::new()
     }
