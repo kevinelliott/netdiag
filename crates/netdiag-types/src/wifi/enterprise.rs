@@ -1,4 +1,4 @@
-//! Enterprise WiFi (802.1X) types.
+//! Enterprise `WiFi` (802.1X) types.
 
 use serde::{Deserialize, Serialize};
 use strum::{Display, EnumString};
@@ -51,7 +51,7 @@ pub enum Phase2Method {
     Tls,
 }
 
-/// Enterprise WiFi configuration.
+/// Enterprise `WiFi` configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EnterpriseConfig {
     /// EAP method

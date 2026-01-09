@@ -1,9 +1,9 @@
-//! WiFi channel types.
+//! `WiFi` channel types.
 
 use serde::{Deserialize, Serialize};
 use strum::{Display, EnumString};
 
-/// WiFi channel information.
+/// `WiFi` channel information.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Channel {
     /// Channel number
@@ -108,7 +108,7 @@ impl std::fmt::Display for Channel {
     }
 }
 
-/// WiFi frequency band.
+/// `WiFi` frequency band.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Display, EnumString)]
 #[serde(rename_all = "lowercase")]
 pub enum WifiBand {
@@ -120,13 +120,13 @@ pub enum WifiBand {
     #[strum(serialize = "5GHz")]
     #[serde(rename = "5ghz")]
     Band5GHz,
-    /// 6 GHz band (WiFi 6E)
+    /// 6 GHz band (`WiFi` 6E)
     #[strum(serialize = "6GHz")]
     #[serde(rename = "6ghz")]
     Band6GHz,
 }
 
-/// WiFi channel width.
+/// `WiFi` channel width.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Display, EnumString, Default,
 )]
@@ -145,7 +145,7 @@ pub enum ChannelWidth {
     /// 160 MHz
     #[strum(serialize = "160MHz")]
     Mhz160,
-    /// 320 MHz (WiFi 7)
+    /// 320 MHz (`WiFi` 7)
     #[strum(serialize = "320MHz")]
     Mhz320,
 }
@@ -176,7 +176,7 @@ pub enum SecondaryChannelPosition {
     None,
 }
 
-/// WiFi standard (802.11 variant).
+/// `WiFi` standard (802.11 variant).
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Display, EnumString, Default,
 )]
@@ -191,17 +191,17 @@ pub enum WifiStandard {
     /// 802.11g (2.4 GHz, up to 54 Mbps)
     #[strum(serialize = "802.11g")]
     Dot11g,
-    /// 802.11n (WiFi 4, up to 600 Mbps)
+    /// 802.11n (`WiFi` 4, up to 600 Mbps)
     #[strum(serialize = "802.11n")]
     Dot11n,
-    /// 802.11ac (WiFi 5, up to 3.5 Gbps)
+    /// 802.11ac (`WiFi` 5, up to 3.5 Gbps)
     #[strum(serialize = "802.11ac")]
     Dot11ac,
-    /// 802.11ax (WiFi 6/6E, up to 9.6 Gbps)
+    /// 802.11ax (`WiFi` 6/6E, up to 9.6 Gbps)
     #[default]
     #[strum(serialize = "802.11ax")]
     Dot11ax,
-    /// 802.11be (WiFi 7, up to 46 Gbps)
+    /// 802.11be (`WiFi` 7, up to 46 Gbps)
     #[strum(serialize = "802.11be")]
     Dot11be,
     /// Unknown standard
@@ -210,7 +210,7 @@ pub enum WifiStandard {
 }
 
 impl WifiStandard {
-    /// Returns the marketing name (WiFi 4, 5, 6, etc.)
+    /// Returns the marketing name (`WiFi` 4, 5, 6, etc.)
     #[must_use]
     pub const fn marketing_name(&self) -> Option<&'static str> {
         match self {
