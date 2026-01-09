@@ -15,7 +15,7 @@ mod traceroute;
 pub use dns::{DnsResolver, DnsResult};
 pub use path_analyzer::{identify_isp, PathAnalyzer};
 pub use ping::{PingConfig, Pinger};
-pub use traceroute::{TracerouteConfig, Tracer};
+pub use traceroute::{Tracer, TracerouteConfig};
 
 use netdiag_types::error::Result;
 use std::net::IpAddr;
@@ -121,7 +121,10 @@ pub async fn check_connectivity(target: &str) -> Result<ConnectivityResult> {
                 error: None,
             })
         }
-        Err(e) => Ok(ConnectivityResult::failed(target.to_string(), e.to_string())),
+        Err(e) => Ok(ConnectivityResult::failed(
+            target.to_string(),
+            e.to_string(),
+        )),
     }
 }
 
@@ -166,6 +169,9 @@ pub async fn diagnose_connectivity(target: &str) -> Result<ConnectivityResult> {
                 error: None,
             })
         }
-        Err(e) => Ok(ConnectivityResult::failed(target.to_string(), e.to_string())),
+        Err(e) => Ok(ConnectivityResult::failed(
+            target.to_string(),
+            e.to_string(),
+        )),
     }
 }

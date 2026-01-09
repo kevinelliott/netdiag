@@ -16,7 +16,7 @@ mod iperf;
 mod result;
 
 pub use error::{SpeedError, SpeedResult};
-pub use http::{HttpSpeedTest, HttpSpeedConfig};
+pub use http::{HttpSpeedConfig, HttpSpeedTest};
 pub use iperf::{IperfClient, IperfConfig};
 pub use result::{
     BandwidthMeasurement, BandwidthSample, BufferBloatAnalysis, BufferBloatGrade,
@@ -87,18 +87,14 @@ impl SpeedTester {
     /// Create a new speed tester with default providers.
     pub fn new() -> Self {
         Self {
-            providers: vec![
-                Box::new(HttpSpeedTest::new()),
-            ],
+            providers: vec![Box::new(HttpSpeedTest::new())],
         }
     }
 
     /// Create a speed tester with iPerf support.
     pub fn with_iperf(server: &str) -> Self {
         Self {
-            providers: vec![
-                Box::new(IperfClient::new(server)),
-            ],
+            providers: vec![Box::new(IperfClient::new(server))],
         }
     }
 

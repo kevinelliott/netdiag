@@ -34,10 +34,7 @@ impl MacosSystemInfoProvider {
             .trim()
             .to_string();
 
-        let build_output = Command::new("sw_vers")
-            .arg("-buildVersion")
-            .output()
-            .ok()?;
+        let build_output = Command::new("sw_vers").arg("-buildVersion").output().ok()?;
 
         let build = String::from_utf8_lossy(&build_output.stdout)
             .trim()
@@ -48,16 +45,9 @@ impl MacosSystemInfoProvider {
 
     /// Gets the kernel version.
     fn get_kernel_version() -> Option<String> {
-        let output = Command::new("uname")
-            .arg("-r")
-            .output()
-            .ok()?;
+        let output = Command::new("uname").arg("-r").output().ok()?;
 
-        Some(
-            String::from_utf8_lossy(&output.stdout)
-                .trim()
-                .to_string(),
-        )
+        Some(String::from_utf8_lossy(&output.stdout).trim().to_string())
     }
 
     /// Gets the architecture.
@@ -92,12 +82,7 @@ impl MacosSystemInfoProvider {
             .args(["-n", "hw.physicalcpu"])
             .output()
             .ok()
-            .and_then(|o| {
-                String::from_utf8_lossy(&o.stdout)
-                    .trim()
-                    .parse()
-                    .ok()
-            })
+            .and_then(|o| String::from_utf8_lossy(&o.stdout).trim().parse().ok())
             .unwrap_or(1);
 
         // Get thread count
@@ -105,12 +90,7 @@ impl MacosSystemInfoProvider {
             .args(["-n", "hw.logicalcpu"])
             .output()
             .ok()
-            .and_then(|o| {
-                String::from_utf8_lossy(&o.stdout)
-                    .trim()
-                    .parse()
-                    .ok()
-            })
+            .and_then(|o| String::from_utf8_lossy(&o.stdout).trim().parse().ok())
             .unwrap_or(cores);
 
         // Get CPU frequency (may not be available on Apple Silicon)
@@ -141,12 +121,7 @@ impl MacosSystemInfoProvider {
             .args(["-n", "hw.memsize"])
             .output()
             .ok()
-            .and_then(|o| {
-                String::from_utf8_lossy(&o.stdout)
-                    .trim()
-                    .parse()
-                    .ok()
-            })
+            .and_then(|o| String::from_utf8_lossy(&o.stdout).trim().parse().ok())
             .unwrap_or(0);
 
         // Get page size
@@ -154,12 +129,7 @@ impl MacosSystemInfoProvider {
             .args(["-n", "hw.pagesize"])
             .output()
             .ok()
-            .and_then(|o| {
-                String::from_utf8_lossy(&o.stdout)
-                    .trim()
-                    .parse()
-                    .ok()
-            })
+            .and_then(|o| String::from_utf8_lossy(&o.stdout).trim().parse().ok())
             .unwrap_or(4096);
 
         // Get VM statistics for used/available memory
@@ -252,8 +222,8 @@ impl SystemInfoProvider for MacosSystemInfoProvider {
         }
 
         let hostname = self.get_hostname().await?;
-        let (os_version, os_build) = Self::get_macos_version()
-            .unwrap_or_else(|| ("Unknown".to_string(), String::new()));
+        let (os_version, os_build) =
+            Self::get_macos_version().unwrap_or_else(|| ("Unknown".to_string(), String::new()));
 
         let info = SystemInfo {
             hostname,

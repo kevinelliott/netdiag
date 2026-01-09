@@ -35,11 +35,7 @@ pub fn list_devices() -> CaptureResult<Vec<CaptureDevice>> {
         .map(|d| CaptureDevice {
             name: d.name.clone(),
             description: d.desc.clone(),
-            addresses: d
-                .addresses
-                .iter()
-                .map(|a| a.addr.to_string())
-                .collect(),
+            addresses: d.addresses.iter().map(|a| a.addr.to_string()).collect(),
             is_loopback: d.flags.is_loopback(),
             is_up: d.flags.is_up(),
             is_running: d.flags.is_running(),

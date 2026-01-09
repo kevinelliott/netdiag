@@ -7,8 +7,8 @@ use netdiag_platform::NetworkProvider;
 use netdiag_types::{
     error::Result,
     network::{
-        DhcpInfo, DnsServer, Gateway, InterfaceFlags, InterfaceType, IpSubnet,
-        Ipv4Info, Ipv6Info, Ipv6Scope, IspInfo, MacAddress, NetworkInterface, Route,
+        DhcpInfo, DnsServer, Gateway, InterfaceFlags, InterfaceType, IpSubnet, Ipv4Info, Ipv6Info,
+        Ipv6Scope, IspInfo, MacAddress, NetworkInterface, Route,
     },
     Error,
 };
@@ -38,8 +38,8 @@ impl AndroidNetworkProvider {
         use ndk_context::android_context;
 
         let ctx = android_context();
-        let vm = unsafe { jni::JavaVM::from_raw(ctx.vm() as *mut _) }
-            .map_err(|e| Error::Platform {
+        let vm =
+            unsafe { jni::JavaVM::from_raw(ctx.vm() as *mut _) }.map_err(|e| Error::Platform {
                 message: "Failed to get JavaVM".to_string(),
                 source: Some(e.to_string()),
             })?;
@@ -57,12 +57,12 @@ impl AndroidNetworkProvider {
         let mut interfaces = Vec::new();
 
         // Call NetworkInterface.getNetworkInterfaces()
-        let net_iface_class = env
-            .find_class("java/net/NetworkInterface")
-            .map_err(|e| Error::Platform {
-                message: "Failed to find NetworkInterface class".to_string(),
-                source: Some(e.to_string()),
-            })?;
+        let net_iface_class =
+            env.find_class("java/net/NetworkInterface")
+                .map_err(|e| Error::Platform {
+                    message: "Failed to find NetworkInterface class".to_string(),
+                    source: Some(e.to_string()),
+                })?;
 
         let ifaces_result = env
             .call_static_method(
@@ -101,12 +101,7 @@ impl AndroidNetworkProvider {
             }
 
             let iface_obj = env
-                .call_method(
-                    &enumeration,
-                    "nextElement",
-                    "()Ljava/lang/Object;",
-                    &[],
-                )
+                .call_method(&enumeration, "nextElement", "()Ljava/lang/Object;", &[])
                 .map_err(|e| Error::Platform {
                     message: "Failed to call nextElement".to_string(),
                     source: Some(e.to_string()),
@@ -139,9 +134,7 @@ impl AndroidNetworkProvider {
         let name = match name_obj {
             JValue::Object(obj) => {
                 let jstr = JString::from(obj);
-                env.get_string(&jstr)
-                    .map(|s| s.into())
-                    .unwrap_or_default()
+                env.get_string(&jstr).map(|s| s.into()).unwrap_or_default()
             }
             _ => return Ok(None),
         };
@@ -266,12 +259,8 @@ impl AndroidNetworkProvider {
         let mut ipv6_addresses = Vec::new();
 
         // Get interface addresses
-        let addrs_result = env.call_method(
-            iface,
-            "getInterfaceAddresses",
-            "()Ljava/util/List;",
-            &[],
-        );
+        let addrs_result =
+            env.call_method(iface, "getInterfaceAddresses", "()Ljava/util/List;", &[]);
 
         if let Ok(JValue::Object(addrs_list)) = addrs_result {
             if addrs_list.is_null() {
@@ -294,12 +283,8 @@ impl AndroidNetworkProvider {
 
                 if let Ok(JValue::Object(iface_addr)) = addr_obj {
                     // Get address
-                    let addr_result = env.call_method(
-                        &iface_addr,
-                        "getAddress",
-                        "()Ljava/net/InetAddress;",
-                        &[],
-                    );
+                    let addr_result =
+                        env.call_method(&iface_addr, "getAddress", "()Ljava/net/InetAddress;", &[]);
 
                     if let Ok(JValue::Object(inet_addr)) = addr_result {
                         let host_addr = env
@@ -421,9 +406,9 @@ impl NetworkProvider for AndroidNetworkProvider {
     async fn get_default_interface(&self) -> Result<Option<NetworkInterface>> {
         let interfaces = self.get_interfaces_jni()?;
         // On Android, check for wlan0 (WiFi) or rmnet (cellular)
-        Ok(interfaces.into_iter().find(|i| {
-            i.is_default || i.name == "wlan0" || i.name.starts_with("rmnet")
-        }))
+        Ok(interfaces
+            .into_iter()
+            .find(|i| i.is_default || i.name == "wlan0" || i.name.starts_with("rmnet")))
     }
 
     async fn get_default_route(&self) -> Result<Option<Route>> {

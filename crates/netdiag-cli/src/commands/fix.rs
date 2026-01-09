@@ -121,8 +121,7 @@ async fn apply_fixes(
 
     // Filter to safe-only if requested
     if safe_only {
-        plan.actions
-            .retain(|a| a.severity <= FixSeverity::Low);
+        plan.actions.retain(|a| a.severity <= FixSeverity::Low);
     }
 
     if plan.is_empty() {
@@ -172,10 +171,7 @@ async fn apply_fixes(
                 if result.success {
                     println!(
                         "  [OK] {} ({}ms)",
-                        result
-                            .message
-                            .as_deref()
-                            .unwrap_or("Success"),
+                        result.message.as_deref().unwrap_or("Success"),
                         result.duration_ms
                     );
                 } else {

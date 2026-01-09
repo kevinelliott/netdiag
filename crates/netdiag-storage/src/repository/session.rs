@@ -51,17 +51,24 @@ impl SessionRepository {
 
     /// Get a session by ID.
     pub async fn get(&self, id: Uuid) -> StorageResult<Option<DiagnosticSession>> {
-        let row: Option<(String, String, Option<String>, String, String, Option<String>, Option<String>)> =
-            sqlx::query_as(
-                r#"
+        let row: Option<(
+            String,
+            String,
+            Option<String>,
+            String,
+            String,
+            Option<String>,
+            Option<String>,
+        )> = sqlx::query_as(
+            r#"
                 SELECT id, started_at, ended_at, session_type, status, summary, metadata
                 FROM diagnostic_sessions
                 WHERE id = ?
                 "#,
-            )
-            .bind(id.to_string())
-            .fetch_optional(&self.pool)
-            .await?;
+        )
+        .bind(id.to_string())
+        .fetch_optional(&self.pool)
+        .await?;
 
         match row {
             Some((id, started_at, ended_at, session_type, status, summary, metadata)) => {
@@ -114,39 +121,48 @@ impl SessionRepository {
         let limit = options.limit.unwrap_or(100);
         let offset = options.offset.unwrap_or(0);
 
-        let rows: Vec<(String, String, Option<String>, String, String, Option<String>, Option<String>)> =
-            sqlx::query_as(
-                r#"
+        let rows: Vec<(
+            String,
+            String,
+            Option<String>,
+            String,
+            String,
+            Option<String>,
+            Option<String>,
+        )> = sqlx::query_as(
+            r#"
                 SELECT id, started_at, ended_at, session_type, status, summary, metadata
                 FROM diagnostic_sessions
                 ORDER BY started_at DESC
                 LIMIT ? OFFSET ?
                 "#,
-            )
-            .bind(limit)
-            .bind(offset)
-            .fetch_all(&self.pool)
-            .await?;
+        )
+        .bind(limit)
+        .bind(offset)
+        .fetch_all(&self.pool)
+        .await?;
 
         let sessions: Vec<DiagnosticSession> = rows
             .into_iter()
-            .filter_map(|(id, started_at, ended_at, session_type, status, summary, metadata)| {
-                Some(DiagnosticSession {
-                    id: Uuid::parse_str(&id).ok()?,
-                    started_at: chrono::DateTime::parse_from_rfc3339(&started_at)
-                        .map(|t| t.with_timezone(&Utc))
-                        .ok()?,
-                    ended_at: ended_at.and_then(|t| {
-                        chrono::DateTime::parse_from_rfc3339(&t)
+            .filter_map(
+                |(id, started_at, ended_at, session_type, status, summary, metadata)| {
+                    Some(DiagnosticSession {
+                        id: Uuid::parse_str(&id).ok()?,
+                        started_at: chrono::DateTime::parse_from_rfc3339(&started_at)
                             .map(|t| t.with_timezone(&Utc))
-                            .ok()
-                    }),
-                    session_type: session_type.parse().ok()?,
-                    status: status.parse().ok()?,
-                    summary,
-                    metadata: metadata.and_then(|m| serde_json::from_str(&m).ok()),
-                })
-            })
+                            .ok()?,
+                        ended_at: ended_at.and_then(|t| {
+                            chrono::DateTime::parse_from_rfc3339(&t)
+                                .map(|t| t.with_timezone(&Utc))
+                                .ok()
+                        }),
+                        session_type: session_type.parse().ok()?,
+                        status: status.parse().ok()?,
+                        summary,
+                        metadata: metadata.and_then(|m| serde_json::from_str(&m).ok()),
+                    })
+                },
+            )
             .collect();
 
         Ok(sessions)

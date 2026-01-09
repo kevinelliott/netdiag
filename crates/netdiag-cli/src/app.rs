@@ -238,7 +238,12 @@ pub enum WifiCommands {
 #[derive(Parser, Debug)]
 pub struct ReportArgs {
     /// Report format (text, json, markdown, html, pdf)
-    #[arg(short = 'F', long = "report-format", value_enum, default_value = "text")]
+    #[arg(
+        short = 'F',
+        long = "report-format",
+        value_enum,
+        default_value = "text"
+    )]
     pub report_format: ReportFormat,
 
     /// Output file path

@@ -54,7 +54,9 @@ impl WindowsSystemInfoProvider {
                 ComputerNameDnsHostname,
                 Some(buffer.as_mut_ptr()),
                 &mut size,
-            ).is_ok() {
+            )
+            .is_ok()
+            {
                 Ok(String::from_utf16_lossy(&buffer[..size as usize]))
             } else {
                 Ok("Unknown".to_string())

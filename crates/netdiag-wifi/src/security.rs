@@ -178,9 +178,8 @@ impl SecurityAnalysis {
                         title: "WPA2 Enterprise".to_string(),
                         description: "WPA2 Enterprise is secure but should verify certificate."
                             .to_string(),
-                        remediation:
-                            "Ensure RADIUS certificate validation is properly configured."
-                                .to_string(),
+                        remediation: "Ensure RADIUS certificate validation is properly configured."
+                            .to_string(),
                         cve: None,
                     });
                 } else {
@@ -191,9 +190,8 @@ impl SecurityAnalysis {
                         description:
                             "WPA2 Personal is secure but may be vulnerable to KRACK if not patched."
                                 .to_string(),
-                        remediation:
-                            "Ensure all devices are patched. Consider upgrading to WPA3."
-                                .to_string(),
+                        remediation: "Ensure all devices are patched. Consider upgrading to WPA3."
+                            .to_string(),
                         cve: Some("CVE-2017-13077".to_string()),
                     });
 
@@ -221,8 +219,8 @@ impl SecurityAnalysis {
                 issues.push(SecurityIssue {
                     severity: IssueSeverity::Low,
                     title: "OWE (Enhanced Open)".to_string(),
-                    description:
-                        "Using Opportunistic Wireless Encryption for open networks.".to_string(),
+                    description: "Using Opportunistic Wireless Encryption for open networks."
+                        .to_string(),
                     remediation: "Good for public networks, consider WPA3 for private networks."
                         .to_string(),
                     cve: None,
@@ -235,8 +233,8 @@ impl SecurityAnalysis {
             issues.push(SecurityIssue {
                 severity: IssueSeverity::Low,
                 title: "PMF Not Required".to_string(),
-                description:
-                    "Protected Management Frames help prevent deauthentication attacks.".to_string(),
+                description: "Protected Management Frames help prevent deauthentication attacks."
+                    .to_string(),
                 remediation: "Enable PMF (802.11w) on the access point if supported.".to_string(),
                 cve: None,
             });

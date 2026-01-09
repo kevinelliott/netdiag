@@ -56,13 +56,24 @@ impl CaptureStats {
     }
 
     /// Update stats with a new packet.
-    pub fn update(&mut self, protocol: Protocol, length: usize, src_ip: Option<&str>, dst_ip: Option<&str>, src_port: Option<u16>, dst_port: Option<u16>) {
+    pub fn update(
+        &mut self,
+        protocol: Protocol,
+        length: usize,
+        src_ip: Option<&str>,
+        dst_ip: Option<&str>,
+        src_port: Option<u16>,
+        dst_port: Option<u16>,
+    ) {
         self.packets_captured += 1;
         self.bytes_captured += length as u64;
 
         // Update protocol stats
         let proto_name = protocol.name().to_string();
-        let proto_stats = self.protocols.entry(proto_name).or_insert_with(ProtocolStats::new);
+        let proto_stats = self
+            .protocols
+            .entry(proto_name)
+            .or_insert_with(ProtocolStats::new);
         proto_stats.packets += 1;
         proto_stats.bytes += length as u64;
 

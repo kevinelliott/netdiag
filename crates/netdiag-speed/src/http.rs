@@ -43,9 +43,12 @@ pub struct HttpSpeedConfig {
 impl Default for HttpSpeedConfig {
     fn default() -> Self {
         Self {
-            download_urls: DEFAULT_DOWNLOAD_URLS.iter().map(|s| s.to_string()).collect(),
+            download_urls: DEFAULT_DOWNLOAD_URLS
+                .iter()
+                .map(|s| s.to_string())
+                .collect(),
             upload_url: DEFAULT_UPLOAD_URL.to_string(),
-            chunk_size: 1024 * 1024, // 1 MB chunks
+            chunk_size: 1024 * 1024,       // 1 MB chunks
             upload_size: 25 * 1024 * 1024, // 25 MB upload
         }
     }
@@ -104,7 +107,8 @@ impl HttpSpeedTest {
 
         if !response.status().is_success() {
             return Err(SpeedError::ConnectionFailed(format!(
-                "HTTP {}", response.status()
+                "HTTP {}",
+                response.status()
             )));
         }
 
@@ -164,12 +168,7 @@ impl HttpSpeedTest {
         while start.elapsed() < duration {
             let chunk_start = Instant::now();
 
-            let result = self
-                .client
-                .post(url)
-                .body(payload.clone())
-                .send()
-                .await;
+            let result = self.client.post(url).body(payload.clone()).send().await;
 
             match result {
                 Ok(response) => {
@@ -338,10 +337,7 @@ impl SpeedTestProvider for HttpSpeedTest {
         let duration = start.elapsed();
         let total_bytes = bytes_counter.load(Ordering::Relaxed);
 
-        info!(
-            "Download complete: {} bytes in {:?}",
-            total_bytes, duration
-        );
+        info!("Download complete: {} bytes in {:?}", total_bytes, duration);
 
         Ok(BandwidthMeasurement {
             bytes: total_bytes,
@@ -449,7 +445,9 @@ impl SpeedTestProvider for HttpSpeedTest {
         }
 
         if latencies.is_empty() {
-            return Err(SpeedError::ConnectionFailed("No successful latency measurements".into()));
+            return Err(SpeedError::ConnectionFailed(
+                "No successful latency measurements".into(),
+            ));
         }
 
         // Return median latency

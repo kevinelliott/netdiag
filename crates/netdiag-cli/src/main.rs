@@ -42,8 +42,7 @@ fn init_logging(verbose: u8, quiet: bool) {
         }
     };
 
-    let filter_layer = EnvFilter::try_from_default_env()
-        .unwrap_or_else(|_| EnvFilter::new(filter));
+    let filter_layer = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new(filter));
 
     tracing_subscriber::registry()
         .with(filter_layer)
@@ -75,7 +74,10 @@ async fn run_command(command: Commands, format: &app::OutputFormat, verbose: u8)
 
 /// Run in interactive mode.
 async fn run_interactive() -> Result<()> {
-    println!("netdiag - Network Diagnostics Tool v{}", env!("CARGO_PKG_VERSION"));
+    println!(
+        "netdiag - Network Diagnostics Tool v{}",
+        env!("CARGO_PKG_VERSION")
+    );
     println!();
     println!("Use 'netdiag --help' for available commands.");
     println!("Use 'netdiag diagnose' for a full diagnostic run.");

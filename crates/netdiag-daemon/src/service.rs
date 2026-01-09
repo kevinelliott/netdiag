@@ -499,7 +499,9 @@ WantedBy=multi-user.target
     fs::write(service_path, service_content)?;
 
     tracing::info!("Installed systemd service at {:?}", service_path);
-    tracing::info!("Run 'sudo systemctl daemon-reload && sudo systemctl enable --now netdiag' to start");
+    tracing::info!(
+        "Run 'sudo systemctl daemon-reload && sudo systemctl enable --now netdiag' to start"
+    );
 
     Ok(())
 }

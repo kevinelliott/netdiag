@@ -128,10 +128,7 @@ impl MacosAutofixProvider {
 
         for line in stdout.lines() {
             if line.starts_with("Hardware Port:") {
-                current_service = line
-                    .split(':')
-                    .nth(1)
-                    .map(|s| s.trim().to_string());
+                current_service = line.split(':').nth(1).map(|s| s.trim().to_string());
             } else if line.starts_with("Device:") {
                 if let Some(device) = line.split(':').nth(1) {
                     if device.trim() == interface {
@@ -277,10 +274,12 @@ impl AutofixProvider for MacosAutofixProvider {
         info!("Resetting network adapter: {}", interface);
 
         // Get the network service name
-        let service = self.get_network_service(interface).ok_or_else(|| Error::Other {
-            context: "reset_adapter".to_string(),
-            message: format!("Could not find network service for {}", interface),
-        })?;
+        let service = self
+            .get_network_service(interface)
+            .ok_or_else(|| Error::Other {
+                context: "reset_adapter".to_string(),
+                message: format!("Could not find network service for {}", interface),
+            })?;
 
         // Disable and re-enable the interface
         if self.is_root() {
@@ -290,9 +289,15 @@ impl AutofixProvider for MacosAutofixProvider {
             Self::run_command("ifconfig", &[interface, "up"])?;
         } else {
             // Use networksetup (may prompt for password)
-            Self::run_command("networksetup", &["-setnetworkserviceenabled", &service, "off"])?;
+            Self::run_command(
+                "networksetup",
+                &["-setnetworkserviceenabled", &service, "off"],
+            )?;
             std::thread::sleep(Duration::from_millis(500));
-            Self::run_command("networksetup", &["-setnetworkserviceenabled", &service, "on"])?;
+            Self::run_command(
+                "networksetup",
+                &["-setnetworkserviceenabled", &service, "on"],
+            )?;
         }
 
         debug!("Adapter {} reset complete", interface);
@@ -300,10 +305,12 @@ impl AutofixProvider for MacosAutofixProvider {
     }
 
     async fn set_dns_servers(&self, interface: &str, servers: &[IpAddr]) -> Result<()> {
-        let service = self.get_network_service(interface).ok_or_else(|| Error::Other {
-            context: "set_dns_servers".to_string(),
-            message: format!("Could not find network service for {}", interface),
-        })?;
+        let service = self
+            .get_network_service(interface)
+            .ok_or_else(|| Error::Other {
+                context: "set_dns_servers".to_string(),
+                message: format!("Could not find network service for {}", interface),
+            })?;
 
         info!("Setting DNS servers for {} to {:?}", service, servers);
 
@@ -327,15 +334,20 @@ impl AutofixProvider for MacosAutofixProvider {
     }
 
     async fn toggle_interface(&self, interface: &str, enable: bool) -> Result<()> {
-        let service = self.get_network_service(interface).ok_or_else(|| Error::Other {
-            context: "toggle_interface".to_string(),
-            message: format!("Could not find network service for {}", interface),
-        })?;
+        let service = self
+            .get_network_service(interface)
+            .ok_or_else(|| Error::Other {
+                context: "toggle_interface".to_string(),
+                message: format!("Could not find network service for {}", interface),
+            })?;
 
         let state = if enable { "on" } else { "off" };
         info!("Setting {} to {}", service, state);
 
-        Self::run_command("networksetup", &["-setnetworkserviceenabled", &service, state])?;
+        Self::run_command(
+            "networksetup",
+            &["-setnetworkserviceenabled", &service, state],
+        )?;
 
         Ok(())
     }
@@ -431,7 +443,8 @@ impl AutofixProvider for MacosAutofixProvider {
         fixes.push(AutofixAction {
             id: "set_dns_google".to_string(),
             name: "Use Google DNS".to_string(),
-            description: "Set DNS servers to Google (8.8.8.8, 8.8.4.4) for reliable DNS resolution".to_string(),
+            description: "Set DNS servers to Google (8.8.8.8, 8.8.4.4) for reliable DNS resolution"
+                .to_string(),
             category: FixCategory::Dns,
             risk_level: RiskLevel::Low,
             reversible: true,
@@ -455,7 +468,8 @@ impl AutofixProvider for MacosAutofixProvider {
         fixes.push(AutofixAction {
             id: "reset_adapter".to_string(),
             name: "Reset Network Adapter".to_string(),
-            description: "Disable and re-enable the network adapter to clear any stuck state".to_string(),
+            description: "Disable and re-enable the network adapter to clear any stuck state"
+                .to_string(),
             category: FixCategory::Adapter,
             risk_level: RiskLevel::Medium,
             reversible: false,
@@ -541,9 +555,7 @@ impl AutofixProvider for MacosAutofixProvider {
                 self.reset_tcpip_stack().await?;
                 FixResult::success("TCP/IP stack reset")
             }
-            _ => {
-                FixResult::failure(format!("Unknown fix: {}", fix.id))
-            }
+            _ => FixResult::failure(format!("Unknown fix: {}", fix.id)),
         };
 
         Ok(result)
@@ -573,7 +585,10 @@ mod tests {
     #[tokio::test]
     async fn test_create_rollback_point() {
         let provider = MacosAutofixProvider::new();
-        let id = provider.create_rollback_point("Test rollback").await.unwrap();
+        let id = provider
+            .create_rollback_point("Test rollback")
+            .await
+            .unwrap();
         assert!(!id.0.is_empty());
 
         let points = provider.list_rollback_points().await.unwrap();

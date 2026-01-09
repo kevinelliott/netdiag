@@ -61,18 +61,12 @@ pub async fn run(args: PingArgs) -> Result<()> {
                 result.rtt.unwrap_or_default().as_secs_f64() * 1000.0
             );
         } else {
-            println!(
-                "Request timeout for icmp_seq {}",
-                result.seq
-            );
+            println!("Request timeout for icmp_seq {}", result.seq);
         }
     }
 
     println!();
-    println!(
-        "--- {} ping statistics ---",
-        style(&args.target).cyan()
-    );
+    println!("--- {} ping statistics ---", style(&args.target).cyan());
     println!(
         "{} packets transmitted, {} received, {:.1}% packet loss, time {:.0}ms",
         stats.transmitted,

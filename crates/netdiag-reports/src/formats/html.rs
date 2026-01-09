@@ -58,8 +58,17 @@ impl ReportFormatter for HtmlFormatter {
         writeln!(output, "<html lang=\"en\">").unwrap();
         writeln!(output, "<head>").unwrap();
         writeln!(output, "    <meta charset=\"UTF-8\">").unwrap();
-        writeln!(output, "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">").unwrap();
-        writeln!(output, "    <title>{}</title>", html_escape(&report.metadata.title)).unwrap();
+        writeln!(
+            output,
+            "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+        )
+        .unwrap();
+        writeln!(
+            output,
+            "    <title>{}</title>",
+            html_escape(&report.metadata.title)
+        )
+        .unwrap();
 
         if self.include_css {
             writeln!(output, "    <style>").unwrap();
@@ -73,17 +82,46 @@ impl ReportFormatter for HtmlFormatter {
 
         // Header
         writeln!(output, "<header>").unwrap();
-        writeln!(output, "    <h1>{}</h1>", html_escape(&report.metadata.title)).unwrap();
+        writeln!(
+            output,
+            "    <h1>{}</h1>",
+            html_escape(&report.metadata.title)
+        )
+        .unwrap();
         writeln!(output, "    <div class=\"metadata\">").unwrap();
-        writeln!(output, "        <span class=\"tag\">Report ID: {}</span>", report.metadata.id).unwrap();
-        writeln!(output, "        <span class=\"tag\">Generated: {}</span>",
-            report.metadata.generated_at.format("%Y-%m-%d %H:%M:%S UTC")).unwrap();
-        writeln!(output, "        <span class=\"tag\">Version: {}</span>", report.metadata.version).unwrap();
+        writeln!(
+            output,
+            "        <span class=\"tag\">Report ID: {}</span>",
+            report.metadata.id
+        )
+        .unwrap();
+        writeln!(
+            output,
+            "        <span class=\"tag\">Generated: {}</span>",
+            report.metadata.generated_at.format("%Y-%m-%d %H:%M:%S UTC")
+        )
+        .unwrap();
+        writeln!(
+            output,
+            "        <span class=\"tag\">Version: {}</span>",
+            report.metadata.version
+        )
+        .unwrap();
         if let Some(ref hostname) = report.metadata.hostname {
-            writeln!(output, "        <span class=\"tag\">Host: {}</span>", html_escape(hostname)).unwrap();
+            writeln!(
+                output,
+                "        <span class=\"tag\">Host: {}</span>",
+                html_escape(hostname)
+            )
+            .unwrap();
         }
         if let Some(ref os_info) = report.metadata.os_info {
-            writeln!(output, "        <span class=\"tag\">OS: {}</span>", html_escape(os_info)).unwrap();
+            writeln!(
+                output,
+                "        <span class=\"tag\">OS: {}</span>",
+                html_escape(os_info)
+            )
+            .unwrap();
         }
         writeln!(output, "    </div>").unwrap();
         writeln!(output, "</header>").unwrap();
@@ -101,8 +139,18 @@ impl ReportFormatter for HtmlFormatter {
             };
 
             writeln!(output, "    <div class=\"health-card {}\">", status_class).unwrap();
-            writeln!(output, "        <div class=\"health-score\">{}</div>", health.score).unwrap();
-            writeln!(output, "        <div class=\"health-status\">{}</div>", health.status.to_uppercase()).unwrap();
+            writeln!(
+                output,
+                "        <div class=\"health-score\">{}</div>",
+                health.score
+            )
+            .unwrap();
+            writeln!(
+                output,
+                "        <div class=\"health-status\">{}</div>",
+                health.status.to_uppercase()
+            )
+            .unwrap();
             writeln!(output, "    </div>").unwrap();
 
             if !health.issues.is_empty() {
@@ -110,7 +158,12 @@ impl ReportFormatter for HtmlFormatter {
                 writeln!(output, "        <h3>Issues</h3>").unwrap();
                 writeln!(output, "        <ul>").unwrap();
                 for issue in &health.issues {
-                    writeln!(output, "            <li class=\"issue\">{}</li>", html_escape(issue)).unwrap();
+                    writeln!(
+                        output,
+                        "            <li class=\"issue\">{}</li>",
+                        html_escape(issue)
+                    )
+                    .unwrap();
                 }
                 writeln!(output, "        </ul>").unwrap();
                 writeln!(output, "    </div>").unwrap();
@@ -121,7 +174,12 @@ impl ReportFormatter for HtmlFormatter {
                 writeln!(output, "        <h3>Recommendations</h3>").unwrap();
                 writeln!(output, "        <ul>").unwrap();
                 for rec in &health.recommendations {
-                    writeln!(output, "            <li class=\"recommendation\">{}</li>", html_escape(rec)).unwrap();
+                    writeln!(
+                        output,
+                        "            <li class=\"recommendation\">{}</li>",
+                        html_escape(rec)
+                    )
+                    .unwrap();
                 }
                 writeln!(output, "        </ul>").unwrap();
                 writeln!(output, "    </div>").unwrap();
@@ -137,20 +195,53 @@ impl ReportFormatter for HtmlFormatter {
             writeln!(output, "    <div class=\"cards\">").unwrap();
 
             for iface in &report.interfaces {
-                let status_class = if iface.is_up { "status-up" } else { "status-down" };
-                let default_badge = if iface.is_default { "<span class=\"badge default\">Default</span>" } else { "" };
+                let status_class = if iface.is_up {
+                    "status-up"
+                } else {
+                    "status-down"
+                };
+                let default_badge = if iface.is_default {
+                    "<span class=\"badge default\">Default</span>"
+                } else {
+                    ""
+                };
 
-                writeln!(output, "    <div class=\"card interface-card {}\">", status_class).unwrap();
+                writeln!(
+                    output,
+                    "    <div class=\"card interface-card {}\">",
+                    status_class
+                )
+                .unwrap();
                 writeln!(output, "        <div class=\"card-header\">").unwrap();
-                writeln!(output, "            <h3>{} {}</h3>", html_escape(&iface.name), default_badge).unwrap();
-                writeln!(output, "            <span class=\"status-indicator\">{}</span>",
-                    if iface.is_up { "UP" } else { "DOWN" }).unwrap();
+                writeln!(
+                    output,
+                    "            <h3>{} {}</h3>",
+                    html_escape(&iface.name),
+                    default_badge
+                )
+                .unwrap();
+                writeln!(
+                    output,
+                    "            <span class=\"status-indicator\">{}</span>",
+                    if iface.is_up { "UP" } else { "DOWN" }
+                )
+                .unwrap();
                 writeln!(output, "        </div>").unwrap();
                 writeln!(output, "        <div class=\"card-body\">").unwrap();
-                writeln!(output, "            <p><strong>Type:</strong> {}</p>", html_escape(&iface.interface_type)).unwrap();
+                writeln!(
+                    output,
+                    "            <p><strong>Type:</strong> {}</p>",
+                    html_escape(&iface.interface_type)
+                )
+                .unwrap();
 
                 if let Some(ref mac) = iface.mac_address {
-                    writeln!(output, "            <p><strong>MAC:</strong> <code>{}</code></p>", mac).unwrap();
+                    writeln!(
+                        output,
+                        "            <p><strong>MAC:</strong> <code>{}</code></p>",
+                        mac
+                    )
+                    .unwrap();
                 }
 
                 if !iface.ipv4_addresses.is_empty() {
@@ -204,10 +295,25 @@ impl ReportFormatter for HtmlFormatter {
                 };
 
                 writeln!(output, "            <tr class=\"{}\">", status_class).unwrap();
-                writeln!(output, "                <td><code>{}</code></td>", html_escape(&dns.query)).unwrap();
-                writeln!(output, "                <td class=\"status-cell\">{}</td>", status_icon).unwrap();
+                writeln!(
+                    output,
+                    "                <td><code>{}</code></td>",
+                    html_escape(&dns.query)
+                )
+                .unwrap();
+                writeln!(
+                    output,
+                    "                <td class=\"status-cell\">{}</td>",
+                    status_icon
+                )
+                .unwrap();
                 writeln!(output, "                <td>{:.1}ms</td>", dns.duration_ms).unwrap();
-                writeln!(output, "                <td>{}</td>", html_escape(&addresses)).unwrap();
+                writeln!(
+                    output,
+                    "                <td>{}</td>",
+                    html_escape(&addresses)
+                )
+                .unwrap();
                 writeln!(output, "            </tr>").unwrap();
             }
 
@@ -229,40 +335,95 @@ impl ReportFormatter for HtmlFormatter {
                     _ => "quality-poor",
                 };
 
-                writeln!(output, "    <div class=\"card ping-card {}\">", quality_class).unwrap();
+                writeln!(
+                    output,
+                    "    <div class=\"card ping-card {}\">",
+                    quality_class
+                )
+                .unwrap();
                 writeln!(output, "        <div class=\"card-header\">").unwrap();
                 writeln!(output, "            <h3>{}</h3>", html_escape(&ping.target)).unwrap();
-                writeln!(output, "            <span class=\"quality-badge\">{}</span>", ping.quality.to_uppercase()).unwrap();
+                writeln!(
+                    output,
+                    "            <span class=\"quality-badge\">{}</span>",
+                    ping.quality.to_uppercase()
+                )
+                .unwrap();
                 writeln!(output, "        </div>").unwrap();
                 writeln!(output, "        <div class=\"card-body\">").unwrap();
                 writeln!(output, "            <div class=\"stats-grid\">").unwrap();
                 writeln!(output, "                <div class=\"stat\">").unwrap();
-                writeln!(output, "                    <span class=\"stat-value\">{}/{}</span>", ping.received, ping.transmitted).unwrap();
-                writeln!(output, "                    <span class=\"stat-label\">Packets</span>").unwrap();
+                writeln!(
+                    output,
+                    "                    <span class=\"stat-value\">{}/{}</span>",
+                    ping.received, ping.transmitted
+                )
+                .unwrap();
+                writeln!(
+                    output,
+                    "                    <span class=\"stat-label\">Packets</span>"
+                )
+                .unwrap();
                 writeln!(output, "                </div>").unwrap();
                 writeln!(output, "                <div class=\"stat\">").unwrap();
-                writeln!(output, "                    <span class=\"stat-value\">{:.1}%</span>", ping.loss_percent).unwrap();
-                writeln!(output, "                    <span class=\"stat-label\">Loss</span>").unwrap();
+                writeln!(
+                    output,
+                    "                    <span class=\"stat-value\">{:.1}%</span>",
+                    ping.loss_percent
+                )
+                .unwrap();
+                writeln!(
+                    output,
+                    "                    <span class=\"stat-label\">Loss</span>"
+                )
+                .unwrap();
                 writeln!(output, "                </div>").unwrap();
 
                 if let Some(min) = ping.min_rtt_ms {
                     writeln!(output, "                <div class=\"stat\">").unwrap();
-                    writeln!(output, "                    <span class=\"stat-value\">{:.1}ms</span>", min).unwrap();
-                    writeln!(output, "                    <span class=\"stat-label\">Min RTT</span>").unwrap();
+                    writeln!(
+                        output,
+                        "                    <span class=\"stat-value\">{:.1}ms</span>",
+                        min
+                    )
+                    .unwrap();
+                    writeln!(
+                        output,
+                        "                    <span class=\"stat-label\">Min RTT</span>"
+                    )
+                    .unwrap();
                     writeln!(output, "                </div>").unwrap();
                 }
 
                 if let Some(avg) = ping.avg_rtt_ms {
                     writeln!(output, "                <div class=\"stat\">").unwrap();
-                    writeln!(output, "                    <span class=\"stat-value\">{:.1}ms</span>", avg).unwrap();
-                    writeln!(output, "                    <span class=\"stat-label\">Avg RTT</span>").unwrap();
+                    writeln!(
+                        output,
+                        "                    <span class=\"stat-value\">{:.1}ms</span>",
+                        avg
+                    )
+                    .unwrap();
+                    writeln!(
+                        output,
+                        "                    <span class=\"stat-label\">Avg RTT</span>"
+                    )
+                    .unwrap();
                     writeln!(output, "                </div>").unwrap();
                 }
 
                 if let Some(max) = ping.max_rtt_ms {
                     writeln!(output, "                <div class=\"stat\">").unwrap();
-                    writeln!(output, "                    <span class=\"stat-value\">{:.1}ms</span>", max).unwrap();
-                    writeln!(output, "                    <span class=\"stat-label\">Max RTT</span>").unwrap();
+                    writeln!(
+                        output,
+                        "                    <span class=\"stat-value\">{:.1}ms</span>",
+                        max
+                    )
+                    .unwrap();
+                    writeln!(
+                        output,
+                        "                    <span class=\"stat-label\">Max RTT</span>"
+                    )
+                    .unwrap();
                     writeln!(output, "                </div>").unwrap();
                 }
 
@@ -281,16 +442,53 @@ impl ReportFormatter for HtmlFormatter {
             writeln!(output, "    <h2>Traceroute Results</h2>").unwrap();
 
             for traceroute in &report.traceroute_results {
-                let status_class = if traceroute.reached { "reached" } else { "not-reached" };
+                let status_class = if traceroute.reached {
+                    "reached"
+                } else {
+                    "not-reached"
+                };
 
-                writeln!(output, "    <div class=\"traceroute-result {}\">", status_class).unwrap();
-                writeln!(output, "        <h3>{}</h3>", html_escape(&traceroute.target)).unwrap();
+                writeln!(
+                    output,
+                    "    <div class=\"traceroute-result {}\">",
+                    status_class
+                )
+                .unwrap();
+                writeln!(
+                    output,
+                    "        <h3>{}</h3>",
+                    html_escape(&traceroute.target)
+                )
+                .unwrap();
                 writeln!(output, "        <div class=\"traceroute-meta\">").unwrap();
-                writeln!(output, "            <span>Protocol: {}</span>", traceroute.protocol).unwrap();
-                writeln!(output, "            <span>Hops: {}</span>", traceroute.hop_count).unwrap();
-                writeln!(output, "            <span>Duration: {:.0}ms</span>", traceroute.duration_ms).unwrap();
-                writeln!(output, "            <span class=\"status\">{}</span>",
-                    if traceroute.reached { "Reached" } else { "Not Reached" }).unwrap();
+                writeln!(
+                    output,
+                    "            <span>Protocol: {}</span>",
+                    traceroute.protocol
+                )
+                .unwrap();
+                writeln!(
+                    output,
+                    "            <span>Hops: {}</span>",
+                    traceroute.hop_count
+                )
+                .unwrap();
+                writeln!(
+                    output,
+                    "            <span>Duration: {:.0}ms</span>",
+                    traceroute.duration_ms
+                )
+                .unwrap();
+                writeln!(
+                    output,
+                    "            <span class=\"status\">{}</span>",
+                    if traceroute.reached {
+                        "Reached"
+                    } else {
+                        "Not Reached"
+                    }
+                )
+                .unwrap();
                 writeln!(output, "        </div>").unwrap();
 
                 writeln!(output, "        <table class=\"hops-table\">").unwrap();
@@ -308,13 +506,17 @@ impl ReportFormatter for HtmlFormatter {
                         "* * *".to_string()
                     } else {
                         match (&hop.hostname, &hop.address) {
-                            (Some(name), Some(ip)) => format!("{} <code>{}</code>", html_escape(name), ip),
+                            (Some(name), Some(ip)) => {
+                                format!("{} <code>{}</code>", html_escape(name), ip)
+                            }
                             (None, Some(ip)) => format!("<code>{}</code>", ip),
                             _ => "*".to_string(),
                         }
                     };
 
-                    let rtts: Vec<String> = hop.rtt_ms.iter()
+                    let rtts: Vec<String> = hop
+                        .rtt_ms
+                        .iter()
                         .map(|rtt| match rtt {
                             Some(ms) => format!("{:.1}ms", ms),
                             None => "*".to_string(),
@@ -340,7 +542,12 @@ impl ReportFormatter for HtmlFormatter {
 
         // Footer
         writeln!(output, "<footer>").unwrap();
-        writeln!(output, "    <p>Generated by <strong>netdiag</strong> v{}</p>", report.metadata.version).unwrap();
+        writeln!(
+            output,
+            "    <p>Generated by <strong>netdiag</strong> v{}</p>",
+            report.metadata.version
+        )
+        .unwrap();
         writeln!(output, "</footer>").unwrap();
 
         // Close HTML

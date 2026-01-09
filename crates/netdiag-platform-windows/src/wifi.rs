@@ -74,7 +74,9 @@ impl WifiProvider for WindowsWifiProvider {
             Err(Error::UnsupportedOnPlatform {
                 feature: "WiFi scanning".to_string(),
                 platform: "Windows".to_string(),
-                alternative: Some("Run as Administrator or use netsh wlan show networks".to_string()),
+                alternative: Some(
+                    "Run as Administrator or use netsh wlan show networks".to_string(),
+                ),
             })
         }
         #[cfg(not(windows))]

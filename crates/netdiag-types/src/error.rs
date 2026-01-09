@@ -199,7 +199,10 @@ impl Error {
 
     /// Creates a network interface error.
     #[must_use]
-    pub fn network_interface(interface: impl Into<Option<String>>, message: impl Into<String>) -> Self {
+    pub fn network_interface(
+        interface: impl Into<Option<String>>,
+        message: impl Into<String>,
+    ) -> Self {
         Self::NetworkInterface {
             interface: interface.into(),
             message: message.into(),

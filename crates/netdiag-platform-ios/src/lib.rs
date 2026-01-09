@@ -21,8 +21,8 @@ pub use system::IosSystemInfoProvider;
 pub use wifi::IosWifiProvider;
 
 use netdiag_platform::{
-    AutofixProvider, CaptureProvider, CaptureInterface, PlatformProviders, RollbackPoint,
-    AutofixAction, FixResult,
+    AutofixAction, AutofixProvider, CaptureInterface, CaptureProvider, FixResult,
+    PlatformProviders, RollbackPoint,
 };
 use netdiag_types::system::PrivilegeLevel;
 use std::sync::Arc;
@@ -127,12 +127,19 @@ impl AutofixProvider for StubAutofixProvider {
         Err(netdiag_types::Error::unsupported("Set DNS servers", "iOS"))
     }
 
-    async fn toggle_interface(&self, _interface: &str, _enable: bool) -> netdiag_types::error::Result<()> {
+    async fn toggle_interface(
+        &self,
+        _interface: &str,
+        _enable: bool,
+    ) -> netdiag_types::error::Result<()> {
         Err(netdiag_types::Error::unsupported("Toggle interface", "iOS"))
     }
 
     async fn reset_tcpip_stack(&self) -> netdiag_types::error::Result<()> {
-        Err(netdiag_types::Error::unsupported("Reset TCP/IP stack", "iOS"))
+        Err(netdiag_types::Error::unsupported(
+            "Reset TCP/IP stack",
+            "iOS",
+        ))
     }
 
     async fn renew_dhcp(&self, _interface: &str) -> netdiag_types::error::Result<()> {

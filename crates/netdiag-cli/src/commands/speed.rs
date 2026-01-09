@@ -99,11 +99,7 @@ async fn run_http_test(config: &SpeedTestConfig) -> Result<SpeedTestResult> {
                 );
             }
             Err(e) => {
-                println!(
-                    "  {} {}",
-                    style("Download:").red(),
-                    format!("Error: {}", e)
-                );
+                println!("  {} {}", style("Download:").red(), format!("Error: {}", e));
             }
         }
     }
@@ -128,11 +124,7 @@ async fn run_http_test(config: &SpeedTestConfig) -> Result<SpeedTestResult> {
                 );
             }
             Err(e) => {
-                println!(
-                    "  {} {}",
-                    style("Upload:").red(),
-                    format!("Error: {}", e)
-                );
+                println!("  {} {}", style("Upload:").red(), format!("Error: {}", e));
             }
         }
     }
@@ -198,11 +190,7 @@ async fn run_iperf_test(server: &str, config: &SpeedTestConfig) -> Result<SpeedT
                 );
             }
             Err(e) => {
-                println!(
-                    "  {} {}",
-                    style("Download:").red(),
-                    format!("Error: {}", e)
-                );
+                println!("  {} {}", style("Download:").red(), format!("Error: {}", e));
             }
         }
     }
@@ -227,11 +215,7 @@ async fn run_iperf_test(server: &str, config: &SpeedTestConfig) -> Result<SpeedT
                 );
             }
             Err(e) => {
-                println!(
-                    "  {} {}",
-                    style("Upload:").red(),
-                    format!("Error: {}", e)
-                );
+                println!("  {} {}", style("Upload:").red(), format!("Error: {}", e));
             }
         }
     }
@@ -278,12 +262,7 @@ fn display_results(result: &SpeedTestResult) {
 
     if let Some(location) = &result.server.location {
         if let Some(country) = &result.server.country {
-            println!(
-                "  {} {}, {}",
-                style("Location:").bold(),
-                location,
-                country
-            );
+            println!("  {} {}, {}", style("Location:").bold(), location, country);
         } else {
             println!("  {} {}", style("Location:").bold(), location);
         }

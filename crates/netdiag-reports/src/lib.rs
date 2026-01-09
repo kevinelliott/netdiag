@@ -15,8 +15,8 @@ mod report;
 pub use error::{ReportError, ReportResult};
 pub use formats::{HtmlFormatter, JsonFormatter, MarkdownFormatter, PdfFormatter, TextFormatter};
 pub use report::{
-    DiagnosticReport, DnsSummary, HealthAssessment, InterfaceSummary, PingSummary,
-    ReportBuilder, ReportFormat, ReportMetadata, TracerouteHopSummary, TracerouteSummary,
+    DiagnosticReport, DnsSummary, HealthAssessment, InterfaceSummary, PingSummary, ReportBuilder,
+    ReportFormat, ReportMetadata, TracerouteHopSummary, TracerouteSummary,
 };
 
 /// Generate a report from diagnostic results.

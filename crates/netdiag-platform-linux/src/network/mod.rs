@@ -147,7 +147,10 @@ impl NetworkProvider for LinuxNetworkProvider {
 
             let net_iface = NetworkInterface {
                 name: iface.name.clone(),
-                display_name: iface.friendly_name.clone().unwrap_or_else(|| iface.name.clone()),
+                display_name: iface
+                    .friendly_name
+                    .clone()
+                    .unwrap_or_else(|| iface.name.clone()),
                 interface_type,
                 mac_address,
                 ipv4_addresses,

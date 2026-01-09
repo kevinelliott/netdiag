@@ -321,7 +321,9 @@ impl AutofixEngine {
             FixType::RestartNetworkService => self.restart_network_service().await,
             FixType::ClearArpCache => self.clear_arp_cache().await,
             FixType::ResetFirewall => self.reset_firewall().await,
-            FixType::CustomCommand { command, args } => self.run_custom_command(command, args).await,
+            FixType::CustomCommand { command, args } => {
+                self.run_custom_command(command, args).await
+            }
         };
 
         let duration_ms = start.elapsed().as_millis() as u64;
@@ -343,7 +345,10 @@ impl AutofixEngine {
         let mut manager = self.rollback_manager.write().await;
 
         match &action.fix_type {
-            FixType::SetDnsServers { interface, servers: _ } => {
+            FixType::SetDnsServers {
+                interface,
+                servers: _,
+            } => {
                 // Get current DNS servers
                 let current = self.get_current_dns_servers(interface).await?;
                 manager.create_dns_point(interface, current, Some(action.id))
@@ -422,9 +427,7 @@ impl AutofixEngine {
         #[cfg(target_os = "macos")]
         {
             use std::process::Command;
-            Command::new("dscacheutil")
-                .args(["-flushcache"])
-                .output()?;
+            Command::new("dscacheutil").args(["-flushcache"]).output()?;
             Command::new("killall")
                 .args(["-HUP", "mDNSResponder"])
                 .output()?;
@@ -438,9 +441,7 @@ impl AutofixEngine {
                 .args(["--flush-caches"])
                 .output();
             // Also try resolvectl
-            let _ = Command::new("resolvectl")
-                .args(["flush-caches"])
-                .output();
+            let _ = Command::new("resolvectl").args(["flush-caches"]).output();
         }
 
         #[cfg(target_os = "windows")]
@@ -501,9 +502,7 @@ impl AutofixEngine {
                 .args([interface, "down"])
                 .output()?;
             tokio::time::sleep(std::time::Duration::from_secs(1)).await;
-            Command::new("ifconfig")
-                .args([interface, "up"])
-                .output()?;
+            Command::new("ifconfig").args([interface, "up"]).output()?;
         }
 
         #[cfg(target_os = "linux")]
@@ -540,9 +539,7 @@ impl AutofixEngine {
             Command::new("netsh")
                 .args(["int", "ip", "reset"])
                 .output()?;
-            Command::new("netsh")
-                .args(["winsock", "reset"])
-                .output()?;
+            Command::new("netsh").args(["winsock", "reset"]).output()?;
         }
 
         #[cfg(not(target_os = "windows"))]
@@ -572,9 +569,7 @@ impl AutofixEngine {
         {
             use std::process::Command;
             // Release
-            let _ = Command::new("dhclient")
-                .args(["-r", interface])
-                .output();
+            let _ = Command::new("dhclient").args(["-r", interface]).output();
             // Renew
             Command::new("dhclient").args([interface]).output()?;
         }
@@ -598,7 +593,11 @@ impl AutofixEngine {
         {
             use std::process::Command;
             Command::new("launchctl")
-                .args(["kickstart", "-k", "system/com.apple.networking.discoveryengine"])
+                .args([
+                    "kickstart",
+                    "-k",
+                    "system/com.apple.networking.discoveryengine",
+                ])
                 .output()?;
         }
 
@@ -620,12 +619,8 @@ impl AutofixEngine {
         #[cfg(target_os = "windows")]
         {
             use std::process::Command;
-            Command::new("net")
-                .args(["stop", "netman"])
-                .output()?;
-            Command::new("net")
-                .args(["start", "netman"])
-                .output()?;
+            Command::new("net").args(["stop", "netman"]).output()?;
+            Command::new("net").args(["start", "netman"]).output()?;
         }
 
         Ok(Some("Network service restarted".to_string()))
@@ -641,7 +636,9 @@ impl AutofixEngine {
         #[cfg(target_os = "linux")]
         {
             use std::process::Command;
-            Command::new("ip").args(["neigh", "flush", "all"]).output()?;
+            Command::new("ip")
+                .args(["neigh", "flush", "all"])
+                .output()?;
         }
 
         #[cfg(target_os = "windows")]

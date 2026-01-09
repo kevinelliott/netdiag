@@ -37,11 +37,7 @@ impl SslLabsClient {
         let response = self
             .client
             .get(&url)
-            .query(&[
-                ("host", host),
-                ("all", "done"),
-                ("startNew", "on"),
-            ])
+            .query(&[("host", host), ("all", "done"), ("startNew", "on")])
             .send()
             .await?;
 
@@ -104,10 +100,7 @@ impl SslLabsClient {
         }
     }
 
-    async fn handle_response(
-        &self,
-        response: reqwest::Response,
-    ) -> IntegrationResult<SslAnalysis> {
+    async fn handle_response(&self, response: reqwest::Response) -> IntegrationResult<SslAnalysis> {
         match response.status().as_u16() {
             200 => {
                 let analysis: SslLabsResponse = response.json().await?;
@@ -117,7 +110,9 @@ impl SslLabsClient {
                     "READY" => Ok(SslAnalysis::from(analysis)),
                     "IN_PROGRESS" | "DNS" => Err(IntegrationError::AnalysisInProgress),
                     "ERROR" => Err(IntegrationError::Api(
-                        analysis.status_message.unwrap_or_else(|| "Unknown error".to_string()),
+                        analysis
+                            .status_message
+                            .unwrap_or_else(|| "Unknown error".to_string()),
                     )),
                     _ => Err(IntegrationError::Api(format!(
                         "Unknown status: {}",
@@ -493,11 +488,31 @@ impl From<SslLabsEndpoint> for SslEndpoint {
             grade: e.grade.as_ref().and_then(|g| SslGrade::from_str(g)),
             has_warnings: e.has_warnings.unwrap_or(false),
             protocols,
-            cert_subject: e.details.as_ref().and_then(|d| d.cert.as_ref()).and_then(|c| c.subject.clone()),
-            cert_issuer: e.details.as_ref().and_then(|d| d.cert.as_ref()).and_then(|c| c.issuer.clone()),
-            cert_not_after: e.details.as_ref().and_then(|d| d.cert.as_ref()).and_then(|c| c.not_after),
-            key_algorithm: e.details.as_ref().and_then(|d| d.cert.as_ref()).and_then(|c| c.key_alg.clone()),
-            key_size: e.details.as_ref().and_then(|d| d.cert.as_ref()).and_then(|c| c.key_size),
+            cert_subject: e
+                .details
+                .as_ref()
+                .and_then(|d| d.cert.as_ref())
+                .and_then(|c| c.subject.clone()),
+            cert_issuer: e
+                .details
+                .as_ref()
+                .and_then(|d| d.cert.as_ref())
+                .and_then(|c| c.issuer.clone()),
+            cert_not_after: e
+                .details
+                .as_ref()
+                .and_then(|d| d.cert.as_ref())
+                .and_then(|c| c.not_after),
+            key_algorithm: e
+                .details
+                .as_ref()
+                .and_then(|d| d.cert.as_ref())
+                .and_then(|c| c.key_alg.clone()),
+            key_size: e
+                .details
+                .as_ref()
+                .and_then(|d| d.cert.as_ref())
+                .and_then(|c| c.key_size),
             hsts_enabled,
             hsts_preload,
             vulnerabilities,
@@ -566,7 +581,10 @@ impl SslGrade {
 
     /// Is this grade passing?
     pub fn is_passing(&self) -> bool {
-        matches!(self, SslGrade::APlus | SslGrade::A | SslGrade::AMinus | SslGrade::B)
+        matches!(
+            self,
+            SslGrade::APlus | SslGrade::A | SslGrade::AMinus | SslGrade::B
+        )
     }
 }
 

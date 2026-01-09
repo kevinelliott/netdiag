@@ -48,21 +48,13 @@ async fn run_show() -> Result<()> {
 
 async fn run_set(key: &str, value: &str) -> Result<()> {
     // TODO: Implement actual config setting
-    println!(
-        "Set {} = {}",
-        style(key).cyan(),
-        style(value).green()
-    );
+    println!("Set {} = {}", style(key).cyan(), style(value).green());
     Ok(())
 }
 
 async fn run_get(key: &str) -> Result<()> {
     // TODO: Implement actual config getting
-    println!(
-        "{}: {}",
-        style(key).cyan(),
-        style("(value)").dim()
-    );
+    println!("{}: {}", style(key).cyan(), style("(value)").dim());
     Ok(())
 }
 

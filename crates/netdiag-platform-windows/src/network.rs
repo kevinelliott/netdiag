@@ -13,10 +13,7 @@ use netdiag_types::{
 use std::net::{IpAddr, Ipv4Addr};
 
 #[cfg(windows)]
-use windows::{
-    Win32::NetworkManagement::IpHelper::*,
-    Win32::Networking::WinSock::*,
-};
+use windows::{Win32::NetworkManagement::IpHelper::*, Win32::Networking::WinSock::*};
 
 /// Windows network provider using IP Helper API.
 pub struct WindowsNetworkProvider {
@@ -41,13 +38,8 @@ impl WindowsNetworkProvider {
 
         // First call to get required buffer size
         unsafe {
-            let result = GetAdaptersAddresses(
-                AF_UNSPEC.0 as u32,
-                flags,
-                None,
-                None,
-                &mut buffer_size,
-            );
+            let result =
+                GetAdaptersAddresses(AF_UNSPEC.0 as u32, flags, None, None, &mut buffer_size);
 
             if result != ERROR_BUFFER_OVERFLOW.0 {
                 return Err(Error::platform("Failed to get adapter addresses size"));
@@ -88,8 +80,7 @@ impl WindowsNetworkProvider {
 
                 // Get friendly name
                 let friendly_name = if !adapter.FriendlyName.0.is_null() {
-                    widestring::U16CStr::from_ptr_str(adapter.FriendlyName.0)
-                        .to_string_lossy()
+                    widestring::U16CStr::from_ptr_str(adapter.FriendlyName.0).to_string_lossy()
                 } else {
                     String::new()
                 };
@@ -130,7 +121,8 @@ impl WindowsNetworkProvider {
                         match sockaddr.sa_family {
                             AF_INET => {
                                 let sockaddr_in = &*(sockaddr as *const _ as *const SOCKADDR_IN);
-                                let ip = Ipv4Addr::from(u32::from_be(sockaddr_in.sin_addr.S_un.S_addr));
+                                let ip =
+                                    Ipv4Addr::from(u32::from_be(sockaddr_in.sin_addr.S_un.S_addr));
                                 ipv4_addresses.push(IpAddressInfo {
                                     address: IpAddr::V4(ip),
                                     prefix_length: addr.OnLinkPrefixLength,

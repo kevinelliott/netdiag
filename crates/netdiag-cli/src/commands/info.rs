@@ -51,14 +51,23 @@ pub async fn run() -> Result<()> {
     // Network interfaces
     match providers.network.list_interfaces().await {
         Ok(interfaces) if !interfaces.is_empty() => {
-            println!("  {} Found {} interface(s)", style("Interfaces:").bold(), interfaces.len());
+            println!(
+                "  {} Found {} interface(s)",
+                style("Interfaces:").bold(),
+                interfaces.len()
+            );
             for iface in interfaces {
                 let status = if iface.is_up() {
                     style("UP").green()
                 } else {
                     style("DOWN").red()
                 };
-                println!("    {} {} ({})", style(&iface.name).cyan(), status, iface.interface_type);
+                println!(
+                    "    {} {} ({})",
+                    style(&iface.name).cyan(),
+                    status,
+                    iface.interface_type
+                );
 
                 if let Some(mac) = &iface.mac_address {
                     println!("      MAC: {}", mac);
@@ -72,10 +81,17 @@ pub async fn run() -> Result<()> {
             }
         }
         Ok(_) => {
-            println!("  {} No network interfaces found", style("Interfaces:").bold());
+            println!(
+                "  {} No network interfaces found",
+                style("Interfaces:").bold()
+            );
         }
         Err(e) => {
-            println!("  {} Error getting interfaces: {}", style("Interfaces:").red(), e);
+            println!(
+                "  {} Error getting interfaces: {}",
+                style("Interfaces:").red(),
+                e
+            );
         }
     }
 
@@ -129,8 +145,12 @@ pub async fn run() -> Result<()> {
                     } else {
                         style("Disconnected").yellow()
                     };
-                    println!("  {} {} ({})", style(&iface.name).cyan(), status,
-                        if iface.powered_on { "On" } else { "Off" });
+                    println!(
+                        "  {} {} ({})",
+                        style(&iface.name).cyan(),
+                        status,
+                        if iface.powered_on { "On" } else { "Off" }
+                    );
                 }
             }
             Ok(_) => {
@@ -151,7 +171,10 @@ pub async fn run() -> Result<()> {
 
     let caps = providers.privilege.available_capabilities();
     if caps.is_empty() {
-        println!("  {} None (run with elevated privileges for more)", style("Capabilities:").yellow());
+        println!(
+            "  {} None (run with elevated privileges for more)",
+            style("Capabilities:").yellow()
+        );
     } else {
         println!("  {} {}", style("Capabilities:").bold(), caps.len());
         for cap in caps {

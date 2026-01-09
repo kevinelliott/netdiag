@@ -240,17 +240,16 @@ impl IperfClient {
         debug!("Running iperf3 with args: {:?}", args);
 
         let mut cmd = Command::new(&self.config.binary);
-        cmd.args(args)
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped());
+        cmd.args(args).stdout(Stdio::piped()).stderr(Stdio::piped());
 
-        let mut child = cmd.spawn().map_err(|e| {
-            SpeedError::Iperf(format!("Failed to spawn iperf3: {}", e))
-        })?;
+        let mut child = cmd
+            .spawn()
+            .map_err(|e| SpeedError::Iperf(format!("Failed to spawn iperf3: {}", e)))?;
 
-        let stdout = child.stdout.take().ok_or_else(|| {
-            SpeedError::Iperf("Failed to capture stdout".to_string())
-        })?;
+        let stdout = child
+            .stdout
+            .take()
+            .ok_or_else(|| SpeedError::Iperf("Failed to capture stdout".to_string()))?;
 
         let mut output = String::new();
         let mut reader = BufReader::new(stdout);
@@ -261,9 +260,10 @@ impl IperfClient {
             line.clear();
         }
 
-        let status = child.wait().await.map_err(|e| {
-            SpeedError::Iperf(format!("Failed to wait for iperf3: {}", e))
-        })?;
+        let status = child
+            .wait()
+            .await
+            .map_err(|e| SpeedError::Iperf(format!("Failed to wait for iperf3: {}", e)))?;
 
         if !status.success() && output.is_empty() {
             return Err(SpeedError::Iperf(format!(
@@ -273,9 +273,8 @@ impl IperfClient {
         }
 
         // Parse JSON output
-        let result: IperfOutput = serde_json::from_str(&output).map_err(|e| {
-            SpeedError::Parse(format!("Failed to parse iperf3 output: {}", e))
-        })?;
+        let result: IperfOutput = serde_json::from_str(&output)
+            .map_err(|e| SpeedError::Parse(format!("Failed to parse iperf3 output: {}", e)))?;
 
         // Check for error in output
         if let Some(error) = &result.error {

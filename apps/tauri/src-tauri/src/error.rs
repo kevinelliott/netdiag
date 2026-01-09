@@ -33,18 +33,20 @@ impl From<netdiag_types::Error> for GuiError {
             netdiag_types::Error::DnsResolution { message, .. } => {
                 GuiError::DnsResolution(message.clone())
             }
-            netdiag_types::Error::Timeout { operation, duration_ms } => {
-                GuiError::Timeout(format!("{} timed out after {}ms", operation, duration_ms))
-            }
-            netdiag_types::Error::PermissionDenied { operation, required_privilege } => {
-                GuiError::PermissionDenied(format!(
-                    "{} requires {} privilege",
-                    operation, required_privilege
-                ))
-            }
-            netdiag_types::Error::UnsupportedOnPlatform { feature, platform, .. } => {
-                GuiError::NotSupported(format!("{} not supported on {}", feature, platform))
-            }
+            netdiag_types::Error::Timeout {
+                operation,
+                duration_ms,
+            } => GuiError::Timeout(format!("{} timed out after {}ms", operation, duration_ms)),
+            netdiag_types::Error::PermissionDenied {
+                operation,
+                required_privilege,
+            } => GuiError::PermissionDenied(format!(
+                "{} requires {} privilege",
+                operation, required_privilege
+            )),
+            netdiag_types::Error::UnsupportedOnPlatform {
+                feature, platform, ..
+            } => GuiError::NotSupported(format!("{} not supported on {}", feature, platform)),
             _ => GuiError::Internal(err.to_string()),
         }
     }

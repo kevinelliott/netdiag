@@ -52,7 +52,7 @@ impl SystemInfoProvider for AndroidSystemInfoProvider {
             hostname: self.get_hostname().await?,
             os_type: OsType::Android,
             os_version: self.get_android_version(),
-            os_build: None, // Would be Build.ID
+            os_build: None,       // Would be Build.ID
             kernel_version: None, // Would be from /proc/version
             architecture: std::env::consts::ARCH.to_string(),
             cpu: None,

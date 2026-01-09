@@ -49,26 +49,25 @@ impl IosNetworkProvider {
                 let ifa = &*current;
 
                 if !ifa.ifa_name.is_null() {
-                    let name = CStr::from_ptr(ifa.ifa_name)
-                        .to_string_lossy()
-                        .to_string();
+                    let name = CStr::from_ptr(ifa.ifa_name).to_string_lossy().to_string();
 
                     // Get or create interface entry
-                    let iface = interfaces_map.entry(name.clone()).or_insert_with(|| {
-                        NetworkInterface {
-                            name: name.clone(),
-                            display_name: Some(get_display_name(&name)),
-                            index: libc::if_nametoindex(ifa.ifa_name) as u32,
-                            interface_type: detect_interface_type(&name),
-                            mac_address: None,
-                            ipv4_addresses: Vec::new(),
-                            ipv6_addresses: Vec::new(),
-                            flags: parse_flags(ifa.ifa_flags as u32),
-                            mtu: None,
-                            speed_mbps: None,
-                            is_default: is_default_interface(&name),
-                        }
-                    });
+                    let iface =
+                        interfaces_map
+                            .entry(name.clone())
+                            .or_insert_with(|| NetworkInterface {
+                                name: name.clone(),
+                                display_name: Some(get_display_name(&name)),
+                                index: libc::if_nametoindex(ifa.ifa_name) as u32,
+                                interface_type: detect_interface_type(&name),
+                                mac_address: None,
+                                ipv4_addresses: Vec::new(),
+                                ipv6_addresses: Vec::new(),
+                                flags: parse_flags(ifa.ifa_flags as u32),
+                                mtu: None,
+                                speed_mbps: None,
+                                is_default: is_default_interface(&name),
+                            });
 
                     // Parse address based on family
                     if !ifa.ifa_addr.is_null() {
@@ -154,9 +153,9 @@ impl NetworkProvider for IosNetworkProvider {
     async fn get_default_interface(&self) -> Result<Option<NetworkInterface>> {
         let interfaces = self.get_interfaces_impl()?;
         // Prefer en0 (WiFi) or pdp_ip0 (cellular) as default
-        Ok(interfaces.into_iter().find(|i| {
-            i.is_default || i.name == "en0" || i.name.starts_with("pdp_ip")
-        }))
+        Ok(interfaces
+            .into_iter()
+            .find(|i| i.is_default || i.name == "en0" || i.name.starts_with("pdp_ip")))
     }
 
     async fn get_default_route(&self) -> Result<Option<Route>> {

@@ -157,13 +157,15 @@ impl BgpLookingGlass {
                     .data
                     .rrcs
                     .into_iter()
-                    .flat_map(|rrc| rrc.peers.into_iter().map(move |peer| AsPath {
-                        collector: rrc.rrc.clone(),
-                        peer_asn: peer.asn_origin,
-                        as_path: peer.as_path.split(' ').map(|s| s.to_string()).collect(),
-                        prefix: peer.prefix,
-                        origin: peer.origin,
-                    }))
+                    .flat_map(|rrc| {
+                        rrc.peers.into_iter().map(move |peer| AsPath {
+                            collector: rrc.rrc.clone(),
+                            peer_asn: peer.asn_origin,
+                            as_path: peer.as_path.split(' ').map(|s| s.to_string()).collect(),
+                            prefix: peer.prefix,
+                            origin: peer.origin,
+                        })
+                    })
                     .collect();
                 Ok(paths)
             }
@@ -367,17 +369,16 @@ impl RouteInfo {
             ip: p.ip,
             cidr: p.cidr,
             origin_asns: p.asns.iter().map(|a| a.asn).collect(),
-            origin_names: p
-                .asns
-                .iter()
-                .filter_map(|a| a.name.clone())
-                .collect(),
+            origin_names: p.asns.iter().filter_map(|a| a.name.clone()).collect(),
             country_code: p.country_code,
             name: p.name,
             description: p.description_short,
             parent_prefix: p.parent.and_then(|p| p.prefix),
             rir_name: p.rir_allocation.as_ref().and_then(|r| r.rir_name.clone()),
-            allocation_date: p.rir_allocation.as_ref().and_then(|r| r.date_allocated.clone()),
+            allocation_date: p
+                .rir_allocation
+                .as_ref()
+                .and_then(|r| r.date_allocated.clone()),
             date_updated: p.date_updated,
         }
     }

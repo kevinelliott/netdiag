@@ -78,10 +78,7 @@ impl ChannelAnalysis {
 
         // Group APs by channel
         for ap in access_points {
-            channel_map
-                .entry(ap.channel.number)
-                .or_default()
-                .push(ap);
+            channel_map.entry(ap.channel.number).or_default().push(ap);
         }
 
         // Build channel info
@@ -152,8 +149,7 @@ impl ChannelAnalysis {
         });
 
         // Generate recommendations
-        let recommendations =
-            Self::generate_recommendations(&channels, current_channel.as_ref());
+        let recommendations = Self::generate_recommendations(&channels, current_channel.as_ref());
 
         // Calculate overall health score
         let health_score = Self::calculate_health_score(&current_utilization, &channels);

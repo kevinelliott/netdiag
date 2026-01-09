@@ -50,7 +50,11 @@ impl Tracer {
     }
 
     /// Traces the route to a target.
-    pub async fn trace(&self, target: IpAddr, config: &TracerouteConfig) -> Result<TracerouteResult> {
+    pub async fn trace(
+        &self,
+        target: IpAddr,
+        config: &TracerouteConfig,
+    ) -> Result<TracerouteResult> {
         let start = Instant::now();
 
         debug!("Traceroute to {} with max {} hops", target, config.max_hops);
@@ -129,7 +133,10 @@ impl Tracer {
 
         // Parse traceroute output
         let hops = self.parse_traceroute_output(&stdout, config);
-        let reached = hops.last().map(|h| h.address == Some(target)).unwrap_or(false);
+        let reached = hops
+            .last()
+            .map(|h| h.address == Some(target))
+            .unwrap_or(false);
 
         Ok(TracerouteResult {
             target,
@@ -142,7 +149,11 @@ impl Tracer {
     }
 
     /// Parses traceroute command output.
-    fn parse_traceroute_output(&self, output: &str, config: &TracerouteConfig) -> Vec<TracerouteHop> {
+    fn parse_traceroute_output(
+        &self,
+        output: &str,
+        config: &TracerouteConfig,
+    ) -> Vec<TracerouteHop> {
         let mut hops = Vec::new();
 
         for line in output.lines().skip(1) {

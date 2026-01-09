@@ -242,7 +242,9 @@ pub enum IssueType {
 }
 
 /// Severity of an issue.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, strum::Display)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize, strum::Display,
+)]
 #[serde(rename_all = "snake_case")]
 pub enum IssueSeverity {
     /// Informational
@@ -468,18 +470,51 @@ mod tests {
 
     #[test]
     fn test_buffer_bloat_grade_from_increase() {
-        assert_eq!(BufferBloatGrade::from_increase_ms(0.0), BufferBloatGrade::APlus);
-        assert_eq!(BufferBloatGrade::from_increase_ms(4.9), BufferBloatGrade::APlus);
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(0.0),
+            BufferBloatGrade::APlus
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(4.9),
+            BufferBloatGrade::APlus
+        );
         assert_eq!(BufferBloatGrade::from_increase_ms(5.0), BufferBloatGrade::A);
-        assert_eq!(BufferBloatGrade::from_increase_ms(29.9), BufferBloatGrade::A);
-        assert_eq!(BufferBloatGrade::from_increase_ms(30.0), BufferBloatGrade::B);
-        assert_eq!(BufferBloatGrade::from_increase_ms(59.9), BufferBloatGrade::B);
-        assert_eq!(BufferBloatGrade::from_increase_ms(60.0), BufferBloatGrade::C);
-        assert_eq!(BufferBloatGrade::from_increase_ms(199.9), BufferBloatGrade::C);
-        assert_eq!(BufferBloatGrade::from_increase_ms(200.0), BufferBloatGrade::D);
-        assert_eq!(BufferBloatGrade::from_increase_ms(399.9), BufferBloatGrade::D);
-        assert_eq!(BufferBloatGrade::from_increase_ms(400.0), BufferBloatGrade::F);
-        assert_eq!(BufferBloatGrade::from_increase_ms(1000.0), BufferBloatGrade::F);
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(29.9),
+            BufferBloatGrade::A
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(30.0),
+            BufferBloatGrade::B
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(59.9),
+            BufferBloatGrade::B
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(60.0),
+            BufferBloatGrade::C
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(199.9),
+            BufferBloatGrade::C
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(200.0),
+            BufferBloatGrade::D
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(399.9),
+            BufferBloatGrade::D
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(400.0),
+            BufferBloatGrade::F
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase_ms(1000.0),
+            BufferBloatGrade::F
+        );
     }
 
     #[test]

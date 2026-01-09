@@ -96,7 +96,9 @@ impl Channel {
         // 2.4GHz channels overlap with channels within +/- 4
         let min = self.number.saturating_sub(4);
         let max = std::cmp::min(self.number + 4, 14);
-        (min..=max).filter(|&c| c != self.number && c >= 1).collect()
+        (min..=max)
+            .filter(|&c| c != self.number && c >= 1)
+            .collect()
     }
 }
 
@@ -125,7 +127,9 @@ pub enum WifiBand {
 }
 
 /// WiFi channel width.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Display, EnumString, Default)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Display, EnumString, Default,
+)]
 #[serde(rename_all = "lowercase")]
 pub enum ChannelWidth {
     /// 20 MHz
@@ -173,7 +177,9 @@ pub enum SecondaryChannelPosition {
 }
 
 /// WiFi standard (802.11 variant).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Display, EnumString, Default)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Display, EnumString, Default,
+)]
 #[serde(rename_all = "lowercase")]
 pub enum WifiStandard {
     /// 802.11a (5 GHz, up to 54 Mbps)
@@ -249,7 +255,9 @@ pub struct ChannelUtilization {
 }
 
 /// Interference level.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Display, EnumString, Default)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Display, EnumString, Default,
+)]
 #[serde(rename_all = "lowercase")]
 #[strum(serialize_all = "lowercase")]
 pub enum InterferenceLevel {

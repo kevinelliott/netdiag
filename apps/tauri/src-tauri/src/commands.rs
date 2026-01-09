@@ -1,13 +1,13 @@
 //! Tauri commands for network diagnostics.
 
 use crate::{
-    AccessPointInfo, CaptureDeviceInfo, CapturedPacketInfo, CaptureStatsInfo, ChannelAnalysis,
-    DiagnosticTest, DiagnosticsResult, DiagnosticsSummary, DnsResult, FixActionInfo, FixResultInfo,
-    GeneratedReport, InterfaceInfo, InterferenceReport, PingResult, RollbackPointInfo,
-    SpeedTestResultOutput, SystemInfo, TracerouteHop, TracerouteResult, WifiConnectionInfo,
-    WifiInterfaceInfo, AppState,
+    AccessPointInfo, AppState, CaptureDeviceInfo, CaptureStatsInfo, CapturedPacketInfo,
+    ChannelAnalysis, DiagnosticTest, DiagnosticsResult, DiagnosticsSummary, DnsResult,
+    FixActionInfo, FixResultInfo, GeneratedReport, InterfaceInfo, InterferenceReport, PingResult,
+    RollbackPointInfo, SpeedTestResultOutput, SystemInfo, TracerouteHop, TracerouteResult,
+    WifiConnectionInfo, WifiInterfaceInfo,
 };
-use netdiag_connectivity::{DnsResolver, PingConfig, Pinger, TracerouteConfig, Tracer};
+use netdiag_connectivity::{DnsResolver, PingConfig, Pinger, Tracer, TracerouteConfig};
 use netdiag_reports::{
     DnsSummary, HtmlFormatter, InterfaceSummary, JsonFormatter, MarkdownFormatter, PingSummary,
     ReportBuilder, ReportFormatter, TextFormatter,
@@ -145,21 +145,19 @@ pub async fn ping_target(
             };
 
             match pinger.ping(ip, &config).await {
-                Ok(stats) => {
-                    Ok(PingResult {
-                        target,
-                        resolved_ip: Some(ip.to_string()),
-                        sent: stats.transmitted,
-                        received: stats.received,
-                        lost: stats.lost,
-                        loss_percent: stats.loss_percent,
-                        min_ms: stats.min_rtt.map(|d| d.as_secs_f64() * 1000.0),
-                        avg_ms: stats.avg_rtt.map(|d| d.as_secs_f64() * 1000.0),
-                        max_ms: stats.max_rtt.map(|d| d.as_secs_f64() * 1000.0),
-                        jitter_ms: stats.jitter.map(|d| d.as_secs_f64() * 1000.0),
-                        error: None,
-                    })
-                }
+                Ok(stats) => Ok(PingResult {
+                    target,
+                    resolved_ip: Some(ip.to_string()),
+                    sent: stats.transmitted,
+                    received: stats.received,
+                    lost: stats.lost,
+                    loss_percent: stats.loss_percent,
+                    min_ms: stats.min_rtt.map(|d| d.as_secs_f64() * 1000.0),
+                    avg_ms: stats.avg_rtt.map(|d| d.as_secs_f64() * 1000.0),
+                    max_ms: stats.max_rtt.map(|d| d.as_secs_f64() * 1000.0),
+                    jitter_ms: stats.jitter.map(|d| d.as_secs_f64() * 1000.0),
+                    error: None,
+                }),
                 Err(e) => Ok(PingResult {
                     target,
                     resolved_ip: Some(ip.to_string()),
@@ -303,7 +301,9 @@ pub async fn check_connectivity(target: String) -> Result<PingResult, String> {
 
 /// Get WiFi interfaces.
 #[tauri::command]
-pub async fn get_wifi_interfaces(state: State<'_, AppState>) -> Result<Vec<WifiInterfaceInfo>, String> {
+pub async fn get_wifi_interfaces(
+    state: State<'_, AppState>,
+) -> Result<Vec<WifiInterfaceInfo>, String> {
     let interfaces = state
         .providers
         .wifi
@@ -323,7 +323,9 @@ pub async fn get_wifi_interfaces(state: State<'_, AppState>) -> Result<Vec<WifiI
 
 /// Get current WiFi connection info.
 #[tauri::command]
-pub async fn get_wifi_connection(state: State<'_, AppState>) -> Result<Option<WifiConnectionInfo>, String> {
+pub async fn get_wifi_connection(
+    state: State<'_, AppState>,
+) -> Result<Option<WifiConnectionInfo>, String> {
     let interfaces = state
         .providers
         .wifi
@@ -353,7 +355,12 @@ pub async fn get_wifi_connection(state: State<'_, AppState>) -> Result<Option<Wi
         }));
     }
 
-    match state.providers.wifi.get_current_connection(&iface.name).await {
+    match state
+        .providers
+        .wifi
+        .get_current_connection(&iface.name)
+        .await
+    {
         Ok(Some(conn)) => {
             let rssi = conn.access_point.rssi;
             let noise = conn.access_point.noise;
@@ -549,16 +556,14 @@ pub async fn analyze_wifi_channels(
 
     Ok(channel_data
         .into_iter()
-        .map(|ch| {
-            ChannelAnalysis {
-                channel: ch.channel.number,
-                band: format!("{:?}", ch.channel.band),
-                network_count: ch.network_count as usize,
-                interference_level: format!("{:?}", ch.interference_level),
-                is_dfs: ch.channel.is_dfs(),
-                is_recommended: ch.recommended,
-                is_current: current_channel == Some(ch.channel.number),
-            }
+        .map(|ch| ChannelAnalysis {
+            channel: ch.channel.number,
+            band: format!("{:?}", ch.channel.band),
+            network_count: ch.network_count as usize,
+            interference_level: format!("{:?}", ch.interference_level),
+            is_dfs: ch.channel.is_dfs(),
+            is_recommended: ch.recommended,
+            is_current: current_channel == Some(ch.channel.number),
         })
         .collect())
 }
@@ -662,15 +667,23 @@ pub async fn check_wifi_interference(
     let mut recommendations = Vec::new();
 
     if snr_rating == "Poor" || snr_rating == "Fair" {
-        recommendations.push("Consider moving closer to your router or reducing interference sources".to_string());
+        recommendations.push(
+            "Consider moving closer to your router or reducing interference sources".to_string(),
+        );
     }
 
     if overlapping_networks.len() > 3 {
-        recommendations.push("High channel congestion detected. Consider switching to a 5GHz network if available".to_string());
+        recommendations.push(
+            "High channel congestion detected. Consider switching to a 5GHz network if available"
+                .to_string(),
+        );
     }
 
     if current_channel.map(|c| c < 36).unwrap_or(false) && access_points.len() > 10 {
-        recommendations.push("Many networks on 2.4GHz band. A 5GHz network would provide better performance".to_string());
+        recommendations.push(
+            "Many networks on 2.4GHz band. A 5GHz network would provide better performance"
+                .to_string(),
+        );
     }
 
     if recommendations.is_empty() {
@@ -718,7 +731,10 @@ pub async fn run_diagnostics(
                 category: "Network".to_string(),
                 passed,
                 message: if passed {
-                    format!("{} active interface(s) with IPv4 connectivity", active_count)
+                    format!(
+                        "{} active interface(s) with IPv4 connectivity",
+                        active_count
+                    )
                 } else {
                     "No active network interfaces found".to_string()
                 },
@@ -732,7 +748,9 @@ pub async fn run_diagnostics(
 
             if !passed {
                 issues.push("No active network interfaces".to_string());
-                recommendations.push("Check that your network cable is connected or WiFi is enabled".to_string());
+                recommendations.push(
+                    "Check that your network cable is connected or WiFi is enabled".to_string(),
+                );
             }
         }
         Err(e) => {
@@ -866,7 +884,9 @@ pub async fn run_diagnostics(
                     duration_ms: duration,
                 });
                 issues.push("DNS resolution failing".to_string());
-                recommendations.push("Check DNS server configuration or try alternative DNS (8.8.8.8)".to_string());
+                recommendations.push(
+                    "Check DNS server configuration or try alternative DNS (8.8.8.8)".to_string(),
+                );
             }
         }
     }
@@ -887,12 +907,18 @@ pub async fn run_diagnostics(
 
     match ping_result {
         Ok(stats) if stats.received > 0 => {
-            let avg_latency = stats.avg_rtt.map(|d| d.as_secs_f64() * 1000.0).unwrap_or(0.0);
+            let avg_latency = stats
+                .avg_rtt
+                .map(|d| d.as_secs_f64() * 1000.0)
+                .unwrap_or(0.0);
             tests.push(DiagnosticTest {
                 name: "Internet Connectivity".to_string(),
                 category: "Connectivity".to_string(),
                 passed: true,
-                message: format!("Ping to 8.8.8.8: {:.1}ms avg, {:.0}% loss", avg_latency, stats.loss_percent),
+                message: format!(
+                    "Ping to 8.8.8.8: {:.1}ms avg, {:.0}% loss",
+                    avg_latency, stats.loss_percent
+                ),
                 details: Some(serde_json::json!({
                     "target": "8.8.8.8",
                     "sent": stats.transmitted,
@@ -932,7 +958,11 @@ pub async fn run_diagnostics(
             Ok(interfaces) if !interfaces.is_empty() => {
                 let iface = &interfaces[0];
                 if iface.powered_on {
-                    let conn_result = state.providers.wifi.get_current_connection(&iface.name).await;
+                    let conn_result = state
+                        .providers
+                        .wifi
+                        .get_current_connection(&iface.name)
+                        .await;
                     match conn_result {
                         Ok(Some(conn)) => {
                             let rssi = conn.access_point.rssi;
@@ -951,7 +981,12 @@ pub async fn run_diagnostics(
                                 name: "WiFi Signal".to_string(),
                                 category: "WiFi".to_string(),
                                 passed,
-                                message: format!("Connected to {} ({} dBm - {})", conn.access_point.ssid.as_str(), rssi, quality),
+                                message: format!(
+                                    "Connected to {} ({} dBm - {})",
+                                    conn.access_point.ssid.as_str(),
+                                    rssi,
+                                    quality
+                                ),
                                 details: Some(serde_json::json!({
                                     "ssid": conn.access_point.ssid.as_str(),
                                     "rssi": rssi,
@@ -963,7 +998,9 @@ pub async fn run_diagnostics(
 
                             if !passed {
                                 issues.push("Weak WiFi signal".to_string());
-                                recommendations.push("Move closer to your router or reduce interference".to_string());
+                                recommendations.push(
+                                    "Move closer to your router or reduce interference".to_string(),
+                                );
                             }
                         }
                         Ok(None) => {
@@ -1029,7 +1066,10 @@ pub async fn run_diagnostics(
 
                 if !passed {
                     issues.push("Slow download speed".to_string());
-                    recommendations.push("Check for bandwidth-heavy applications or consider upgrading your plan".to_string());
+                    recommendations.push(
+                        "Check for bandwidth-heavy applications or consider upgrading your plan"
+                            .to_string(),
+                    );
                 }
             }
             Err(e) => {
@@ -1085,12 +1125,7 @@ pub async fn generate_report(
     let include_raw = include_raw_data.unwrap_or(false);
 
     // Collect system info
-    let system_info = state
-        .providers
-        .system
-        .get_system_info()
-        .await
-        .ok();
+    let system_info = state.providers.system.get_system_info().await.ok();
 
     // Collect interfaces
     let interfaces = state
@@ -1169,7 +1204,9 @@ pub async fn generate_report(
     };
 
     if let Ok(stats) = pinger.ping("8.8.8.8".parse().unwrap(), &ping_config).await {
-        let quality = if stats.loss_percent == 0.0 && stats.avg_rtt.map(|d| d.as_millis() < 100).unwrap_or(false) {
+        let quality = if stats.loss_percent == 0.0
+            && stats.avg_rtt.map(|d| d.as_millis() < 100).unwrap_or(false)
+        {
             "Excellent"
         } else if stats.loss_percent < 5.0 {
             "Good"
@@ -1193,8 +1230,7 @@ pub async fn generate_report(
     }
 
     // Build the report
-    let mut builder = ReportBuilder::new()
-        .title("Network Diagnostics Report");
+    let mut builder = ReportBuilder::new().title("Network Diagnostics Report");
 
     if let Some(info) = &system_info {
         builder = builder
@@ -1224,7 +1260,9 @@ pub async fn generate_report(
     let report = builder.build();
 
     // Get health assessment
-    let (health_score, health_status) = report.health.as_ref()
+    let (health_score, health_status) = report
+        .health
+        .as_ref()
         .map(|h| (h.score, h.status.clone()))
         .unwrap_or((0, "unknown".to_string()));
 
@@ -1233,7 +1271,12 @@ pub async fn generate_report(
         "json" => {
             let formatter = JsonFormatter::new();
             let content = formatter.format(&report).map_err(|e| e.to_string())?;
-            (content, "application/json".to_string(), "json".to_string(), false)
+            (
+                content,
+                "application/json".to_string(),
+                "json".to_string(),
+                false,
+            )
         }
         "text" | "txt" => {
             let formatter = TextFormatter::new();
@@ -1243,7 +1286,12 @@ pub async fn generate_report(
         "markdown" | "md" => {
             let formatter = MarkdownFormatter::new();
             let content = formatter.format(&report).map_err(|e| e.to_string())?;
-            (content, "text/markdown".to_string(), "md".to_string(), false)
+            (
+                content,
+                "text/markdown".to_string(),
+                "md".to_string(),
+                false,
+            )
         }
         "html" => {
             let formatter = HtmlFormatter::new();
@@ -1251,7 +1299,10 @@ pub async fn generate_report(
             (content, "text/html".to_string(), "html".to_string(), false)
         }
         _ => {
-            return Err(format!("Unsupported format: {}. Supported formats: json, text, markdown, html", format));
+            return Err(format!(
+                "Unsupported format: {}. Supported formats: json, text, markdown, html",
+                format
+            ));
         }
     };
 
@@ -1323,15 +1374,21 @@ pub async fn apply_fix(
         "reset_tcp_ip" => FixAction::reset_tcp_ip(),
         "restart_network_service" => FixAction::restart_network_service(),
         "reset_adapter" => {
-            let iface = interface.clone().ok_or("Interface required for reset_adapter")?;
+            let iface = interface
+                .clone()
+                .ok_or("Interface required for reset_adapter")?;
             FixAction::reset_adapter(iface)
         }
         "renew_dhcp" => {
-            let iface = interface.clone().ok_or("Interface required for renew_dhcp")?;
+            let iface = interface
+                .clone()
+                .ok_or("Interface required for renew_dhcp")?;
             FixAction::renew_dhcp(iface)
         }
         "reconnect_wifi" => {
-            let iface = interface.clone().ok_or("Interface required for reconnect_wifi")?;
+            let iface = interface
+                .clone()
+                .ok_or("Interface required for reconnect_wifi")?;
             FixAction::reconnect_wifi(iface)
         }
         _ => return Err(format!("Unknown fix type: {}", fix_type)),
@@ -1356,18 +1413,24 @@ pub async fn apply_fix(
             #[cfg(target_os = "macos")]
             {
                 let _ = Command::new("dscacheutil").args(["-flushcache"]).output();
-                let _ = Command::new("killall").args(["-HUP", "mDNSResponder"]).output();
+                let _ = Command::new("killall")
+                    .args(["-HUP", "mDNSResponder"])
+                    .output();
                 Ok("DNS cache flushed".to_string())
             }
             #[cfg(target_os = "linux")]
             {
-                let _ = Command::new("systemd-resolve").args(["--flush-caches"]).output();
+                let _ = Command::new("systemd-resolve")
+                    .args(["--flush-caches"])
+                    .output();
                 let _ = Command::new("resolvectl").args(["flush-caches"]).output();
                 Ok("DNS cache flushed".to_string())
             }
             #[cfg(target_os = "windows")]
             {
-                Command::new("ipconfig").args(["/flushdns"]).output()
+                Command::new("ipconfig")
+                    .args(["/flushdns"])
+                    .output()
                     .map(|_| "DNS cache flushed".to_string())
                     .map_err(|e| e.to_string())
             }
@@ -1388,16 +1451,24 @@ pub async fn apply_fix(
             #[cfg(target_os = "macos")]
             {
                 Command::new("launchctl")
-                    .args(["kickstart", "-k", "system/com.apple.networking.discoveryengine"])
+                    .args([
+                        "kickstart",
+                        "-k",
+                        "system/com.apple.networking.discoveryengine",
+                    ])
                     .output()
                     .map(|_| "Network service restarted".to_string())
                     .map_err(|e| e.to_string())
             }
             #[cfg(target_os = "linux")]
             {
-                let nm = Command::new("systemctl").args(["restart", "NetworkManager"]).output();
+                let nm = Command::new("systemctl")
+                    .args(["restart", "NetworkManager"])
+                    .output();
                 if nm.is_err() {
-                    Command::new("systemctl").args(["restart", "networking"]).output()
+                    Command::new("systemctl")
+                        .args(["restart", "networking"])
+                        .output()
                         .map(|_| "Network service restarted".to_string())
                         .map_err(|e| e.to_string())
                 } else {
@@ -1407,7 +1478,9 @@ pub async fn apply_fix(
             #[cfg(target_os = "windows")]
             {
                 let _ = Command::new("net").args(["stop", "netman"]).output();
-                Command::new("net").args(["start", "netman"]).output()
+                Command::new("net")
+                    .args(["start", "netman"])
+                    .output()
                     .map(|_| "Network service restarted".to_string())
                     .map_err(|e| e.to_string())
             }
@@ -1416,25 +1489,37 @@ pub async fn apply_fix(
             let iface = interface.as_ref().ok_or("Interface required")?;
             #[cfg(target_os = "macos")]
             {
-                let _ = Command::new("ifconfig").args([iface.as_str(), "down"]).output();
+                let _ = Command::new("ifconfig")
+                    .args([iface.as_str(), "down"])
+                    .output();
                 tokio::time::sleep(Duration::from_secs(1)).await;
-                Command::new("ifconfig").args([iface.as_str(), "up"]).output()
+                Command::new("ifconfig")
+                    .args([iface.as_str(), "up"])
+                    .output()
                     .map(|_| format!("Adapter {} reset", iface))
                     .map_err(|e| e.to_string())
             }
             #[cfg(target_os = "linux")]
             {
-                let _ = Command::new("ip").args(["link", "set", iface.as_str(), "down"]).output();
+                let _ = Command::new("ip")
+                    .args(["link", "set", iface.as_str(), "down"])
+                    .output();
                 tokio::time::sleep(Duration::from_secs(1)).await;
-                Command::new("ip").args(["link", "set", iface.as_str(), "up"]).output()
+                Command::new("ip")
+                    .args(["link", "set", iface.as_str(), "up"])
+                    .output()
                     .map(|_| format!("Adapter {} reset", iface))
                     .map_err(|e| e.to_string())
             }
             #[cfg(target_os = "windows")]
             {
-                let _ = Command::new("netsh").args(["interface", "set", "interface", iface.as_str(), "disable"]).output();
+                let _ = Command::new("netsh")
+                    .args(["interface", "set", "interface", iface.as_str(), "disable"])
+                    .output();
                 tokio::time::sleep(Duration::from_secs(2)).await;
-                Command::new("netsh").args(["interface", "set", "interface", iface.as_str(), "enable"]).output()
+                Command::new("netsh")
+                    .args(["interface", "set", "interface", iface.as_str(), "enable"])
+                    .output()
                     .map(|_| format!("Adapter {} reset", iface))
                     .map_err(|e| e.to_string())
             }
@@ -1443,21 +1528,31 @@ pub async fn apply_fix(
             let iface = interface.as_ref().ok_or("Interface required")?;
             #[cfg(target_os = "macos")]
             {
-                Command::new("ipconfig").args(["set", iface.as_str(), "DHCP"]).output()
+                Command::new("ipconfig")
+                    .args(["set", iface.as_str(), "DHCP"])
+                    .output()
                     .map(|_| format!("DHCP renewed on {}", iface))
                     .map_err(|e| e.to_string())
             }
             #[cfg(target_os = "linux")]
             {
-                let _ = Command::new("dhclient").args(["-r", iface.as_str()]).output();
-                Command::new("dhclient").args([iface.as_str()]).output()
+                let _ = Command::new("dhclient")
+                    .args(["-r", iface.as_str()])
+                    .output();
+                Command::new("dhclient")
+                    .args([iface.as_str()])
+                    .output()
                     .map(|_| format!("DHCP renewed on {}", iface))
                     .map_err(|e| e.to_string())
             }
             #[cfg(target_os = "windows")]
             {
-                let _ = Command::new("ipconfig").args(["/release", iface.as_str()]).output();
-                Command::new("ipconfig").args(["/renew", iface.as_str()]).output()
+                let _ = Command::new("ipconfig")
+                    .args(["/release", iface.as_str()])
+                    .output();
+                Command::new("ipconfig")
+                    .args(["/renew", iface.as_str()])
+                    .output()
                     .map(|_| format!("DHCP renewed on {}", iface))
                     .map_err(|e| e.to_string())
             }
@@ -1502,9 +1597,7 @@ pub async fn list_rollback_points() -> Result<Vec<RollbackPointInfo>, String> {
 /// Note: Rollback functionality is limited in this simplified implementation.
 #[cfg(not(any(target_os = "ios", target_os = "android")))]
 #[tauri::command]
-pub async fn perform_rollback(
-    _rollback_id: String,
-) -> Result<bool, String> {
+pub async fn perform_rollback(_rollback_id: String) -> Result<bool, String> {
     // In a full implementation, this would restore from persistent state
     Err("Rollback functionality is not yet available in this version".to_string())
 }

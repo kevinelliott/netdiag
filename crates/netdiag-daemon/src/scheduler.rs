@@ -185,7 +185,10 @@ impl DiagnosticScheduler {
             // Note: Would need to remove/re-add job to scheduler to actually enable/disable
             Ok(())
         } else {
-            Err(DaemonError::scheduler(format!("Job '{}' not found", job_name)))
+            Err(DaemonError::scheduler(format!(
+                "Job '{}' not found",
+                job_name
+            )))
         }
     }
 }

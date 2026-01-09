@@ -22,11 +22,7 @@ impl SiteSurvey {
     }
 
     /// Record a single survey point.
-    pub async fn record_point(
-        &self,
-        interface: &str,
-        location: &str,
-    ) -> WifiResult<SurveyPoint> {
+    pub async fn record_point(&self, interface: &str, location: &str) -> WifiResult<SurveyPoint> {
         debug!("Recording survey point at: {}", location);
 
         let connection = self

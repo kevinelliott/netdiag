@@ -134,7 +134,10 @@ pub trait PrivilegeProviderExt: PrivilegeProvider {
                 .map(|c| c.typical_required_level())
                 .max()
                 .unwrap_or(PrivilegeLevel::User),
-            features: missing.iter().map(|c| c.description().to_string()).collect(),
+            features: missing
+                .iter()
+                .map(|c| c.description().to_string())
+                .collect(),
         };
 
         self.request_elevation(&request).await

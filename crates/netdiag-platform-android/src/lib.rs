@@ -20,8 +20,8 @@ pub use system::AndroidSystemInfoProvider;
 pub use wifi::AndroidWifiProvider;
 
 use netdiag_platform::{
-    AutofixProvider, CaptureProvider, CaptureInterface, PlatformProviders, RollbackPoint,
-    AutofixAction, FixResult,
+    AutofixAction, AutofixProvider, CaptureInterface, CaptureProvider, FixResult,
+    PlatformProviders, RollbackPoint,
 };
 use netdiag_types::system::PrivilegeLevel;
 use std::sync::Arc;
@@ -57,21 +57,30 @@ impl CaptureProvider for StubCaptureProvider {
         _filter: Option<netdiag_types::capture::CaptureFilter>,
         _packet_tx: tokio::sync::mpsc::Sender<netdiag_types::capture::CapturedPacket>,
     ) -> netdiag_types::error::Result<netdiag_types::capture::CaptureHandle> {
-        Err(netdiag_types::Error::unsupported("Packet capture", "Android"))
+        Err(netdiag_types::Error::unsupported(
+            "Packet capture",
+            "Android",
+        ))
     }
 
     async fn stop_capture(
         &self,
         _handle: netdiag_types::capture::CaptureHandle,
     ) -> netdiag_types::error::Result<netdiag_types::capture::CaptureStats> {
-        Err(netdiag_types::Error::unsupported("Packet capture", "Android"))
+        Err(netdiag_types::Error::unsupported(
+            "Packet capture",
+            "Android",
+        ))
     }
 
     async fn get_capture_stats(
         &self,
         _handle: netdiag_types::capture::CaptureHandle,
     ) -> netdiag_types::error::Result<netdiag_types::capture::CaptureStats> {
-        Err(netdiag_types::Error::unsupported("Packet capture", "Android"))
+        Err(netdiag_types::Error::unsupported(
+            "Packet capture",
+            "Android",
+        ))
     }
 
     fn required_privilege_level(&self) -> PrivilegeLevel {
@@ -79,7 +88,10 @@ impl CaptureProvider for StubCaptureProvider {
     }
 
     fn compile_filter(&self, _expression: &str) -> netdiag_types::error::Result<String> {
-        Err(netdiag_types::Error::unsupported("Packet capture", "Android"))
+        Err(netdiag_types::Error::unsupported(
+            "Packet capture",
+            "Android",
+        ))
     }
 }
 
@@ -111,11 +123,17 @@ impl AutofixProvider for StubAutofixProvider {
     }
 
     async fn flush_dns_cache(&self) -> netdiag_types::error::Result<()> {
-        Err(netdiag_types::Error::unsupported("DNS cache flush", "Android"))
+        Err(netdiag_types::Error::unsupported(
+            "DNS cache flush",
+            "Android",
+        ))
     }
 
     async fn reset_adapter(&self, _interface: &str) -> netdiag_types::error::Result<()> {
-        Err(netdiag_types::Error::unsupported("Adapter reset", "Android"))
+        Err(netdiag_types::Error::unsupported(
+            "Adapter reset",
+            "Android",
+        ))
     }
 
     async fn set_dns_servers(
@@ -123,15 +141,28 @@ impl AutofixProvider for StubAutofixProvider {
         _interface: &str,
         _servers: &[std::net::IpAddr],
     ) -> netdiag_types::error::Result<()> {
-        Err(netdiag_types::Error::unsupported("Set DNS servers", "Android"))
+        Err(netdiag_types::Error::unsupported(
+            "Set DNS servers",
+            "Android",
+        ))
     }
 
-    async fn toggle_interface(&self, _interface: &str, _enable: bool) -> netdiag_types::error::Result<()> {
-        Err(netdiag_types::Error::unsupported("Toggle interface", "Android"))
+    async fn toggle_interface(
+        &self,
+        _interface: &str,
+        _enable: bool,
+    ) -> netdiag_types::error::Result<()> {
+        Err(netdiag_types::Error::unsupported(
+            "Toggle interface",
+            "Android",
+        ))
     }
 
     async fn reset_tcpip_stack(&self) -> netdiag_types::error::Result<()> {
-        Err(netdiag_types::Error::unsupported("Reset TCP/IP stack", "Android"))
+        Err(netdiag_types::Error::unsupported(
+            "Reset TCP/IP stack",
+            "Android",
+        ))
     }
 
     async fn renew_dhcp(&self, _interface: &str) -> netdiag_types::error::Result<()> {
@@ -139,7 +170,10 @@ impl AutofixProvider for StubAutofixProvider {
     }
 
     async fn clear_arp_cache(&self) -> netdiag_types::error::Result<()> {
-        Err(netdiag_types::Error::unsupported("Clear ARP cache", "Android"))
+        Err(netdiag_types::Error::unsupported(
+            "Clear ARP cache",
+            "Android",
+        ))
     }
 
     async fn get_available_fixes(&self) -> netdiag_types::error::Result<Vec<AutofixAction>> {

@@ -216,16 +216,17 @@ impl Pinger {
                         .unwrap_or(0);
 
                     // Parse RTT stats from "min/avg/max/stddev = X/Y/Z/W ms"
-                    let avg_rtt = output
-                        .lines()
-                        .find(|l| l.contains("min/avg/max"))
-                        .and_then(|l| {
-                            l.split('=')
-                                .nth(1)
-                                .and_then(|s| s.split('/').nth(1))
-                                .and_then(|s| s.trim().parse::<f64>().ok())
-                                .map(|ms| Duration::from_secs_f64(ms / 1000.0))
-                        });
+                    let avg_rtt =
+                        output
+                            .lines()
+                            .find(|l| l.contains("min/avg/max"))
+                            .and_then(|l| {
+                                l.split('=')
+                                    .nth(1)
+                                    .and_then(|s| s.split('/').nth(1))
+                                    .and_then(|s| s.trim().parse::<f64>().ok())
+                                    .map(|ms| Duration::from_secs_f64(ms / 1000.0))
+                            });
 
                     // Create synthetic results based on summary
                     let mut results = Vec::new();

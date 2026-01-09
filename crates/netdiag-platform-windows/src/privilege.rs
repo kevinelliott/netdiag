@@ -28,11 +28,7 @@ impl WindowsPrivilegeProvider {
 
         unsafe {
             let mut token_handle = std::mem::zeroed();
-            if OpenProcessToken(
-                GetCurrentProcess(),
-                TOKEN_QUERY,
-                &mut token_handle,
-            ).is_ok() {
+            if OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &mut token_handle).is_ok() {
                 let mut elevation = TOKEN_ELEVATION::default();
                 let mut size = std::mem::size_of::<TOKEN_ELEVATION>() as u32;
 
@@ -42,7 +38,9 @@ impl WindowsPrivilegeProvider {
                     Some(&mut elevation as *mut _ as *mut _),
                     size,
                     &mut size,
-                ).is_ok() {
+                )
+                .is_ok()
+                {
                     let _ = windows::Win32::Foundation::CloseHandle(token_handle);
                     return elevation.TokenIsElevated != 0;
                 }
