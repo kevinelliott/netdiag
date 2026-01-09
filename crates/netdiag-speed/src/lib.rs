@@ -18,7 +18,10 @@ mod result;
 pub use error::{SpeedError, SpeedResult};
 pub use http::{HttpSpeedTest, HttpSpeedConfig};
 pub use iperf::{IperfClient, IperfConfig};
-pub use result::{SpeedTestResult, BandwidthMeasurement, BandwidthSample, SpeedTestServer};
+pub use result::{
+    BandwidthMeasurement, BandwidthSample, BufferBloatAnalysis, BufferBloatGrade,
+    ConsistencyRating, SpeedConsistency, SpeedTestResult, SpeedTestServer,
+};
 
 use async_trait::async_trait;
 use std::time::Duration;

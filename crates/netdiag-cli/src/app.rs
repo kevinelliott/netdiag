@@ -97,9 +97,13 @@ pub struct DiagnoseArgs {
     #[arg(short = 'Q', long)]
     pub quick: bool,
 
-    /// Include speed test
+    /// Skip speed test (speed test runs by default in comprehensive mode)
     #[arg(long)]
-    pub speed: bool,
+    pub no_speed: bool,
+
+    /// Number of parallel connections for speed test
+    #[arg(short, long, default_value = "4")]
+    pub connections: usize,
 
     /// Include WiFi analysis
     #[arg(long)]
@@ -116,6 +120,10 @@ pub struct DiagnoseArgs {
     /// Save report to file
     #[arg(short, long)]
     pub output: Option<PathBuf>,
+
+    /// Verbosity level (set by global -v flag)
+    #[arg(skip)]
+    pub verbose: u8,
 }
 
 /// Arguments for ping command

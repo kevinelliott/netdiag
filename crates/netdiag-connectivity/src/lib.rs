@@ -2,18 +2,20 @@
 //!
 //! Connectivity testing module for netdiag.
 //!
-//! Provides ping, traceroute, and jitter testing capabilities.
+//! Provides ping, traceroute, jitter testing, and path analysis capabilities.
 
 #![warn(missing_docs)]
 #![warn(clippy::all)]
 
 mod dns;
+mod path_analyzer;
 mod ping;
 mod traceroute;
 
 pub use dns::{DnsResolver, DnsResult};
-pub use ping::{Pinger, PingConfig};
-pub use traceroute::{Tracer, TracerouteConfig};
+pub use path_analyzer::{identify_isp, PathAnalyzer};
+pub use ping::{PingConfig, Pinger};
+pub use traceroute::{TracerouteConfig, Tracer};
 
 use netdiag_types::error::Result;
 use std::net::IpAddr;

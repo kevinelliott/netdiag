@@ -6,7 +6,7 @@ use console::style;
 use netdiag_connectivity::{DnsResolver, PingConfig, Pinger};
 use netdiag_reports::{
     DiagnosticReport, DnsSummary, HtmlFormatter, InterfaceSummary, JsonFormatter, MarkdownFormatter,
-    ReportBuilder, ReportFormatter, TextFormatter,
+    PdfFormatter, ReportBuilder, ReportFormatter, TextFormatter,
 };
 use std::fs;
 use std::time::Duration;
@@ -19,7 +19,58 @@ pub async fn run(args: ReportArgs) -> Result<()> {
     // Build the report
     let report = generate_report().await?;
 
-    // Format the report based on requested format
+    // Handle PDF separately since it produces binary output
+    if matches!(args.report_format, crate::app::ReportFormat::Pdf) {
+        let formatter = PdfFormatter::new();
+
+        // PDF must be written to a file
+        let output_path = match args.output {
+            Some(mut path) => {
+                if path.extension().is_none() {
+                    path.set_extension("pdf");
+                }
+                path
+            }
+            None => {
+                // Generate a default filename with Unix timestamp
+                let timestamp = std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .unwrap()
+                    .as_secs();
+                std::path::PathBuf::from(format!("netdiag_report_{}.pdf", timestamp))
+            }
+        };
+
+        match formatter.generate_pdf(&report) {
+            Ok(pdf_bytes) => {
+                fs::write(&output_path, pdf_bytes)?;
+                println!();
+                println!(
+                    "PDF report saved to: {}",
+                    style(output_path.display()).green().bold()
+                );
+            }
+            Err(e) => {
+                println!(
+                    "{}",
+                    style(format!("Warning: PDF generation failed: {}", e)).yellow()
+                );
+                println!("Falling back to text format...");
+                let formatter = TextFormatter::new();
+                let content = formatter.format(&report)?;
+                let text_path = output_path.with_extension("txt");
+                fs::write(&text_path, &content)?;
+                println!(
+                    "Text report saved to: {}",
+                    style(text_path.display()).green().bold()
+                );
+            }
+        }
+
+        return Ok(());
+    }
+
+    // Format the report based on requested format (text-based formats)
     let (content, extension) = match args.report_format {
         crate::app::ReportFormat::Text => {
             let formatter = TextFormatter::new();
@@ -38,13 +89,8 @@ pub async fn run(args: ReportArgs) -> Result<()> {
             (formatter.format(&report)?, formatter.extension())
         }
         crate::app::ReportFormat::Pdf => {
-            // For now, use Text as a fallback for PDF
-            println!(
-                "{}",
-                style("PDF format not yet implemented, falling back to Text").yellow()
-            );
-            let formatter = TextFormatter::new();
-            (formatter.format(&report)?, "pdf")
+            // This shouldn't be reached due to early return above
+            unreachable!()
         }
     };
 

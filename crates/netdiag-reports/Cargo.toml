@@ -31,5 +31,8 @@ tracing = { workspace = true }
 # Error handling
 thiserror = { workspace = true }
 
+# PDF generation
+genpdf = "0.2"
+
 [dev-dependencies]
 tokio = { workspace = true }

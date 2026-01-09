@@ -13,7 +13,7 @@ mod formats;
 mod report;
 
 pub use error::{ReportError, ReportResult};
-pub use formats::{HtmlFormatter, JsonFormatter, MarkdownFormatter, TextFormatter};
+pub use formats::{HtmlFormatter, JsonFormatter, MarkdownFormatter, PdfFormatter, TextFormatter};
 pub use report::{
     DiagnosticReport, DnsSummary, HealthAssessment, InterfaceSummary, PingSummary,
     ReportBuilder, ReportFormat, ReportMetadata, TracerouteHopSummary, TracerouteSummary,

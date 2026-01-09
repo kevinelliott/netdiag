@@ -24,7 +24,7 @@ async fn main() -> Result<()> {
 
     // Run the appropriate command
     match cli.command {
-        Some(cmd) => run_command(cmd, &cli.format).await,
+        Some(cmd) => run_command(cmd, &cli.format, cli.verbose).await,
         None => run_interactive().await,
     }
 }
@@ -52,10 +52,13 @@ fn init_logging(verbose: u8, quiet: bool) {
 }
 
 /// Run a specific command.
-async fn run_command(command: Commands, format: &app::OutputFormat) -> Result<()> {
+async fn run_command(command: Commands, format: &app::OutputFormat, verbose: u8) -> Result<()> {
     match command {
         Commands::Info => commands::info::run().await,
-        Commands::Diagnose(args) => commands::diagnose::run(args).await,
+        Commands::Diagnose(mut args) => {
+            args.verbose = verbose;
+            commands::diagnose::run(args).await
+        }
         Commands::Ping(args) => commands::ping::run(args).await,
         Commands::Traceroute(args) => commands::traceroute::run(args).await,
         Commands::Speed(args) => commands::speed::run(args).await,

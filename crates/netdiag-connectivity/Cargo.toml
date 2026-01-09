@@ -16,6 +16,7 @@ async-trait = { workspace = true }
 tokio = { workspace = true }
 tracing = { workspace = true }
 hickory-resolver = { workspace = true }
+chrono = { workspace = true }
 
 # For raw socket ping (optional, requires root)
 socket2 = { workspace = true }

@@ -1,0 +1,146 @@
+================================================================================
+                           Network Diagnostics Report                           
+================================================================================
+
+Report ID: e04cab7a-4469-4b9f-a558-d1bec28d26cd
+Generated: 2026-01-09 01:01:40 UTC
+Version: 0.1.0
+Hostname: MacBook-Pro-3.local
+OS: macOS
+
+--------------------------------------------------------------------------------
+HEALTH ASSESSMENT
+--------------------------------------------------------------------------------
+
+Status: GOOD (Score: 100/100)
+
+Recommendations:
+  * Network appears healthy
+
+--------------------------------------------------------------------------------
+NETWORK INTERFACES
+--------------------------------------------------------------------------------
+
+lo0 [Loopback] - UP
+  IPv4: 127.0.0.1
+  IPv6: ::1
+  IPv6: fe80::1
+
+gif0 [Unknown] - DOWN
+
+stf0 [Unknown] - DOWN
+
+anpi2 [Ethernet] - UP
+  MAC: ea:c4:3d:94:64:12
+
+anpi0 [Ethernet] - UP
+  MAC: ea:c4:3d:94:64:10
+
+anpi1 [Ethernet] - UP
+  MAC: ea:c4:3d:94:64:11
+
+en4 [Ethernet] - UP
+  MAC: ea:c4:3d:94:64:f0
+
+en5 [Ethernet] - UP
+  MAC: ea:c4:3d:94:64:f1
+
+en6 [Ethernet] - UP
+  MAC: ea:c4:3d:94:64:f2
+
+en1 [Ethernet] - UP
+  MAC: 36:fb:d0:e8:3b:00
+
+en2 [Ethernet] - UP
+  MAC: 36:fb:d0:e8:3b:04
+
+en3 [Ethernet] - UP
+  MAC: 36:fb:d0:e8:3b:08
+
+bridge0 [Bridge] - UP
+  MAC: 36:fb:d0:e8:3b:00
+
+ap1 [Ethernet] - UP
+  MAC: ea:e0:93:11:e2:8a
+
+en0 [Wireless80211] - UP (default)
+  MAC: 1a:1b:43:74:36:09
+  IPv4: 192.168.20.29
+  IPv6: fe80::4b7:1e2f:f469:9fb4
+
+awdl0 [Ethernet] - UP
+  MAC: 42:d0:63:dd:20:23
+  IPv6: fe80::40d0:63ff:fedd:2023
+
+llw0 [Ethernet] - UP
+  MAC: 42:d0:63:dd:20:23
+  IPv6: fe80::40d0:63ff:fedd:2023
+
+utun0 [Unknown] - UP
+  IPv6: fe80::89a6:2d3e:cadf:453a
+
+utun1 [Unknown] - UP
+  IPv6: fe80::8fe6:a41e:8224:76b0
+
+utun2 [Unknown] - UP
+  IPv6: fe80::88ff:3f6c:4752:9b6c
+
+utun3 [Unknown] - UP
+  IPv6: fe80::ce81:b1c:bd2c:69e
+
+utun4 [Unknown] - UP
+  IPv6: fe80::725f:62bd:acbd:b3bb
+
+utun5 [Unknown] - UP
+  IPv6: fe80::5f91:4195:a9af:7a0c
+
+utun6 [Unknown] - UP
+  IPv6: fe80::1255:e1d4:5dcc:bf01
+
+utun7 [Unknown] - UP
+  IPv6: fe80::c696:64d1:7e92:d699
+
+utun8 [Unknown] - UP
+  IPv6: fe80::fea7:4101:fb44:2ad9
+
+utun9 [Unknown] - UP
+  IPv6: fe80::ee79:b8ea:395d:d27c
+
+utun10 [Unknown] - UP
+  IPv6: fe80::366c:ef55:3953:ff9a
+
+utun11 [Unknown] - UP
+  IPv6: fe80::2b4f:9f23:acad:9f39
+
+utun12 [Unknown] - UP
+
+utun13 [Unknown] - UP
+
+--------------------------------------------------------------------------------
+DNS RESOLUTION
+--------------------------------------------------------------------------------
+
+google.com -> OK (65.1ms)
+  Addresses: 142.251.214.142
+cloudflare.com -> OK (66.2ms)
+  Addresses: 104.16.133.229, 104.16.132.229
+1.1.1.1 -> OK (0.0ms)
+  Addresses: 1.1.1.1
+
+--------------------------------------------------------------------------------
+PING RESULTS
+--------------------------------------------------------------------------------
+
+Target: 8.8.8.8
+  Packets: 3 transmitted, 3 received (0.0% loss)
+  RTT: min=36.6ms avg=85.5ms max=119.2ms stddev=35.4ms
+  Quality: VeryGood
+
+Target: 1.1.1.1
+  Packets: 3 transmitted, 3 received (0.0% loss)
+  RTT: min=25.9ms avg=81.0ms max=116.7ms stddev=39.5ms
+  Quality: VeryGood
+
+================================================================================
+End of Report
+================================================================================

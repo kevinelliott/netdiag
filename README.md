@@ -6,9 +6,22 @@ A comprehensive network diagnostics tool supporting macOS, Linux, Windows, iOS, 
 
 - **Multi-Platform Support**: Native implementations for macOS, Linux, Windows, iOS, and Android
 - **Multiple Interfaces**: CLI, TUI (terminal UI), and GUI (desktop/mobile)
-- **Network Diagnostics**: Ping, traceroute, DNS lookup, connectivity testing
+- **Comprehensive Diagnostics**:
+  - Ping with latency percentiles (P50, P95, P99)
+  - Traceroute with network path analysis
+  - DNS resolution testing
+  - VoIP quality metrics (MOS scoring, R-factor)
+  - Jitter and packet loss analysis
+- **Network Path Analysis**:
+  - Segment identification (Local, Router, ISP, Backbone, Destination)
+  - Per-segment latency contribution
+  - ISP identification
+  - Network health scoring
 - **WiFi Analysis**: Signal strength, channel analysis, interference detection
-- **Speed Testing**: Multiple providers (Ookla, Cloudflare, iPerf3)
+- **Speed Testing**:
+  - Multiple providers (Cloudflare, iPerf3)
+  - Buffer bloat detection (grades A-F)
+  - Speed consistency analysis
 - **Packet Capture**: PCAP-based capture with protocol decoding
 - **Auto-Fix**: Automatic remediation with rollback capability
 - **Background Daemon**: Continuous monitoring and scheduled diagnostics
