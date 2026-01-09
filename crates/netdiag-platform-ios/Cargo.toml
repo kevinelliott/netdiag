@@ -30,6 +30,9 @@ tracing = { workspace = true }
 objc2 = "0.6"
 objc2-foundation = "0.3"
 block2 = "0.6"
+libc = "0.2"
+core-foundation = "0.10"
+core-foundation-sys = "0.8"
 
 [dev-dependencies]
 tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }

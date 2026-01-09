@@ -41,18 +41,26 @@ hostname = "0.4"
 netdiag-types = { path = "../../../crates/netdiag-types" }
 netdiag-platform = { path = "../../../crates/netdiag-platform" }
 netdiag-connectivity = { path = "../../../crates/netdiag-connectivity" }
+netdiag-speed = { path = "../../../crates/netdiag-speed" }
+netdiag-reports = { path = "../../../crates/netdiag-reports" }
 
 # Platform-specific
 [target.'cfg(target_os = "macos")'.dependencies]
 netdiag-platform-macos = { path = "../../../crates/netdiag-platform-macos" }
+netdiag-autofix = { path = "../../../crates/netdiag-autofix" }
+netdiag-capture = { path = "../../../crates/netdiag-capture" }
 netdev = "0.31"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 netdiag-platform-linux = { path = "../../../crates/netdiag-platform-linux" }
+netdiag-autofix = { path = "../../../crates/netdiag-autofix" }
+netdiag-capture = { path = "../../../crates/netdiag-capture" }
 netdev = "0.31"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 netdiag-platform-windows = { path = "../../../crates/netdiag-platform-windows" }
+netdiag-autofix = { path = "../../../crates/netdiag-autofix" }
+netdiag-capture = { path = "../../../crates/netdiag-capture" }
 netdev = "0.31"
 
 [target.'cfg(target_os = "ios")'.dependencies]

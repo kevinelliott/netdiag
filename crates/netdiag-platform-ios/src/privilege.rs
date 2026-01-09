@@ -44,42 +44,43 @@ impl PrivilegeProvider for IosPrivilegeProvider {
 
     fn has_capability(&self, capability: Capability) -> bool {
         match capability {
-            // Basic network capabilities are available
-            Capability::NetworkRead => true,
-            Capability::DnsResolve => true,
-            Capability::Ping => true, // With some limitations
-            Capability::Traceroute => true, // With some limitations
+            // WiFi scanning requires NEHotspotHelper entitlement (restricted)
+            Capability::WifiScan => false,
 
-            // These require special entitlements or are not available
-            Capability::RawSocket => false,
-            Capability::PacketCapture => false,
-            Capability::NetworkWrite => false,
-            Capability::WifiScan => false, // Requires NEHotspotHelper
-            Capability::WifiConnect => false,
-            Capability::SystemModify => false,
-            Capability::ServiceManage => false,
+            // None of these are available on iOS due to sandboxing
+            Capability::RawSockets => false,
+            Capability::PromiscuousMode => false,
+            Capability::NetworkConfig => false,
+            Capability::DnsConfig => false,
+            Capability::InterfaceControl => false,
+            Capability::RoutingTable => false,
+            Capability::Firewall => false,
+            Capability::DriverAccess => false,
+            Capability::ServiceManagement => false,
+            Capability::SystemRegistry => false,
         }
     }
 
     fn available_capabilities(&self) -> Vec<Capability> {
-        vec![
-            Capability::NetworkRead,
-            Capability::DnsResolve,
-            Capability::Ping,
-            Capability::Traceroute,
-        ]
+        // iOS apps have very limited network capabilities
+        // Most operations require special entitlements
+        Vec::new()
     }
 
     fn capabilities_requiring_elevation(&self) -> Vec<Capability> {
         // On iOS, elevation isn't possible, so return capabilities
-        // that would require special entitlements
+        // that would require special entitlements (none are elevatable)
         vec![
-            Capability::RawSocket,
-            Capability::PacketCapture,
+            Capability::RawSockets,
+            Capability::PromiscuousMode,
+            Capability::NetworkConfig,
+            Capability::DnsConfig,
+            Capability::InterfaceControl,
+            Capability::RoutingTable,
+            Capability::Firewall,
+            Capability::DriverAccess,
+            Capability::ServiceManagement,
             Capability::WifiScan,
-            Capability::WifiConnect,
-            Capability::SystemModify,
-            Capability::ServiceManage,
         ]
     }
 }

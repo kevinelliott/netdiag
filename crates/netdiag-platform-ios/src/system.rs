@@ -45,7 +45,7 @@ impl SystemInfoProvider for IosSystemInfoProvider {
     async fn get_system_info(&self) -> Result<SystemInfo> {
         Ok(SystemInfo {
             hostname: self.get_hostname().await?,
-            os_type: OsType::Ios,
+            os_type: OsType::IOS,
             os_version: self.get_ios_version(),
             os_build: None,
             kernel_version: None,

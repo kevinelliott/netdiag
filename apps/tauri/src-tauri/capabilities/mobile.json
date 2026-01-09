@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "mobile",
+  "description": "Mobile-specific permissions for network diagnostics",
+  "windows": [
+    "main"
+  ],
+  "platforms": ["iOS", "android"],
+  "permissions": [
+    "core:default",
+    "log:default"
+  ]
+}

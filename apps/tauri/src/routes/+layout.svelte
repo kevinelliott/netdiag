@@ -41,11 +41,16 @@
       <!-- Navigation links -->
       <div class="nav-links" class:open={menuOpen}>
         <a href="/" class="nav-link" class:active={$page.url.pathname === '/'} onclick={closeMenu}>Dashboard</a>
+        <a href="/diagnose" class="nav-link" class:active={$page.url.pathname === '/diagnose'} onclick={closeMenu}>Diagnose</a>
         <a href="/interfaces" class="nav-link" class:active={$page.url.pathname === '/interfaces'} onclick={closeMenu}>Interfaces</a>
         <a href="/wifi" class="nav-link" class:active={$page.url.pathname === '/wifi'} onclick={closeMenu}>WiFi</a>
+        <a href="/speed" class="nav-link" class:active={$page.url.pathname === '/speed'} onclick={closeMenu}>Speed</a>
         <a href="/ping" class="nav-link" class:active={$page.url.pathname === '/ping'} onclick={closeMenu}>Ping</a>
         <a href="/traceroute" class="nav-link" class:active={$page.url.pathname === '/traceroute'} onclick={closeMenu}>Traceroute</a>
         <a href="/dns" class="nav-link" class:active={$page.url.pathname === '/dns'} onclick={closeMenu}>DNS</a>
+        <a href="/report" class="nav-link" class:active={$page.url.pathname === '/report'} onclick={closeMenu}>Report</a>
+        <a href="/fix" class="nav-link" class:active={$page.url.pathname === '/fix'} onclick={closeMenu}>Fix</a>
+        <a href="/capture" class="nav-link" class:active={$page.url.pathname === '/capture'} onclick={closeMenu}>Capture</a>
       </div>
     </nav>
   </header>
