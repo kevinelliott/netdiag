@@ -25,7 +25,7 @@ pub use analysis::{WifiAnalysis, WifiAnalyzer, WifiEnvironment};
 pub use channel::{ChannelAnalysis, ChannelRecommendation};
 pub use error::{WifiError, WifiResult};
 pub use interference::{InterferenceAnalysis, InterferenceSource};
-pub use quality::{SignalQuality, QualityMetrics};
+pub use quality::{QualityMetrics, SignalQuality};
 pub use security::{SecurityAnalysis, SecurityIssue, SecurityRating};
 pub use survey::{SiteSurvey, SurveyPoint, SurveyResult};
 

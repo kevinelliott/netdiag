@@ -35,9 +35,9 @@ impl ShodanClient {
     /// Get host information.
     pub async fn host(&self, ip: &str) -> IntegrationResult<ShodanHost> {
         // Validate IP
-        let _: IpAddr = ip.parse().map_err(|_| {
-            IntegrationError::InvalidInput(format!("Invalid IP address: {}", ip))
-        })?;
+        let _: IpAddr = ip
+            .parse()
+            .map_err(|_| IntegrationError::InvalidInput(format!("Invalid IP address: {}", ip)))?;
 
         let url = format!("{}/shodan/host/{}", SHODAN_BASE_URL, ip);
         debug!("Shodan host lookup: {}", url);
@@ -55,7 +55,10 @@ impl ShodanClient {
                 Ok(ShodanHost::from(host))
             }
             401 => Err(IntegrationError::InvalidApiKey("Shodan")),
-            404 => Err(IntegrationError::NotFound(format!("Host not found: {}", ip))),
+            404 => Err(IntegrationError::NotFound(format!(
+                "Host not found: {}",
+                ip
+            ))),
             429 => Err(IntegrationError::RateLimited("Shodan")),
             _ => {
                 let text = response.text().await.unwrap_or_default();
@@ -281,7 +284,12 @@ impl From<ShodanHostResponse> for ShodanHost {
             ports: r.ports.unwrap_or_default(),
             vulnerabilities: r.vulns.unwrap_or_default(),
             tags: r.tags.unwrap_or_default(),
-            services: r.data.unwrap_or_default().into_iter().map(ShodanService::from).collect(),
+            services: r
+                .data
+                .unwrap_or_default()
+                .into_iter()
+                .map(ShodanService::from)
+                .collect(),
             last_update: r.last_update,
         }
     }
@@ -331,10 +339,14 @@ impl From<ShodanServiceResponse> for ShodanService {
             transport: r.transport,
             product: r.product,
             version: r.version,
-            ssl_versions: r.ssl_info.as_ref()
+            ssl_versions: r
+                .ssl_info
+                .as_ref()
                 .and_then(|s| s.versions.clone())
                 .unwrap_or_default(),
-            ssl_cert_cn: r.ssl_info.as_ref()
+            ssl_cert_cn: r
+                .ssl_info
+                .as_ref()
                 .and_then(|s| s.cert.as_ref())
                 .and_then(|c| c.subject.as_ref())
                 .and_then(|s| s.cn.clone()),

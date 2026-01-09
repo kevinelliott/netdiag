@@ -1,8 +1,8 @@
 //! Network path analyzer for identifying network segments and issues.
 
 use netdiag_types::diagnostics::{
-    BufferBloatGrade, BufferBloatResult, GeoLocation, HealthRating, HopInfo, IssueType,
-    IssueSeverity, IspInfo, IspServiceType, LatencyContribution, PathAnalysis, PathHealth,
+    BufferBloatGrade, BufferBloatResult, GeoLocation, HealthRating, HopInfo, IspInfo,
+    IspServiceType, IssueSeverity, IssueType, LatencyContribution, PathAnalysis, PathHealth,
     PathIssue, PathSegments, SegmentAnalysis, SegmentStatus, SegmentType, TracerouteResult,
 };
 use std::time::Duration;
@@ -288,11 +288,7 @@ impl PathAnalyzer {
         }
 
         // Check for unresponsive hops
-        let unresponsive_ratio = segment
-            .hops
-            .iter()
-            .filter(|h| !h.responsive)
-            .count() as f64
+        let unresponsive_ratio = segment.hops.iter().filter(|h| !h.responsive).count() as f64
             / segment.hops.len() as f64;
         if unresponsive_ratio > 0.5 {
             issues += 2;
@@ -372,7 +368,9 @@ impl PathAnalyzer {
                     severity: IssueSeverity::Critical,
                     description: format!("{} segment is unreachable", segment_type),
                     details: None,
-                    remediation: Some("Check physical connectivity and network configuration".to_string()),
+                    remediation: Some(
+                        "Check physical connectivity and network configuration".to_string(),
+                    ),
                 });
             }
         }
@@ -431,11 +429,19 @@ impl PathAnalyzer {
     /// Gets remediation advice for latency issues.
     fn get_latency_remediation(&self, segment: SegmentType) -> Option<String> {
         Some(match segment {
-            SegmentType::Local => "Check local network congestion and WiFi signal strength".to_string(),
+            SegmentType::Local => {
+                "Check local network congestion and WiFi signal strength".to_string()
+            }
             SegmentType::Router => "Restart router, check for firmware updates".to_string(),
-            SegmentType::Isp => "Contact ISP about high latency; check for local outages".to_string(),
-            SegmentType::Backbone => "Latency may be geographic; consider CDN or different routing".to_string(),
-            SegmentType::Destination => "Destination server may be overloaded or geographically distant".to_string(),
+            SegmentType::Isp => {
+                "Contact ISP about high latency; check for local outages".to_string()
+            }
+            SegmentType::Backbone => {
+                "Latency may be geographic; consider CDN or different routing".to_string()
+            }
+            SegmentType::Destination => {
+                "Destination server may be overloaded or geographically distant".to_string()
+            }
             SegmentType::Unknown => "Unable to determine cause of latency".to_string(),
         })
     }
@@ -443,11 +449,21 @@ impl PathAnalyzer {
     /// Gets remediation advice for packet loss issues.
     fn get_packet_loss_remediation(&self, segment: SegmentType) -> Option<String> {
         Some(match segment {
-            SegmentType::Local => "Check cables, WiFi interference, or local network congestion".to_string(),
-            SegmentType::Router => "Restart router, check for overheating or hardware issues".to_string(),
-            SegmentType::Isp => "Contact ISP; packet loss at ISP level requires provider intervention".to_string(),
-            SegmentType::Backbone => "Transit network issues; usually resolve automatically".to_string(),
-            SegmentType::Destination => "Destination network may be congested or experiencing issues".to_string(),
+            SegmentType::Local => {
+                "Check cables, WiFi interference, or local network congestion".to_string()
+            }
+            SegmentType::Router => {
+                "Restart router, check for overheating or hardware issues".to_string()
+            }
+            SegmentType::Isp => {
+                "Contact ISP; packet loss at ISP level requires provider intervention".to_string()
+            }
+            SegmentType::Backbone => {
+                "Transit network issues; usually resolve automatically".to_string()
+            }
+            SegmentType::Destination => {
+                "Destination network may be congested or experiencing issues".to_string()
+            }
             SegmentType::Unknown => "Unable to determine source of packet loss".to_string(),
         })
     }
@@ -483,11 +499,19 @@ impl PathAnalyzer {
         let rating = HealthRating::from_score(score);
 
         let summary = match rating {
-            HealthRating::Excellent => "Network path is healthy with no significant issues".to_string(),
+            HealthRating::Excellent => {
+                "Network path is healthy with no significant issues".to_string()
+            }
             HealthRating::Good => "Network path is generally healthy with minor issues".to_string(),
-            HealthRating::Fair => "Network path has some issues that may affect performance".to_string(),
-            HealthRating::Poor => "Network path has significant issues affecting connectivity".to_string(),
-            HealthRating::Critical => "Network path has critical issues causing severe degradation".to_string(),
+            HealthRating::Fair => {
+                "Network path has some issues that may affect performance".to_string()
+            }
+            HealthRating::Poor => {
+                "Network path has significant issues affecting connectivity".to_string()
+            }
+            HealthRating::Critical => {
+                "Network path has critical issues causing severe degradation".to_string()
+            }
         };
 
         PathHealth {
@@ -530,13 +554,15 @@ impl PathAnalyzer {
         }
 
         if has_destination_issues {
-            recommendations.push(
-                "Destination issue: check if the service has reported outages".to_string(),
-            );
+            recommendations
+                .push("Destination issue: check if the service has reported outages".to_string());
         }
 
         // Add critical issue recommendations
-        for issue in issues.iter().filter(|i| i.severity == IssueSeverity::Critical) {
+        for issue in issues
+            .iter()
+            .filter(|i| i.severity == IssueSeverity::Critical)
+        {
             if let Some(ref remediation) = issue.remediation {
                 if !recommendations.contains(remediation) {
                     recommendations.push(remediation.clone());

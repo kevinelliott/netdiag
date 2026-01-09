@@ -271,7 +271,10 @@ impl App {
     }
 
     /// Run the application.
-    pub async fn run(mut self, terminal: &mut Terminal<CrosstermBackend<io::Stdout>>) -> TuiResult<()> {
+    pub async fn run(
+        mut self,
+        terminal: &mut Terminal<CrosstermBackend<io::Stdout>>,
+    ) -> TuiResult<()> {
         // Create event handler
         let mut events = EventHandler::new(Duration::from_millis(100));
 
@@ -385,7 +388,11 @@ impl App {
                 self.status_message = Some(format!(
                     "Traceroute complete: {} hops, {}",
                     result.hops.len(),
-                    if result.reached { "target reached" } else { "target not reached" }
+                    if result.reached {
+                        "target reached"
+                    } else {
+                        "target not reached"
+                    }
                 ));
             }
             TaskMessage::TracerouteError(err) => {
@@ -454,17 +461,15 @@ impl App {
             }
 
             // Enter input mode or execute
-            KeyCode::Enter | KeyCode::Char('i') => {
-                match self.current_tab {
-                    Tab::Ping | Tab::Dns | Tab::Traceroute => {
-                        self.input_mode = true;
-                    }
-                    Tab::Wifi => {
-                        self.refresh_wifi();
-                    }
-                    _ => {}
+            KeyCode::Enter | KeyCode::Char('i') => match self.current_tab {
+                Tab::Ping | Tab::Dns | Tab::Traceroute => {
+                    self.input_mode = true;
                 }
-            }
+                Tab::Wifi => {
+                    self.refresh_wifi();
+                }
+                _ => {}
+            },
 
             // Clear results
             KeyCode::Char('c') => {
@@ -518,34 +523,30 @@ impl App {
                 self.input_mode = false;
                 self.execute_command();
             }
-            KeyCode::Backspace => {
-                match self.current_tab {
-                    Tab::Ping => {
-                        self.ping_target.pop();
-                    }
-                    Tab::Dns => {
-                        self.dns_target.pop();
-                    }
-                    Tab::Traceroute => {
-                        self.traceroute_target.pop();
-                    }
-                    _ => {}
+            KeyCode::Backspace => match self.current_tab {
+                Tab::Ping => {
+                    self.ping_target.pop();
                 }
-            }
-            KeyCode::Char(c) => {
-                match self.current_tab {
-                    Tab::Ping => {
-                        self.ping_target.push(c);
-                    }
-                    Tab::Dns => {
-                        self.dns_target.push(c);
-                    }
-                    Tab::Traceroute => {
-                        self.traceroute_target.push(c);
-                    }
-                    _ => {}
+                Tab::Dns => {
+                    self.dns_target.pop();
                 }
-            }
+                Tab::Traceroute => {
+                    self.traceroute_target.pop();
+                }
+                _ => {}
+            },
+            KeyCode::Char(c) => match self.current_tab {
+                Tab::Ping => {
+                    self.ping_target.push(c);
+                }
+                Tab::Dns => {
+                    self.dns_target.push(c);
+                }
+                Tab::Traceroute => {
+                    self.traceroute_target.push(c);
+                }
+                _ => {}
+            },
             _ => {}
         }
     }
@@ -587,19 +588,16 @@ impl App {
                 Err(_) => {
                     // Try DNS resolution
                     match DnsResolver::new() {
-                        Ok(resolver) => {
-                            match resolver.resolve(&target).await {
-                                Ok(result) if !result.addresses.is_empty() => {
-                                    result.addresses[0]
-                                }
-                                _ => {
-                                    let _ = tx.send(TaskMessage::PingError(
-                                        format!("Failed to resolve: {}", target)
-                                    ));
-                                    return;
-                                }
+                        Ok(resolver) => match resolver.resolve(&target).await {
+                            Ok(result) if !result.addresses.is_empty() => result.addresses[0],
+                            _ => {
+                                let _ = tx.send(TaskMessage::PingError(format!(
+                                    "Failed to resolve: {}",
+                                    target
+                                )));
+                                return;
                             }
-                        }
+                        },
                         Err(e) => {
                             let _ = tx.send(TaskMessage::PingError(e.to_string()));
                             return;
@@ -637,16 +635,14 @@ impl App {
 
         tokio::spawn(async move {
             match DnsResolver::new() {
-                Ok(resolver) => {
-                    match resolver.resolve(&target).await {
-                        Ok(result) => {
-                            let _ = tx.send(TaskMessage::DnsResult(result));
-                        }
-                        Err(e) => {
-                            let _ = tx.send(TaskMessage::DnsError(e.to_string()));
-                        }
+                Ok(resolver) => match resolver.resolve(&target).await {
+                    Ok(result) => {
+                        let _ = tx.send(TaskMessage::DnsResult(result));
                     }
-                }
+                    Err(e) => {
+                        let _ = tx.send(TaskMessage::DnsError(e.to_string()));
+                    }
+                },
                 Err(e) => {
                     let _ = tx.send(TaskMessage::DnsError(e.to_string()));
                 }
@@ -667,27 +663,22 @@ impl App {
             // First resolve DNS if needed
             let ip = match target.parse::<IpAddr>() {
                 Ok(ip) => ip,
-                Err(_) => {
-                    match DnsResolver::new() {
-                        Ok(resolver) => {
-                            match resolver.resolve(&target).await {
-                                Ok(result) if !result.addresses.is_empty() => {
-                                    result.addresses[0]
-                                }
-                                _ => {
-                                    let _ = tx.send(TaskMessage::TracerouteError(
-                                        format!("Failed to resolve: {}", target)
-                                    ));
-                                    return;
-                                }
-                            }
-                        }
-                        Err(e) => {
-                            let _ = tx.send(TaskMessage::TracerouteError(e.to_string()));
+                Err(_) => match DnsResolver::new() {
+                    Ok(resolver) => match resolver.resolve(&target).await {
+                        Ok(result) if !result.addresses.is_empty() => result.addresses[0],
+                        _ => {
+                            let _ = tx.send(TaskMessage::TracerouteError(format!(
+                                "Failed to resolve: {}",
+                                target
+                            )));
                             return;
                         }
+                    },
+                    Err(e) => {
+                        let _ = tx.send(TaskMessage::TracerouteError(e.to_string()));
+                        return;
                     }
-                }
+                },
             };
 
             let tracer = Tracer::new();
@@ -748,8 +739,8 @@ impl App {
             // Use platform-specific WiFi provider
             #[cfg(target_os = "macos")]
             {
-                use netdiag_platform_macos::MacosWifiProvider;
                 use netdiag_platform::WifiProvider;
+                use netdiag_platform_macos::MacosWifiProvider;
 
                 let provider = MacosWifiProvider::new();
 
@@ -772,13 +763,16 @@ impl App {
                             wifi_info.band = Some(format!("{:?}", conn.access_point.channel.band));
                             wifi_info.security = Some(format!("{:?}", conn.access_point.security));
                             wifi_info.tx_rate = conn.tx_rate;
-                            wifi_info.standard = Some(format!("{:?}", conn.access_point.wifi_standard));
+                            wifi_info.standard =
+                                Some(format!("{:?}", conn.access_point.wifi_standard));
                         }
 
                         let _ = tx.send(TaskMessage::WifiUpdate(wifi_info));
                     }
                     Ok(_) => {
-                        let _ = tx.send(TaskMessage::WifiError("No WiFi interfaces found".to_string()));
+                        let _ = tx.send(TaskMessage::WifiError(
+                            "No WiFi interfaces found".to_string(),
+                        ));
                     }
                     Err(e) => {
                         let _ = tx.send(TaskMessage::WifiError(e.to_string()));
@@ -788,8 +782,8 @@ impl App {
 
             #[cfg(target_os = "linux")]
             {
-                use netdiag_platform_linux::LinuxWifiProvider;
                 use netdiag_platform::WifiProvider;
+                use netdiag_platform_linux::LinuxWifiProvider;
 
                 let provider = LinuxWifiProvider::new();
 
@@ -805,7 +799,9 @@ impl App {
                         let _ = tx.send(TaskMessage::WifiUpdate(wifi_info));
                     }
                     Ok(_) => {
-                        let _ = tx.send(TaskMessage::WifiError("No WiFi interfaces found".to_string()));
+                        let _ = tx.send(TaskMessage::WifiError(
+                            "No WiFi interfaces found".to_string(),
+                        ));
                     }
                     Err(e) => {
                         let _ = tx.send(TaskMessage::WifiError(e.to_string()));
@@ -815,7 +811,9 @@ impl App {
 
             #[cfg(not(any(target_os = "macos", target_os = "linux")))]
             {
-                let _ = tx.send(TaskMessage::WifiError("WiFi not supported on this platform".to_string()));
+                let _ = tx.send(TaskMessage::WifiError(
+                    "WiFi not supported on this platform".to_string(),
+                ));
             }
         });
     }
@@ -828,7 +826,9 @@ impl App {
         if let Ok(gateway) = netdev::get_default_interface() {
             if let Some(gw) = gateway.gateway {
                 // Get gateway IP from ipv4 or ipv6 addresses
-                let gw_ip = gw.ipv4.first()
+                let gw_ip = gw
+                    .ipv4
+                    .first()
                     .map(|addr| IpAddr::V4(*addr))
                     .or_else(|| gw.ipv6.first().map(|addr| IpAddr::V6(*addr)));
 

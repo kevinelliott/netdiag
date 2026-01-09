@@ -32,9 +32,9 @@ impl IpInfoClient {
     /// Look up IP information.
     pub async fn lookup(&self, ip: &str) -> IntegrationResult<IpInfo> {
         // Validate IP
-        let _: IpAddr = ip.parse().map_err(|_| {
-            IntegrationError::InvalidInput(format!("Invalid IP address: {}", ip))
-        })?;
+        let _: IpAddr = ip
+            .parse()
+            .map_err(|_| IntegrationError::InvalidInput(format!("Invalid IP address: {}", ip)))?;
 
         let url = format!("{}/{}/json", IPINFO_BASE_URL, ip);
         debug!("IPinfo lookup: {}", url);
@@ -79,7 +79,10 @@ impl IpInfoClient {
                 Ok(AsnInfo::from(info))
             }
             401 => Err(IntegrationError::InvalidApiKey("IPinfo")),
-            404 => Err(IntegrationError::NotFound(format!("ASN not found: AS{}", asn))),
+            404 => Err(IntegrationError::NotFound(format!(
+                "ASN not found: AS{}",
+                asn
+            ))),
             429 => Err(IntegrationError::RateLimited("IPinfo")),
             _ => {
                 let text = response.text().await.unwrap_or_default();
@@ -215,21 +218,23 @@ pub struct IpInfo {
 
 impl From<IpInfoResponse> for IpInfo {
     fn from(r: IpInfoResponse) -> Self {
-        let (lat, lon) = r.loc.as_ref().and_then(|loc| {
-            let parts: Vec<&str> = loc.split(',').collect();
-            if parts.len() == 2 {
-                Some((
-                    parts[0].parse().ok(),
-                    parts[1].parse().ok(),
-                ))
-            } else {
-                None
-            }
-        }).unwrap_or((None, None));
+        let (lat, lon) = r
+            .loc
+            .as_ref()
+            .and_then(|loc| {
+                let parts: Vec<&str> = loc.split(',').collect();
+                if parts.len() == 2 {
+                    Some((parts[0].parse().ok(), parts[1].parse().ok()))
+                } else {
+                    None
+                }
+            })
+            .unwrap_or((None, None));
 
-        let asn = r.asn.as_ref().and_then(|a| {
-            a.asn.trim_start_matches("AS").parse().ok()
-        });
+        let asn = r
+            .asn
+            .as_ref()
+            .and_then(|a| a.asn.trim_start_matches("AS").parse().ok());
 
         Self {
             ip: r.ip,
@@ -334,8 +339,18 @@ impl From<AsnInfoResponse> for AsnInfo {
             domain: r.domain,
             num_ips: r.num_ips,
             asn_type: r.asn_type,
-            prefixes: r.prefixes.unwrap_or_default().into_iter().map(|p| p.netblock).collect(),
-            prefixes6: r.prefixes6.unwrap_or_default().into_iter().map(|p| p.netblock).collect(),
+            prefixes: r
+                .prefixes
+                .unwrap_or_default()
+                .into_iter()
+                .map(|p| p.netblock)
+                .collect(),
+            prefixes6: r
+                .prefixes6
+                .unwrap_or_default()
+                .into_iter()
+                .map(|p| p.netblock)
+                .collect(),
             peers: r.peers.unwrap_or_default(),
             upstreams: r.upstreams.unwrap_or_default(),
             downstreams: r.downstreams.unwrap_or_default(),

@@ -170,7 +170,10 @@ impl NetworkMonitor {
         }
 
         *self.running.write().await = true;
-        tracing::info!("Starting network monitoring with interval {:?}", self.config.interval);
+        tracing::info!(
+            "Starting network monitoring with interval {:?}",
+            self.config.interval
+        );
 
         let mut interval = interval(self.config.interval);
 
@@ -299,7 +302,11 @@ impl NetworkMonitor {
                 avg_latency_ms: result.latency_ms.unwrap_or(0.0),
                 packet_loss: result.packet_loss.unwrap_or(0.0),
                 consecutive_failures: if result.success { 0 } else { 1 },
-                last_success: if result.success { Some(result.timestamp) } else { None },
+                last_success: if result.success {
+                    Some(result.timestamp)
+                } else {
+                    None
+                },
             };
 
             match result.target.as_str() {
@@ -307,7 +314,8 @@ impl NetworkMonitor {
                 "dns" => data.dns = Some(target_status),
                 "internet" => data.internet = Some(target_status),
                 _ => {
-                    data.custom_targets.insert(result.target.clone(), target_status);
+                    data.custom_targets
+                        .insert(result.target.clone(), target_status);
                 }
             }
         }

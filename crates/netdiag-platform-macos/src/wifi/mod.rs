@@ -7,7 +7,7 @@ use netdiag_types::{
     network::MacAddress,
     wifi::{
         AccessPoint, AccessPointCapabilities, Bssid, Channel, ChannelUtilization, ChannelWidth,
-        InterferenceLevel, KeyManagement, SecurityType, Ssid, WifiAuthentication, WifiAuthState,
+        InterferenceLevel, KeyManagement, SecurityType, Ssid, WifiAuthState, WifiAuthentication,
         WifiBand, WifiConnection, WifiConnectionState, WifiEncryption, WifiStandard,
     },
 };
@@ -77,10 +77,11 @@ impl MacosWifiProvider {
         }
 
         let json_str = String::from_utf8_lossy(&output.stdout);
-        let json: serde_json::Value = serde_json::from_str(&json_str).map_err(|e| Error::Other {
-            context: "system_profiler JSON".to_string(),
-            message: e.to_string(),
-        })?;
+        let json: serde_json::Value =
+            serde_json::from_str(&json_str).map_err(|e| Error::Other {
+                context: "system_profiler JSON".to_string(),
+                message: e.to_string(),
+            })?;
 
         let mut info = SystemProfilerWifiInfo::default();
 
@@ -88,7 +89,10 @@ impl MacosWifiProvider {
         if let Some(airport_data) = json.get("SPAirPortDataType").and_then(|v| v.as_array()) {
             for entry in airport_data {
                 // Get interfaces
-                if let Some(interfaces) = entry.get("spairport_airport_interfaces").and_then(|v| v.as_array()) {
+                if let Some(interfaces) = entry
+                    .get("spairport_airport_interfaces")
+                    .and_then(|v| v.as_array())
+                {
                     for iface in interfaces {
                         if let Some(name) = iface.get("_name").and_then(|v| v.as_str()) {
                             info.interface_name = Some(name.to_string());
@@ -99,23 +103,41 @@ impl MacosWifiProvider {
                             if let Some(ssid) = current.get("_name").and_then(|v| v.as_str()) {
                                 info.ssid = Some(ssid.to_string());
                             }
-                            if let Some(bssid) = current.get("spairport_network_bssid").and_then(|v| v.as_str()) {
+                            if let Some(bssid) = current
+                                .get("spairport_network_bssid")
+                                .and_then(|v| v.as_str())
+                            {
                                 info.bssid = Self::parse_bssid(bssid);
                             }
-                            if let Some(channel) = current.get("spairport_network_channel").and_then(|v| v.as_str()) {
+                            if let Some(channel) = current
+                                .get("spairport_network_channel")
+                                .and_then(|v| v.as_str())
+                            {
                                 info.channel = Self::parse_channel_string(channel);
                             }
-                            if let Some(rssi) = current.get("spairport_signal_noise").and_then(|v| v.as_str()) {
+                            if let Some(rssi) = current
+                                .get("spairport_signal_noise")
+                                .and_then(|v| v.as_str())
+                            {
                                 // Format: "Signal / Noise: -XX dBm / -YY dBm"
                                 info.parse_signal_noise(rssi);
                             }
-                            if let Some(security) = current.get("spairport_network_security").and_then(|v| v.as_str()) {
+                            if let Some(security) = current
+                                .get("spairport_network_security")
+                                .and_then(|v| v.as_str())
+                            {
                                 info.security = Some(security.to_string());
                             }
-                            if let Some(phy_mode) = current.get("spairport_network_phymode").and_then(|v| v.as_str()) {
+                            if let Some(phy_mode) = current
+                                .get("spairport_network_phymode")
+                                .and_then(|v| v.as_str())
+                            {
                                 info.phy_mode = Some(phy_mode.to_string());
                             }
-                            if let Some(tx_rate) = current.get("spairport_network_rate").and_then(|v| v.as_str()) {
+                            if let Some(tx_rate) = current
+                                .get("spairport_network_rate")
+                                .and_then(|v| v.as_str())
+                            {
                                 // Format: "XXX Mbps"
                                 info.tx_rate = tx_rate.trim_end_matches(" Mbps").parse().ok();
                             }
@@ -123,11 +145,15 @@ impl MacosWifiProvider {
 
                         // Check power status
                         if let Some(power) = iface.get("spairport_status_information") {
-                            info.powered_on = power.get("spairport_power").and_then(|v| v.as_str()) == Some("spairport_on");
+                            info.powered_on = power.get("spairport_power").and_then(|v| v.as_str())
+                                == Some("spairport_on");
                         }
 
                         // Get MAC address
-                        if let Some(mac) = iface.get("spairport_hardware_address").and_then(|v| v.as_str()) {
+                        if let Some(mac) = iface
+                            .get("spairport_hardware_address")
+                            .and_then(|v| v.as_str())
+                        {
                             info.mac_address = Self::parse_mac_address(mac);
                         }
                     }
@@ -145,7 +171,9 @@ impl MacosWifiProvider {
             .filter_map(|p| u8::from_str_radix(p, 16).ok())
             .collect();
         if parts.len() == 6 {
-            Some(MacAddress::new([parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]]))
+            Some(MacAddress::new([
+                parts[0], parts[1], parts[2], parts[3], parts[4], parts[5],
+            ]))
         } else {
             None
         }
@@ -213,7 +241,9 @@ impl MacosWifiProvider {
             .filter_map(|p| u8::from_str_radix(p, 16).ok())
             .collect();
         if parts.len() == 6 {
-            Some(Bssid::new([parts[0], parts[1], parts[2], parts[3], parts[4], parts[5]]))
+            Some(Bssid::new([
+                parts[0], parts[1], parts[2], parts[3], parts[4], parts[5],
+            ]))
         } else {
             None
         }
@@ -327,10 +357,7 @@ impl MacosWifiProvider {
     /// Gets WiFi interface MAC address.
     #[allow(dead_code)]
     fn get_interface_mac(&self, interface: &str) -> Option<MacAddress> {
-        let output = Command::new("ifconfig")
-            .arg(interface)
-            .output()
-            .ok()?;
+        let output = Command::new("ifconfig").arg(interface).output().ok()?;
 
         let stdout = String::from_utf8_lossy(&output.stdout);
         for line in stdout.lines() {
@@ -442,7 +469,13 @@ impl WifiProvider for MacosWifiProvider {
             } else if line.starts_with("Device:") && current_is_wifi {
                 current_device = line.split(':').nth(1).map(|s| s.trim().to_string());
             } else if line.starts_with("Ethernet Address:") && current_is_wifi {
-                let mac_str = line.split(':').skip(1).collect::<Vec<_>>().join(":").trim().to_string();
+                let mac_str = line
+                    .split(':')
+                    .skip(1)
+                    .collect::<Vec<_>>()
+                    .join(":")
+                    .trim()
+                    .to_string();
                 current_mac = Self::parse_mac_address(&mac_str);
             } else if line.is_empty() && current_device.is_some() && current_is_wifi {
                 let device = current_device.take().unwrap();
@@ -491,7 +524,12 @@ impl WifiProvider for MacosWifiProvider {
         let mut access_points = Vec::new();
 
         // Mark current connection
-        let _current_bssid = self.get_current_connection(interface).await.ok().flatten().map(|c| c.access_point.bssid);
+        let _current_bssid = self
+            .get_current_connection(interface)
+            .await
+            .ok()
+            .flatten()
+            .map(|c| c.access_point.bssid);
 
         for line in output.lines().skip(1) {
             // Skip header
@@ -505,7 +543,8 @@ impl WifiProvider for MacosWifiProvider {
                 let security_str = parts.get(6..).map(|p| p.join(" ")).unwrap_or_default();
 
                 // Parse channel
-                let (channel_num, secondary) = Self::parse_channel(channel_str).unwrap_or((1, None));
+                let (channel_num, secondary) =
+                    Self::parse_channel(channel_str).unwrap_or((1, None));
                 let band = Self::channel_to_band(channel_num);
                 let width = Self::determine_channel_width(channel_num, secondary);
 
@@ -839,7 +878,9 @@ impl MacosWifiProvider {
         let rssi = info.rssi.unwrap_or(-100);
         let noise = info.noise;
 
-        let (channel_num, band, width) = info.channel.unwrap_or((1, WifiBand::Band2_4GHz, ChannelWidth::Mhz20));
+        let (channel_num, band, width) =
+            info.channel
+                .unwrap_or((1, WifiBand::Band2_4GHz, ChannelWidth::Mhz20));
 
         let channel = Channel {
             number: channel_num,

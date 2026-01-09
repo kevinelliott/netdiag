@@ -214,7 +214,9 @@ impl RollbackManager {
             .clone();
 
         if !point.valid {
-            return Err(AutofixError::rollback_failed("Rollback point is no longer valid"));
+            return Err(AutofixError::rollback_failed(
+                "Rollback point is no longer valid",
+            ));
         }
 
         tracing::info!("Rolling back: {}", point.description);
@@ -257,11 +259,7 @@ impl RollbackManager {
 
     /// Restores DNS servers.
     async fn restore_dns_servers(&self, interface: &str, servers: &[IpAddr]) -> Result<()> {
-        tracing::debug!(
-            "Restoring DNS servers for {}: {:?}",
-            interface,
-            servers
-        );
+        tracing::debug!("Restoring DNS servers for {}: {:?}", interface, servers);
 
         // Platform-specific DNS restoration
         #[cfg(target_os = "macos")]
@@ -304,9 +302,7 @@ impl RollbackManager {
         }
 
         // Flush DNS cache
-        Command::new("dscacheutil")
-            .args(["-flushcache"])
-            .output()?;
+        Command::new("dscacheutil").args(["-flushcache"]).output()?;
 
         Ok(())
     }
@@ -337,14 +333,7 @@ impl RollbackManager {
         if servers.is_empty() {
             // Reset to DHCP
             Command::new("netsh")
-                .args([
-                    "interface",
-                    "ip",
-                    "set",
-                    "dns",
-                    interface,
-                    "dhcp",
-                ])
+                .args(["interface", "ip", "set", "dns", interface, "dhcp"])
                 .output()?;
         } else {
             // Set primary DNS

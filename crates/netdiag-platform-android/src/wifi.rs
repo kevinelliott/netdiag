@@ -42,12 +42,11 @@ impl AndroidWifiProvider {
         use ndk_context::android_context;
 
         let ctx = android_context();
-        let vm = unsafe { jni::JavaVM::from_raw(ctx.vm() as *mut _) }.map_err(|e| {
-            Error::Platform {
+        let vm =
+            unsafe { jni::JavaVM::from_raw(ctx.vm() as *mut _) }.map_err(|e| Error::Platform {
                 message: format!("Failed to get JavaVM: {}", e),
                 source: None,
-            }
-        })?;
+            })?;
 
         let mut env = vm.attach_current_thread().map_err(|e| Error::Platform {
             message: format!("Failed to attach thread: {}", e),
@@ -66,12 +65,10 @@ impl AndroidWifiProvider {
         let activity = unsafe { JObject::from_raw(ctx.context() as jni::sys::jobject) };
 
         // Get WifiManager: context.getSystemService(Context.WIFI_SERVICE)
-        let wifi_service = env
-            .new_string("wifi")
-            .map_err(|e| Error::Platform {
-                message: format!("Failed to create wifi string: {}", e),
-                source: None,
-            })?;
+        let wifi_service = env.new_string("wifi").map_err(|e| Error::Platform {
+            message: format!("Failed to create wifi string: {}", e),
+            source: None,
+        })?;
 
         let wifi_manager = env
             .call_method(
@@ -242,12 +239,11 @@ impl AndroidWifiProvider {
         use ndk_context::android_context;
 
         let ctx = android_context();
-        let vm = unsafe { jni::JavaVM::from_raw(ctx.vm() as *mut _) }.map_err(|e| {
-            Error::Platform {
+        let vm =
+            unsafe { jni::JavaVM::from_raw(ctx.vm() as *mut _) }.map_err(|e| Error::Platform {
                 message: format!("Failed to get JavaVM: {}", e),
                 source: None,
-            }
-        })?;
+            })?;
 
         let mut env = vm.attach_current_thread().map_err(|e| Error::Platform {
             message: format!("Failed to attach thread: {}", e),
@@ -296,12 +292,7 @@ impl AndroidWifiProvider {
 
         // Get scan results: wifiManager.getScanResults()
         let scan_results = env
-            .call_method(
-                &wifi_manager,
-                "getScanResults",
-                "()Ljava/util/List;",
-                &[],
-            )
+            .call_method(&wifi_manager, "getScanResults", "()Ljava/util/List;", &[])
             .map_err(|e| Error::Platform {
                 message: format!("Failed to get scan results: {}", e),
                 source: None,
@@ -356,7 +347,9 @@ impl AndroidWifiProvider {
     #[cfg(target_os = "android")]
     fn parse_scan_result(&self, env: &mut JNIEnv, scan_result: &JObject) -> Option<AccessPoint> {
         // Get SSID field
-        let ssid_field = env.get_field(scan_result, "SSID", "Ljava/lang/String;").ok()?;
+        let ssid_field = env
+            .get_field(scan_result, "SSID", "Ljava/lang/String;")
+            .ok()?;
         let ssid_obj = ssid_field.l().ok()?;
         let ssid = if ssid_obj.is_null() {
             String::new()

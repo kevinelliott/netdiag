@@ -12,19 +12,19 @@
 #![warn(missing_docs)]
 #![warn(clippy::all)]
 
+mod bgp;
 mod error;
 mod ipinfo;
-mod shodan;
 mod registry;
+mod shodan;
 mod ssllabs;
-mod bgp;
 
+pub use bgp::{AsPath, BgpLookingGlass, BgpPeer, RouteInfo};
 pub use error::{IntegrationError, IntegrationResult};
-pub use ipinfo::{IpInfoClient, IpInfo, AsnInfo};
+pub use ipinfo::{AsnInfo, IpInfo, IpInfoClient};
+pub use registry::{RegistryClient, RegistryType, WhoisInfo};
 pub use shodan::{ShodanClient, ShodanHost, ShodanService};
-pub use registry::{RegistryClient, WhoisInfo, RegistryType};
-pub use ssllabs::{SslLabsClient, SslAnalysis, SslGrade, SslEndpoint};
-pub use bgp::{BgpLookingGlass, RouteInfo, AsPath, BgpPeer};
+pub use ssllabs::{SslAnalysis, SslEndpoint, SslGrade, SslLabsClient};
 
 /// Configuration for external integrations.
 #[derive(Debug, Clone, Default)]
@@ -85,7 +85,10 @@ impl IntegrationManager {
     /// Create a new integration manager.
     pub fn new(config: IntegrationConfig) -> Self {
         let ipinfo = IpInfoClient::new(config.ipinfo_api_key.clone());
-        let shodan = config.shodan_api_key.as_ref().map(|k| ShodanClient::new(k.clone()));
+        let shodan = config
+            .shodan_api_key
+            .as_ref()
+            .map(|k| ShodanClient::new(k.clone()));
         let registry = RegistryClient::new();
         let ssllabs = SslLabsClient::new();
         let bgp = BgpLookingGlass::new();

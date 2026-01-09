@@ -109,14 +109,8 @@ impl WifiEnvironment {
         };
 
         // Find most/least congested channels
-        let channels_2_4: Vec<_> = channel_counts
-            .iter()
-            .filter(|(ch, _)| **ch <= 14)
-            .collect();
-        let channels_5: Vec<_> = channel_counts
-            .iter()
-            .filter(|(ch, _)| **ch > 14)
-            .collect();
+        let channels_2_4: Vec<_> = channel_counts.iter().filter(|(ch, _)| **ch <= 14).collect();
+        let channels_5: Vec<_> = channel_counts.iter().filter(|(ch, _)| **ch > 14).collect();
 
         let most_congested_2_4 = channels_2_4
             .iter()
@@ -228,18 +222,17 @@ impl WifiAnalyzer {
 
         // Security analysis
         debug!("Analyzing security...");
-        let security = connection.as_ref().map(SecurityAnalysis::analyze_connection);
+        let security = connection
+            .as_ref()
+            .map(SecurityAnalysis::analyze_connection);
 
         // Calculate overall health score
-        let health_score = Self::calculate_health_score(&quality, &channel_analysis, &interference, &security);
+        let health_score =
+            Self::calculate_health_score(&quality, &channel_analysis, &interference, &security);
 
         // Generate summary recommendations
-        let recommendations = Self::generate_recommendations(
-            &quality,
-            &channel_analysis,
-            &interference,
-            &security,
-        );
+        let recommendations =
+            Self::generate_recommendations(&quality, &channel_analysis, &interference, &security);
 
         info!("WiFi analysis complete. Health score: {}", health_score);
 
@@ -320,11 +313,7 @@ impl WifiAnalyzer {
         }
 
         let total_weight: f64 = weights.iter().sum();
-        let weighted_sum: f64 = scores
-            .iter()
-            .zip(weights.iter())
-            .map(|(s, w)| s * w)
-            .sum();
+        let weighted_sum: f64 = scores.iter().zip(weights.iter()).map(|(s, w)| s * w).sum();
 
         (weighted_sum / total_weight) as u8
     }

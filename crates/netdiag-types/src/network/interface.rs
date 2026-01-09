@@ -36,13 +36,17 @@ impl NetworkInterface {
     /// Gets the primary IPv4 address, if any.
     #[must_use]
     pub fn primary_ipv4(&self) -> Option<IpAddr> {
-        self.ipv4_addresses.first().map(|info| IpAddr::V4(info.address))
+        self.ipv4_addresses
+            .first()
+            .map(|info| IpAddr::V4(info.address))
     }
 
     /// Gets the primary IPv6 address, if any.
     #[must_use]
     pub fn primary_ipv6(&self) -> Option<IpAddr> {
-        self.ipv6_addresses.first().map(|info| IpAddr::V6(info.address))
+        self.ipv6_addresses
+            .first()
+            .map(|info| IpAddr::V6(info.address))
     }
 
     /// Checks if the interface is up and running.
@@ -140,7 +144,12 @@ impl InterfaceType {
     pub fn is_physical(&self) -> bool {
         matches!(
             self,
-            Self::Ethernet | Self::Wifi | Self::Cellular | Self::Bluetooth | Self::Moca | Self::Powerline
+            Self::Ethernet
+                | Self::Wifi
+                | Self::Cellular
+                | Self::Bluetooth
+                | Self::Moca
+                | Self::Powerline
         )
     }
 }

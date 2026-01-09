@@ -22,9 +22,7 @@ pub struct DatabaseConfig {
 impl Default for DatabaseConfig {
     fn default() -> Self {
         Self {
-            path: crate::default_database_path()
-                .to_string_lossy()
-                .to_string(),
+            path: crate::default_database_path().to_string_lossy().to_string(),
             max_connections: 5,
             create_if_missing: true,
             run_migrations: true,

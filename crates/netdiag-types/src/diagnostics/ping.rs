@@ -226,8 +226,7 @@ impl VoipQuality {
         } else if r_factor > 100.0 {
             4.5
         } else {
-            1.0 + 0.035 * r_factor
-                + r_factor * (r_factor - 60.0) * (100.0 - r_factor) * 7.0e-6
+            1.0 + 0.035 * r_factor + r_factor * (r_factor - 60.0) * (100.0 - r_factor) * 7.0e-6
         };
 
         let rating = VoipRating::from_mos(mos);

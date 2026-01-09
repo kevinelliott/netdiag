@@ -104,9 +104,12 @@ fn fmt(sh: &Shell) -> Result<()> {
 
 fn clippy(sh: &Shell) -> Result<()> {
     println!("Running clippy...");
-    cmd!(sh, "cargo clippy --workspace --all-targets --all-features -- -D warnings")
-        .run()
-        .context("Clippy failed")?;
+    cmd!(
+        sh,
+        "cargo clippy --workspace --all-targets --all-features -- -D warnings"
+    )
+    .run()
+    .context("Clippy failed")?;
     Ok(())
 }
 

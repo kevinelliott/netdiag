@@ -62,11 +62,7 @@ pub async fn run(args: TracerouteArgs) -> Result<()> {
     // Display results
     for hop in &result.hops {
         if hop.all_timeout {
-            println!(
-                "{:>3}  {}",
-                style(hop.hop).dim(),
-                style("* * *").yellow()
-            );
+            println!("{:>3}  {}", style(hop.hop).dim(), style("* * *").yellow());
         } else {
             // Build address display
             let addr_str = match (&hop.hostname, hop.address) {
@@ -116,10 +112,7 @@ pub async fn run(args: TracerouteArgs) -> Result<()> {
         );
     }
 
-    println!(
-        "Total time: {:.0}ms",
-        result.duration.as_millis()
-    );
+    println!("Total time: {:.0}ms", result.duration.as_millis());
 
     Ok(())
 }

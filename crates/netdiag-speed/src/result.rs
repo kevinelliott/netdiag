@@ -59,10 +59,7 @@ pub struct BufferBloatAnalysis {
 
 impl BufferBloatAnalysis {
     /// Create a new buffer bloat analysis.
-    pub fn new(
-        baseline_latency: Duration,
-        loaded_latency: Duration,
-    ) -> Self {
+    pub fn new(baseline_latency: Duration, loaded_latency: Duration) -> Self {
         let latency_increase = loaded_latency.saturating_sub(baseline_latency);
         let latency_increase_percent = if baseline_latency.as_nanos() > 0 {
             (latency_increase.as_secs_f64() / baseline_latency.as_secs_f64()) * 100.0
@@ -426,16 +423,46 @@ mod tests {
 
     #[test]
     fn test_buffer_bloat_grade_from_increase() {
-        assert_eq!(BufferBloatGrade::from_increase(Duration::from_millis(0)), BufferBloatGrade::A);
-        assert_eq!(BufferBloatGrade::from_increase(Duration::from_millis(5)), BufferBloatGrade::A);
-        assert_eq!(BufferBloatGrade::from_increase(Duration::from_millis(6)), BufferBloatGrade::B);
-        assert_eq!(BufferBloatGrade::from_increase(Duration::from_millis(30)), BufferBloatGrade::B);
-        assert_eq!(BufferBloatGrade::from_increase(Duration::from_millis(31)), BufferBloatGrade::C);
-        assert_eq!(BufferBloatGrade::from_increase(Duration::from_millis(60)), BufferBloatGrade::C);
-        assert_eq!(BufferBloatGrade::from_increase(Duration::from_millis(61)), BufferBloatGrade::D);
-        assert_eq!(BufferBloatGrade::from_increase(Duration::from_millis(200)), BufferBloatGrade::D);
-        assert_eq!(BufferBloatGrade::from_increase(Duration::from_millis(201)), BufferBloatGrade::F);
-        assert_eq!(BufferBloatGrade::from_increase(Duration::from_millis(500)), BufferBloatGrade::F);
+        assert_eq!(
+            BufferBloatGrade::from_increase(Duration::from_millis(0)),
+            BufferBloatGrade::A
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase(Duration::from_millis(5)),
+            BufferBloatGrade::A
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase(Duration::from_millis(6)),
+            BufferBloatGrade::B
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase(Duration::from_millis(30)),
+            BufferBloatGrade::B
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase(Duration::from_millis(31)),
+            BufferBloatGrade::C
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase(Duration::from_millis(60)),
+            BufferBloatGrade::C
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase(Duration::from_millis(61)),
+            BufferBloatGrade::D
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase(Duration::from_millis(200)),
+            BufferBloatGrade::D
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase(Duration::from_millis(201)),
+            BufferBloatGrade::F
+        );
+        assert_eq!(
+            BufferBloatGrade::from_increase(Duration::from_millis(500)),
+            BufferBloatGrade::F
+        );
     }
 
     #[test]
@@ -462,22 +489,21 @@ mod tests {
 
     #[test]
     fn test_buffer_bloat_analysis_description() {
-        let analysis = BufferBloatAnalysis::new(
-            Duration::from_millis(20),
-            Duration::from_millis(22),
-        );
+        let analysis =
+            BufferBloatAnalysis::new(Duration::from_millis(20), Duration::from_millis(22));
         assert!(analysis.description().contains("Excellent"));
 
-        let analysis = BufferBloatAnalysis::new(
-            Duration::from_millis(20),
-            Duration::from_millis(300),
-        );
+        let analysis =
+            BufferBloatAnalysis::new(Duration::from_millis(20), Duration::from_millis(300));
         assert!(analysis.description().contains("Very Poor"));
     }
 
     #[test]
     fn test_consistency_rating_from_cv() {
-        assert_eq!(ConsistencyRating::from_cv(0.05), ConsistencyRating::Excellent);
+        assert_eq!(
+            ConsistencyRating::from_cv(0.05),
+            ConsistencyRating::Excellent
+        );
         assert_eq!(ConsistencyRating::from_cv(0.1), ConsistencyRating::Good);
         assert_eq!(ConsistencyRating::from_cv(0.15), ConsistencyRating::Good);
         assert_eq!(ConsistencyRating::from_cv(0.2), ConsistencyRating::Fair);
@@ -672,11 +698,7 @@ mod tests {
         let server = SpeedTestServer::new("Test", "https://test.com");
         let mut result = SpeedTestResult::new(server, "cloudflare");
 
-        let mut download = BandwidthMeasurement::new(
-            125_000_000,
-            Duration::from_secs(10),
-            4,
-        );
+        let mut download = BandwidthMeasurement::new(125_000_000, Duration::from_secs(10), 4);
         download.samples = (0..10)
             .map(|i| BandwidthSample {
                 elapsed: Duration::from_secs(i),

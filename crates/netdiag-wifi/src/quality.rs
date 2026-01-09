@@ -185,9 +185,8 @@ impl QualityMetrics {
 
         match quality {
             SignalQuality::VeryWeak => {
-                recommendations.push(
-                    "Move closer to the access point or add a WiFi extender".to_string(),
-                );
+                recommendations
+                    .push("Move closer to the access point or add a WiFi extender".to_string());
                 recommendations.push(
                     "Check for physical obstructions (walls, large metal objects)".to_string(),
                 );
@@ -213,9 +212,8 @@ impl QualityMetrics {
         }
 
         if rssi > -60 && quality != &SignalQuality::Excellent {
-            recommendations.push(
-                "Good signal but high noise - look for nearby interference".to_string(),
-            );
+            recommendations
+                .push("Good signal but high noise - look for nearby interference".to_string());
         }
 
         recommendations

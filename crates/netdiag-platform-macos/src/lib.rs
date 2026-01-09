@@ -47,7 +47,9 @@ impl CaptureProvider for StubCaptureProvider {
         false
     }
 
-    async fn list_capture_interfaces(&self) -> netdiag_types::error::Result<Vec<netdiag_platform::CaptureInterface>> {
+    async fn list_capture_interfaces(
+        &self,
+    ) -> netdiag_types::error::Result<Vec<netdiag_platform::CaptureInterface>> {
         Ok(Vec::new())
     }
 
@@ -57,15 +59,30 @@ impl CaptureProvider for StubCaptureProvider {
         _filter: Option<netdiag_types::capture::CaptureFilter>,
         _packet_tx: tokio::sync::mpsc::Sender<netdiag_types::capture::CapturedPacket>,
     ) -> netdiag_types::error::Result<netdiag_types::capture::CaptureHandle> {
-        Err(netdiag_types::Error::unsupported("Packet capture", "not yet implemented"))
+        Err(netdiag_types::Error::unsupported(
+            "Packet capture",
+            "not yet implemented",
+        ))
     }
 
-    async fn stop_capture(&self, _handle: netdiag_types::capture::CaptureHandle) -> netdiag_types::error::Result<netdiag_types::capture::CaptureStats> {
-        Err(netdiag_types::Error::unsupported("Packet capture", "not yet implemented"))
+    async fn stop_capture(
+        &self,
+        _handle: netdiag_types::capture::CaptureHandle,
+    ) -> netdiag_types::error::Result<netdiag_types::capture::CaptureStats> {
+        Err(netdiag_types::Error::unsupported(
+            "Packet capture",
+            "not yet implemented",
+        ))
     }
 
-    async fn get_capture_stats(&self, _handle: netdiag_types::capture::CaptureHandle) -> netdiag_types::error::Result<netdiag_types::capture::CaptureStats> {
-        Err(netdiag_types::Error::unsupported("Packet capture", "not yet implemented"))
+    async fn get_capture_stats(
+        &self,
+        _handle: netdiag_types::capture::CaptureHandle,
+    ) -> netdiag_types::error::Result<netdiag_types::capture::CaptureStats> {
+        Err(netdiag_types::Error::unsupported(
+            "Packet capture",
+            "not yet implemented",
+        ))
     }
 
     fn required_privilege_level(&self) -> netdiag_types::system::PrivilegeLevel {

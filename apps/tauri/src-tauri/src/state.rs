@@ -15,7 +15,13 @@ use netdiag_platform_android::create_providers;
 #[cfg(target_os = "windows")]
 use netdiag_platform_windows::create_providers;
 
-#[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "ios", target_os = "android", target_os = "windows")))]
+#[cfg(not(any(
+    target_os = "macos",
+    target_os = "linux",
+    target_os = "ios",
+    target_os = "android",
+    target_os = "windows"
+)))]
 fn create_providers() -> netdiag_platform::PlatformProviders {
     netdiag_platform::PlatformProviders::new()
 }

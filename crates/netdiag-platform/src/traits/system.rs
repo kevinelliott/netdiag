@@ -38,10 +38,7 @@ pub trait SystemInfoProviderExt: SystemInfoProvider {
         let info = self.get_system_info().await?;
         Ok(format!(
             "{} {} ({}) - {}",
-            info.os_type,
-            info.os_version,
-            info.architecture,
-            info.hostname
+            info.os_type, info.os_version, info.architecture, info.hostname
         ))
     }
 }

@@ -51,10 +51,7 @@ impl WindowsAutofixProvider {
 
     /// Gets the current DNS servers for an interface.
     fn get_current_dns(&self, interface: &str) -> Result<Vec<IpAddr>> {
-        let output = self.run_command(
-            "netsh",
-            &["interface", "ip", "show", "dns", interface],
-        )?;
+        let output = self.run_command("netsh", &["interface", "ip", "show", "dns", interface])?;
 
         let mut servers = Vec::new();
         for line in output.lines() {
@@ -147,15 +144,7 @@ impl AutofixProvider for WindowsAutofixProvider {
             let addr = server.to_string();
             self.run_command(
                 "netsh",
-                &[
-                    "interface",
-                    "ip",
-                    "add",
-                    "dns",
-                    interface,
-                    &addr,
-                    "index=2",
-                ],
+                &["interface", "ip", "add", "dns", interface, &addr, "index=2"],
             )?;
         }
 
@@ -193,10 +182,8 @@ impl AutofixProvider for WindowsAutofixProvider {
                 "dns_change" => {
                     if let Some(prev) = &point.previous_state {
                         // Parse and restore previous DNS
-                        let servers: Vec<IpAddr> = prev
-                            .split(',')
-                            .filter_map(|s| s.parse().ok())
-                            .collect();
+                        let servers: Vec<IpAddr> =
+                            prev.split(',').filter_map(|s| s.parse().ok()).collect();
                         // Would need interface name stored
                         tracing::warn!("DNS rollback not fully implemented: {}", prev);
                     }
@@ -300,10 +287,8 @@ impl AutofixProvider for WindowsAutofixProvider {
             }
             FixAction::ResetAdapter { interface } => {
                 // Check if interface is up
-                let output = self.run_command(
-                    "netsh",
-                    &["interface", "show", "interface", interface],
-                )?;
+                let output =
+                    self.run_command("netsh", &["interface", "show", "interface", interface])?;
                 Ok(output.contains("Connected") || output.contains("Enabled"))
             }
             FixAction::SetDnsServers { interface, servers } => {

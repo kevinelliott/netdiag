@@ -5,7 +5,7 @@ use color_eyre::eyre::Result;
 use console::style;
 use indicatif::{ProgressBar, ProgressStyle};
 use netdiag_connectivity::{
-    identify_isp, DnsResolver, PathAnalyzer, PingConfig, Pinger, TracerouteConfig, Tracer,
+    identify_isp, DnsResolver, PathAnalyzer, PingConfig, Pinger, Tracer, TracerouteConfig,
 };
 use netdiag_platform::PlatformProviders;
 use netdiag_speed::{SpeedTestConfig, SpeedTester};
@@ -311,12 +311,7 @@ async fn check_interfaces(providers: &PlatformProviders) -> DiagnosticCheck {
             } else {
                 let names: Vec<_> = with_ipv4
                     .iter()
-                    .map(|i| {
-                        i.display_name
-                            .as_ref()
-                            .unwrap_or(&i.name)
-                            .clone()
-                    })
+                    .map(|i| i.display_name.as_ref().unwrap_or(&i.name).clone())
                     .collect();
                 DiagnosticCheck::pass(
                     "Network Interfaces",
@@ -361,7 +356,10 @@ async fn check_gateway(providers: &PlatformProviders) -> DiagnosticCheck {
                     // Verbose details
                     verbose.push(format!("Gateway: {}", gateway.address));
                     verbose.push(format!("Samples: {} pings", stats.transmitted));
-                    verbose.push(format!("Min/Avg/Max: {:.1}/{:.1}/{:.1}ms", min_ms, avg_ms, max_ms));
+                    verbose.push(format!(
+                        "Min/Avg/Max: {:.1}/{:.1}/{:.1}ms",
+                        min_ms, avg_ms, max_ms
+                    ));
 
                     // Latency percentiles
                     if let Some(ref percentiles) = stats.latency_percentiles {
@@ -443,7 +441,10 @@ async fn check_gateway(providers: &PlatformProviders) -> DiagnosticCheck {
                 }
                 Ok(_) => DiagnosticCheck::fail(
                     "Default Gateway",
-                    &format!("Gateway {} is not responding (100% packet loss)", gateway.address),
+                    &format!(
+                        "Gateway {} is not responding (100% packet loss)",
+                        gateway.address
+                    ),
                     Some("Check your router, WiFi signal, or network cable"),
                 ),
                 Err(e) => DiagnosticCheck::fail(
@@ -472,7 +473,11 @@ async fn check_dns_config(providers: &PlatformProviders) -> DiagnosticCheck {
             let server_list: Vec<_> = servers.iter().map(|s| s.address.to_string()).collect();
             DiagnosticCheck::pass(
                 "DNS Configuration",
-                &format!("{} DNS server(s): {}", servers.len(), server_list.join(", ")),
+                &format!(
+                    "{} DNS server(s): {}",
+                    servers.len(),
+                    server_list.join(", ")
+                ),
             )
         }
         Ok(_) => DiagnosticCheck::fail(
@@ -579,7 +584,11 @@ async fn check_wifi(providers: &PlatformProviders) -> DiagnosticCheck {
     match providers.wifi.list_wifi_interfaces().await {
         Ok(interfaces) if !interfaces.is_empty() => {
             let iface = &interfaces[0];
-            let status = if iface.powered_on { "enabled" } else { "disabled" };
+            let status = if iface.powered_on {
+                "enabled"
+            } else {
+                "disabled"
+            };
 
             // Try to get current connection
             if let Ok(Some(conn)) = providers.wifi.get_current_connection(&iface.name).await {
@@ -599,10 +608,7 @@ async fn check_wifi(providers: &PlatformProviders) -> DiagnosticCheck {
 
                 DiagnosticCheck::pass(
                     "WiFi",
-                    &format!(
-                        "Connected to \"{}\"{}",
-                        conn.access_point.ssid, signal_info
-                    ),
+                    &format!("Connected to \"{}\"{}", conn.access_point.ssid, signal_info),
                 )
             } else {
                 DiagnosticCheck::fail(
@@ -613,11 +619,7 @@ async fn check_wifi(providers: &PlatformProviders) -> DiagnosticCheck {
             }
         }
         Ok(_) => DiagnosticCheck::fail("WiFi", "No WiFi interfaces found", None),
-        Err(e) => DiagnosticCheck::fail(
-            "WiFi",
-            &format!("Failed to check WiFi: {}", e),
-            None,
-        ),
+        Err(e) => DiagnosticCheck::fail("WiFi", &format!("Failed to check WiFi: {}", e), None),
     }
 }
 
@@ -660,7 +662,10 @@ async fn check_speed(connections: usize) -> DiagnosticCheck {
 
             // Verbose details
             verbose.push(format!("Provider: {}", result.provider));
-            verbose.push(format!("Server: {} ({})", result.server.name, result.server.url));
+            verbose.push(format!(
+                "Server: {} ({})",
+                result.server.name, result.server.url
+            ));
 
             if let Some(ref download) = result.download {
                 verbose.push(format!(
@@ -829,7 +834,10 @@ async fn check_latency_jitter() -> (DiagnosticCheck, DiagnosticCheck) {
                 }
 
                 verbose.push(format!("Delay impairment: {:.2}", voip.impact.delay_factor));
-                verbose.push(format!("Jitter impairment: {:.2}", voip.impact.jitter_factor));
+                verbose.push(format!(
+                    "Jitter impairment: {:.2}",
+                    voip.impact.jitter_factor
+                ));
                 verbose.push(format!("Loss impairment: {:.2}", voip.impact.loss_factor));
 
                 if mos < 3.5 {
@@ -948,16 +956,17 @@ async fn check_network_path() -> DiagnosticCheck {
                             .map(|r| format!("{:.1}ms", r.as_secs_f64() * 1000.0))
                             .unwrap_or_else(|| "*".to_string());
 
-                        verbose.push(format!("  Hop {}: {} ({})", hop.hop_number, hop_name, hop_rtt));
+                        verbose.push(format!(
+                            "  Hop {}: {} ({})",
+                            hop.hop_number, hop_name, hop_rtt
+                        ));
                     }
 
                     // Show segment issues
                     if !segment.issues.is_empty() {
                         for issue in &segment.issues {
-                            verbose.push(format!(
-                                "  ! {}: {}",
-                                issue.issue_type, issue.description
-                            ));
+                            verbose
+                                .push(format!("  ! {}: {}", issue.issue_type, issue.description));
                         }
                     }
 
@@ -999,7 +1008,12 @@ async fn check_network_path() -> DiagnosticCheck {
                         .as_ref()
                         .map(|l| format!("{:.1}ms", l.absolute_ms))
                         .unwrap_or_else(|| "N/A".to_string());
-                    details.push(format!("{}: {} hops, {}", name, segment.hops.len(), latency_str));
+                    details.push(format!(
+                        "{}: {} hops, {}",
+                        name,
+                        segment.hops.len(),
+                        latency_str
+                    ));
                 }
             }
 
@@ -1101,7 +1115,11 @@ fn extract_isp_from_hostname(hostname: &str) -> Option<String> {
         if domain.len() > 2 && domain.chars().all(|c| c.is_alphanumeric()) {
             let mut chars = domain.chars();
             if let Some(first) = chars.next() {
-                return Some(format!("{}{}", first.to_uppercase(), chars.collect::<String>()));
+                return Some(format!(
+                    "{}{}",
+                    first.to_uppercase(),
+                    chars.collect::<String>()
+                ));
             }
         }
     }
@@ -1172,7 +1190,10 @@ async fn check_isp() -> DiagnosticCheck {
                 let asn_str = isp.asn.map_or(String::new(), |asn| format!(" (AS{})", asn));
                 DiagnosticCheck::pass(
                     "ISP Identification",
-                    &format!("Provider: {}{}, Type: {}", isp.name, asn_str, isp.service_type),
+                    &format!(
+                        "Provider: {}{}, Type: {}",
+                        isp.name, asn_str, isp.service_type
+                    ),
                 )
                 .with_verbose(verbose)
             } else {
@@ -1234,9 +1255,6 @@ async fn check_isp() -> DiagnosticCheck {
                 }
             }
         }
-        Err(_) => DiagnosticCheck::pass(
-            "ISP Identification",
-            "Skipped (traceroute unavailable)",
-        ),
+        Err(_) => DiagnosticCheck::pass("ISP Identification", "Skipped (traceroute unavailable)"),
     }
 }

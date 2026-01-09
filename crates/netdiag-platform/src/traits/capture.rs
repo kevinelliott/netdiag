@@ -81,7 +81,7 @@ pub trait CaptureProviderExt: CaptureProvider {
         while start.elapsed() < duration {
             match tokio::time::timeout(std::time::Duration::from_millis(100), rx.recv()).await {
                 Ok(Some(packet)) => packets.push(packet),
-                Ok(None) => break, // Channel closed
+                Ok(None) => break,  // Channel closed
                 Err(_) => continue, // Timeout, continue collecting
             }
         }

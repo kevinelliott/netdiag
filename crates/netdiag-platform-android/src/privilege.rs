@@ -54,12 +54,12 @@ impl PrivilegeProvider for AndroidPrivilegeProvider {
             Capability::Traceroute => true,
 
             // These require special permissions or root
-            Capability::RawSocket => false, // Requires root
+            Capability::RawSocket => false,     // Requires root
             Capability::PacketCapture => false, // Requires root
-            Capability::NetworkWrite => false, // Limited
-            Capability::WifiScan => false, // Requires ACCESS_FINE_LOCATION
-            Capability::WifiConnect => false, // Requires special permissions
-            Capability::SystemModify => false, // Requires root
+            Capability::NetworkWrite => false,  // Limited
+            Capability::WifiScan => false,      // Requires ACCESS_FINE_LOCATION
+            Capability::WifiConnect => false,   // Requires special permissions
+            Capability::SystemModify => false,  // Requires root
             Capability::ServiceManage => false, // Not available to apps
         }
     }

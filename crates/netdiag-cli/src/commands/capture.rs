@@ -5,9 +5,7 @@ use color_eyre::eyre::Result;
 use comfy_table::{presets::UTF8_FULL, Table};
 use console::style;
 use indicatif::{ProgressBar, ProgressStyle};
-use netdiag_capture::{
-    list_devices, CaptureConfig, CaptureFilter, PacketCapture, Protocol,
-};
+use netdiag_capture::{list_devices, CaptureConfig, CaptureFilter, PacketCapture, Protocol};
 use std::time::Duration;
 
 /// Run the capture command.
@@ -46,7 +44,10 @@ pub async fn run(args: CaptureArgs) -> Result<()> {
                 CaptureConfig::for_device(&dev.name)
             }
             Err(e) => {
-                eprintln!("{}", style(format!("Failed to find default device: {}", e)).red());
+                eprintln!(
+                    "{}",
+                    style(format!("Failed to find default device: {}", e)).red()
+                );
                 return Ok(());
             }
         }
@@ -274,7 +275,11 @@ fn list_interfaces() -> Result<()> {
                     style("DISABLED").red().to_string()
                 };
 
-                let loopback = if device.is_loopback { " (loopback)" } else { "" };
+                let loopback = if device.is_loopback {
+                    " (loopback)"
+                } else {
+                    ""
+                };
 
                 let addresses = if device.addresses.is_empty() {
                     "-".to_string()

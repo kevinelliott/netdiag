@@ -101,7 +101,10 @@ impl Ipv4Subnet {
     /// Creates a new IPv4 subnet.
     #[must_use]
     pub const fn new(network: Ipv4Addr, prefix_len: u8) -> Self {
-        Self { network, prefix_len }
+        Self {
+            network,
+            prefix_len,
+        }
     }
 
     /// Returns the subnet mask.
@@ -146,7 +149,10 @@ impl Ipv6Subnet {
     /// Creates a new IPv6 subnet.
     #[must_use]
     pub const fn new(network: Ipv6Addr, prefix_len: u8) -> Self {
-        Self { network, prefix_len }
+        Self {
+            network,
+            prefix_len,
+        }
     }
 }
 

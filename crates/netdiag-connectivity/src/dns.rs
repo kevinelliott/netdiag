@@ -54,10 +54,8 @@ pub struct DnsResolver {
 impl DnsResolver {
     /// Creates a new DNS resolver with system configuration.
     pub fn new() -> Result<Self> {
-        let resolver = TokioAsyncResolver::tokio(
-            ResolverConfig::default(),
-            ResolverOpts::default(),
-        );
+        let resolver =
+            TokioAsyncResolver::tokio(ResolverConfig::default(), ResolverOpts::default());
 
         Ok(Self { resolver })
     }
@@ -157,10 +155,7 @@ mod tests {
 
         assert!(result.success);
         assert_eq!(result.addresses.len(), 1);
-        assert_eq!(
-            result.addresses[0],
-            "8.8.8.8".parse::<IpAddr>().unwrap()
-        );
+        assert_eq!(result.addresses[0], "8.8.8.8".parse::<IpAddr>().unwrap());
     }
 
     #[tokio::test]

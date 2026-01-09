@@ -123,11 +123,7 @@ async fn run_scan(providers: &PlatformProviders) -> Result<()> {
 
         println!(
             "{:<25} {:>8} {:>8} {:>12} {:>12}",
-            ssid_styled,
-            signal_colored,
-            ap.channel.number,
-            ap.security,
-            standard_display
+            ssid_styled, signal_colored, ap.channel.number, ap.security, standard_display
         );
     }
 
@@ -506,7 +502,10 @@ async fn run_channels(providers: &PlatformProviders) -> Result<()> {
 }
 
 async fn run_interference(providers: &PlatformProviders) -> Result<()> {
-    println!("{}", style("WiFi Interference Analysis").bold().underlined());
+    println!(
+        "{}",
+        style("WiFi Interference Analysis").bold().underlined()
+    );
     println!();
 
     if !providers.wifi.is_available() {
@@ -591,7 +590,11 @@ async fn run_interference(providers: &PlatformProviders) -> Result<()> {
 
     // Get channel utilization for current channel
     let current_channel = connection.access_point.channel;
-    match providers.wifi.get_channel_utilization(current_channel).await {
+    match providers
+        .wifi
+        .get_channel_utilization(current_channel)
+        .await
+    {
         Ok(util) => {
             println!();
             println!("{}", style("Channel Analysis:").bold());
@@ -603,11 +606,7 @@ async fn run_interference(providers: &PlatformProviders) -> Result<()> {
                 InterferenceLevel::Severe => style("Severe").red().bold(),
             };
 
-            println!(
-                "  {} {}",
-                style("Interference level:").bold(),
-                level_style
-            );
+            println!("  {} {}", style("Interference level:").bold(), level_style);
             println!(
                 "  {} {}",
                 style("Networks on channel:").bold(),
@@ -646,12 +645,7 @@ async fn run_interference(providers: &PlatformProviders) -> Result<()> {
                             current_channel.number
                         );
                         for ap in same_channel.iter().take(5) {
-                            println!(
-                                "  {} {} ({} dBm)",
-                                style("  -").dim(),
-                                ap.ssid,
-                                ap.rssi
-                            );
+                            println!("  {} {} ({} dBm)", style("  -").dim(), ap.ssid, ap.rssi);
                         }
                         if same_channel.len() > 5 {
                             println!(

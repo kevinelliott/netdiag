@@ -298,7 +298,7 @@ impl WifiProvider for LinuxWifiProvider {
                     interfaces.push(WifiInterface {
                         name: iface.clone(),
                         mac_address: mac,
-                        is_up: true, // Would need additional check
+                        is_up: true,                 // Would need additional check
                         supports_monitor_mode: true, // Most Linux WiFi interfaces do
                         supported_bands: vec![FrequencyBand::Band2_4GHz, FrequencyBand::Band5GHz],
                     });
@@ -326,7 +326,14 @@ impl WifiProvider for LinuxWifiProvider {
 
         // Fallback: try nmcli
         let output = Command::new("nmcli")
-            .args(["-t", "-f", "BSSID,SSID,FREQ,SIGNAL,SECURITY", "device", "wifi", "list"])
+            .args([
+                "-t",
+                "-f",
+                "BSSID,SSID,FREQ,SIGNAL,SECURITY",
+                "device",
+                "wifi",
+                "list",
+            ])
             .output()
             .map_err(|e| Error::platform("nmcli wifi list", &e.to_string()))?;
 
@@ -415,12 +422,9 @@ impl WifiProvider for LinuxWifiProvider {
             let line = line.trim();
 
             if line.starts_with("Connected to ") {
-                bssid = line.strip_prefix("Connected to ").map(|s| {
-                    s.split_whitespace()
-                        .next()
-                        .unwrap_or("")
-                        .to_uppercase()
-                });
+                bssid = line
+                    .strip_prefix("Connected to ")
+                    .map(|s| s.split_whitespace().next().unwrap_or("").to_uppercase());
             } else if line.starts_with("SSID: ") {
                 ssid = line.strip_prefix("SSID: ").map(|s| s.to_string());
             } else if line.starts_with("freq: ") {

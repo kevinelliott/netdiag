@@ -67,7 +67,11 @@ fn draw_tabs(app: &App, frame: &mut Frame, area: Rect) {
             Block::default()
                 .borders(Borders::ALL)
                 .title(" netdiag - Network Diagnostics ")
-                .title_style(Style::default().fg(Color::Cyan).add_modifier(Modifier::BOLD)),
+                .title_style(
+                    Style::default()
+                        .fg(Color::Cyan)
+                        .add_modifier(Modifier::BOLD),
+                ),
         )
         .select(app.current_tab.index())
         .highlight_style(Style::default().bg(Color::DarkGray));
@@ -113,7 +117,11 @@ fn draw_dashboard(app: &App, frame: &mut Frame, area: Rect) {
         Line::from(vec![
             Span::styled("Interfaces: ", Style::default().fg(Color::Gray)),
             Span::styled(
-                format!("{} total, {} active", app.interfaces.len(), active_interfaces),
+                format!(
+                    "{} total, {} active",
+                    app.interfaces.len(),
+                    active_interfaces
+                ),
                 Style::default().fg(Color::White),
             ),
         ]),
@@ -141,10 +149,7 @@ fn draw_dashboard(app: &App, frame: &mut Frame, area: Rect) {
     // WiFi summary
     let wifi_lines = if let Some(ref wifi) = app.wifi_info {
         let signal_color = wifi.rssi.map(App::signal_color).unwrap_or(Color::Gray);
-        let signal_quality = wifi
-            .rssi
-            .map(App::signal_quality)
-            .unwrap_or("Unknown");
+        let signal_quality = wifi.rssi.map(App::signal_quality).unwrap_or("Unknown");
 
         vec![
             Line::from(vec![
@@ -174,7 +179,9 @@ fn draw_dashboard(app: &App, frame: &mut Frame, area: Rect) {
                 Span::styled(
                     format!(
                         "{} ({})",
-                        wifi.channel.map(|c| c.to_string()).unwrap_or("--".to_string()),
+                        wifi.channel
+                            .map(|c| c.to_string())
+                            .unwrap_or("--".to_string()),
                         wifi.band.as_deref().unwrap_or("--")
                     ),
                     Style::default().fg(Color::White),
@@ -205,8 +212,14 @@ fn draw_dashboard(app: &App, frame: &mut Frame, area: Rect) {
     let actions = vec![
         Line::from(Span::styled("Quick Actions:", Style::default().bold())),
         Line::from(""),
-        Line::from(Span::styled("  r - Refresh all", Style::default().fg(Color::Gray))),
-        Line::from(Span::styled("  1-6 - Switch tabs", Style::default().fg(Color::Gray))),
+        Line::from(Span::styled(
+            "  r - Refresh all",
+            Style::default().fg(Color::Gray),
+        )),
+        Line::from(Span::styled(
+            "  1-6 - Switch tabs",
+            Style::default().fg(Color::Gray),
+        )),
         Line::from(Span::styled("  q - Quit", Style::default().fg(Color::Gray))),
     ];
 
@@ -228,12 +241,13 @@ fn draw_dashboard(app: &App, frame: &mut Frame, area: Rect) {
             let default_marker = if iface.is_default { "*" } else { "" };
 
             Row::new(vec![
-                Cell::from(format!("{}{}", iface.name, default_marker))
-                    .style(Style::default().fg(if iface.is_default {
+                Cell::from(format!("{}{}", iface.name, default_marker)).style(Style::default().fg(
+                    if iface.is_default {
                         Color::Cyan
                     } else {
                         Color::White
-                    })),
+                    },
+                )),
                 Cell::from("UP").style(Style::default().fg(Color::Green)),
                 Cell::from(iface.ipv4.first().cloned().unwrap_or_default()),
             ])
@@ -249,8 +263,11 @@ fn draw_dashboard(app: &App, frame: &mut Frame, area: Rect) {
         ],
     )
     .header(
-        Row::new(vec!["Interface", "Status", "IPv4"])
-            .style(Style::default().add_modifier(Modifier::BOLD).fg(Color::Cyan)),
+        Row::new(vec!["Interface", "Status", "IPv4"]).style(
+            Style::default()
+                .add_modifier(Modifier::BOLD)
+                .fg(Color::Cyan),
+        ),
     )
     .block(
         Block::default()
@@ -401,10 +418,10 @@ fn draw_ping(app: &App, frame: &mut Frame, area: Rect) {
     let chunks = Layout::default()
         .direction(Direction::Vertical)
         .constraints([
-            Constraint::Length(3),  // Input
-            Constraint::Length(5),  // Stats
-            Constraint::Length(5),  // Sparkline
-            Constraint::Min(0),     // Results
+            Constraint::Length(3), // Input
+            Constraint::Length(5), // Stats
+            Constraint::Length(5), // Sparkline
+            Constraint::Min(0),    // Results
         ])
         .split(area);
 
@@ -423,7 +440,11 @@ fn draw_ping(app: &App, frame: &mut Frame, area: Rect) {
         Style::default()
     };
 
-    let status_indicator = if app.ping_running { " [Running...]" } else { "" };
+    let status_indicator = if app.ping_running {
+        " [Running...]"
+    } else {
+        ""
+    };
 
     let input = Paragraph::new(format!("{}{}", input_text, status_indicator))
         .style(input_style)
@@ -468,9 +489,18 @@ fn draw_ping(app: &App, frame: &mut Frame, area: Rect) {
                 Span::styled(
                     format!(
                         "min={:.1}ms avg={:.1}ms max={:.1}ms",
-                        stats.min_rtt.map(|d| d.as_secs_f64() * 1000.0).unwrap_or(0.0),
-                        stats.avg_rtt.map(|d| d.as_secs_f64() * 1000.0).unwrap_or(0.0),
-                        stats.max_rtt.map(|d| d.as_secs_f64() * 1000.0).unwrap_or(0.0),
+                        stats
+                            .min_rtt
+                            .map(|d| d.as_secs_f64() * 1000.0)
+                            .unwrap_or(0.0),
+                        stats
+                            .avg_rtt
+                            .map(|d| d.as_secs_f64() * 1000.0)
+                            .unwrap_or(0.0),
+                        stats
+                            .max_rtt
+                            .map(|d| d.as_secs_f64() * 1000.0)
+                            .unwrap_or(0.0),
                     ),
                     Style::default().fg(Color::Cyan),
                 ),
@@ -493,11 +523,7 @@ fn draw_ping(app: &App, frame: &mut Frame, area: Rect) {
 
     // RTT Sparkline
     if !app.ping_rtt_history.is_empty() {
-        let data: Vec<u64> = app
-            .ping_rtt_history
-            .iter()
-            .map(|&ms| ms as u64)
-            .collect();
+        let data: Vec<u64> = app.ping_rtt_history.iter().map(|&ms| ms as u64).collect();
 
         let sparkline = Sparkline::default()
             .block(
@@ -642,8 +668,11 @@ fn draw_traceroute(app: &App, frame: &mut Frame, area: Rect) {
             ],
         )
         .header(
-            Row::new(vec!["Hop", "IP Address", "Hostname", "RTT"])
-                .style(Style::default().add_modifier(Modifier::BOLD).fg(Color::Cyan)),
+            Row::new(vec!["Hop", "IP Address", "Hostname", "RTT"]).style(
+                Style::default()
+                    .add_modifier(Modifier::BOLD)
+                    .fg(Color::Cyan),
+            ),
         )
         .block(
             Block::default()
@@ -678,7 +707,11 @@ fn draw_dns(app: &App, frame: &mut Frame, area: Rect) {
         Style::default()
     };
 
-    let status_indicator = if app.dns_running { " [Looking up...]" } else { "" };
+    let status_indicator = if app.dns_running {
+        " [Looking up...]"
+    } else {
+        ""
+    };
 
     let input = Paragraph::new(format!("{}{}", input_text, status_indicator))
         .style(input_style)
@@ -692,14 +725,16 @@ fn draw_dns(app: &App, frame: &mut Frame, area: Rect) {
 
     // Results
     if app.dns_results.is_empty() {
-        let help = Paragraph::new("Enter a hostname and press Enter to lookup\n\nResults will show resolved IP addresses")
-            .block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .title(" Results (c to clear) ")
-                    .title_style(Style::default().fg(Color::Cyan)),
-            )
-            .alignment(Alignment::Center);
+        let help = Paragraph::new(
+            "Enter a hostname and press Enter to lookup\n\nResults will show resolved IP addresses",
+        )
+        .block(
+            Block::default()
+                .borders(Borders::ALL)
+                .title(" Results (c to clear) ")
+                .title_style(Style::default().fg(Color::Cyan)),
+        )
+        .alignment(Alignment::Center);
         frame.render_widget(help, chunks[1]);
     } else {
         let mut lines: Vec<Line> = Vec::new();
@@ -829,7 +864,9 @@ fn draw_wifi(app: &App, frame: &mut Frame, area: Rect) {
             Line::from(vec![
                 Span::styled("Channel: ", Style::default().fg(Color::Gray)),
                 Span::styled(
-                    wifi.channel.map(|c| c.to_string()).unwrap_or("--".to_string()),
+                    wifi.channel
+                        .map(|c| c.to_string())
+                        .unwrap_or("--".to_string()),
                     Style::default().fg(Color::White),
                 ),
             ]),
@@ -843,7 +880,9 @@ fn draw_wifi(app: &App, frame: &mut Frame, area: Rect) {
             Line::from(vec![
                 Span::styled("TX Rate: ", Style::default().fg(Color::Gray)),
                 Span::styled(
-                    wifi.tx_rate.map(|r| format!("{:.0} Mbps", r)).unwrap_or("--".to_string()),
+                    wifi.tx_rate
+                        .map(|r| format!("{:.0} Mbps", r))
+                        .unwrap_or("--".to_string()),
                     Style::default().fg(Color::White),
                 ),
             ]),
@@ -859,8 +898,14 @@ fn draw_wifi(app: &App, frame: &mut Frame, area: Rect) {
 
         // Help
         let help_lines = vec![
-            Line::from(Span::styled("Press 'r' to refresh", Style::default().fg(Color::Gray))),
-            Line::from(Span::styled("Press 'Enter' to scan", Style::default().fg(Color::Gray))),
+            Line::from(Span::styled(
+                "Press 'r' to refresh",
+                Style::default().fg(Color::Gray),
+            )),
+            Line::from(Span::styled(
+                "Press 'Enter' to scan",
+                Style::default().fg(Color::Gray),
+            )),
         ];
 
         let help_block = Paragraph::new(help_lines).block(
@@ -892,7 +937,10 @@ fn draw_wifi(app: &App, frame: &mut Frame, area: Rect) {
                 .block(
                     Block::default()
                         .borders(Borders::ALL)
-                        .title(format!(" Signal Strength: {} dBm ({}) ", rssi, signal_quality))
+                        .title(format!(
+                            " Signal Strength: {} dBm ({}) ",
+                            rssi, signal_quality
+                        ))
                         .title_style(Style::default().fg(Color::Cyan)),
                 )
                 .gauge_style(Style::default().fg(signal_color))
@@ -947,9 +995,18 @@ fn draw_wifi(app: &App, frame: &mut Frame, area: Rect) {
                     "SNR Guidelines:",
                     Style::default().fg(Color::Gray).bold(),
                 )),
-                Line::from(Span::styled("  40+ dB: Excellent", Style::default().fg(Color::Green))),
-                Line::from(Span::styled("  25-40: Good", Style::default().fg(Color::LightGreen))),
-                Line::from(Span::styled("  15-25: Fair", Style::default().fg(Color::Yellow))),
+                Line::from(Span::styled(
+                    "  40+ dB: Excellent",
+                    Style::default().fg(Color::Green),
+                )),
+                Line::from(Span::styled(
+                    "  25-40: Good",
+                    Style::default().fg(Color::LightGreen),
+                )),
+                Line::from(Span::styled(
+                    "  15-25: Fair",
+                    Style::default().fg(Color::Yellow),
+                )),
                 Line::from(Span::styled("  <15: Poor", Style::default().fg(Color::Red))),
             ]
         } else {
@@ -1014,15 +1071,24 @@ fn draw_footer(app: &App, frame: &mut Frame, area: Rect) {
     let status = app.status_message.as_deref().unwrap_or(default_help);
 
     let mode_indicator = if app.input_mode {
-        Span::styled(" [INPUT] ", Style::default().fg(Color::Black).bg(Color::Yellow))
+        Span::styled(
+            " [INPUT] ",
+            Style::default().fg(Color::Black).bg(Color::Yellow),
+        )
     } else if app.ping_running || app.traceroute_running || app.dns_running || app.wifi_running {
-        Span::styled(" [BUSY] ", Style::default().fg(Color::Black).bg(Color::Cyan))
+        Span::styled(
+            " [BUSY] ",
+            Style::default().fg(Color::Black).bg(Color::Cyan),
+        )
     } else {
         Span::raw("")
     };
 
     let footer_text = if app.status_message.is_some() {
-        Line::from(vec![mode_indicator, Span::styled(status, Style::default().fg(Color::Yellow))])
+        Line::from(vec![
+            mode_indicator,
+            Span::styled(status, Style::default().fg(Color::Yellow)),
+        ])
     } else {
         Line::from(vec![
             mode_indicator,

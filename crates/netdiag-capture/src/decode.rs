@@ -163,13 +163,27 @@ impl TcpFlags {
     /// Format flags as string.
     pub fn to_string_short(&self) -> String {
         let mut s = String::new();
-        if self.syn { s.push('S'); }
-        if self.ack { s.push('A'); }
-        if self.fin { s.push('F'); }
-        if self.rst { s.push('R'); }
-        if self.psh { s.push('P'); }
-        if self.urg { s.push('U'); }
-        if s.is_empty() { s.push('.'); }
+        if self.syn {
+            s.push('S');
+        }
+        if self.ack {
+            s.push('A');
+        }
+        if self.fin {
+            s.push('F');
+        }
+        if self.rst {
+            s.push('R');
+        }
+        if self.psh {
+            s.push('P');
+        }
+        if self.urg {
+            s.push('U');
+        }
+        if s.is_empty() {
+            s.push('.');
+        }
         s
     }
 }
@@ -253,8 +267,7 @@ impl ProtocolDecoder {
                         etherparse::NetSlice::Ipv4(ipv4) => {
                             let header = ipv4.header();
                             packet.src_ip = Some(IpAddr::V4(Ipv4Addr::from(header.source())));
-                            packet.dst_ip =
-                                Some(IpAddr::V4(Ipv4Addr::from(header.destination())));
+                            packet.dst_ip = Some(IpAddr::V4(Ipv4Addr::from(header.destination())));
                             packet.ip_protocol = Some(header.protocol().0);
                             packet.ttl = Some(header.ttl());
                             packet.protocol = Protocol::Ipv4;
@@ -262,8 +275,7 @@ impl ProtocolDecoder {
                         etherparse::NetSlice::Ipv6(ipv6) => {
                             let header = ipv6.header();
                             packet.src_ip = Some(IpAddr::V6(Ipv6Addr::from(header.source())));
-                            packet.dst_ip =
-                                Some(IpAddr::V6(Ipv6Addr::from(header.destination())));
+                            packet.dst_ip = Some(IpAddr::V6(Ipv6Addr::from(header.destination())));
                             packet.ip_protocol = Some(header.next_header().0);
                             packet.ttl = Some(header.hop_limit());
                             packet.protocol = Protocol::Ipv6;
@@ -287,12 +299,14 @@ impl ProtocolDecoder {
                                 ece: tcp.ece(),
                                 cwr: tcp.cwr(),
                             });
-                            packet.protocol = self.identify_tcp_protocol(tcp.source_port(), tcp.destination_port());
+                            packet.protocol = self
+                                .identify_tcp_protocol(tcp.source_port(), tcp.destination_port());
                         }
                         etherparse::TransportSlice::Udp(udp) => {
                             packet.src_port = Some(udp.source_port());
                             packet.dst_port = Some(udp.destination_port());
-                            packet.protocol = self.identify_udp_protocol(udp.source_port(), udp.destination_port());
+                            packet.protocol = self
+                                .identify_udp_protocol(udp.source_port(), udp.destination_port());
                         }
                         etherparse::TransportSlice::Icmpv4(icmp) => {
                             packet.icmp_type = Some(icmp.type_u8());
@@ -363,23 +377,32 @@ fn format_mac(bytes: &[u8; 6]) -> String {
 impl DecodedPacket {
     /// Format a one-line summary.
     pub fn summary(&self) -> String {
-        let src = self.src_ip.map(|ip| {
-            if let Some(port) = self.src_port {
-                format!("{}:{}", ip, port)
-            } else {
-                ip.to_string()
-            }
-        }).unwrap_or_else(|| "?".to_string());
+        let src = self
+            .src_ip
+            .map(|ip| {
+                if let Some(port) = self.src_port {
+                    format!("{}:{}", ip, port)
+                } else {
+                    ip.to_string()
+                }
+            })
+            .unwrap_or_else(|| "?".to_string());
 
-        let dst = self.dst_ip.map(|ip| {
-            if let Some(port) = self.dst_port {
-                format!("{}:{}", ip, port)
-            } else {
-                ip.to_string()
-            }
-        }).unwrap_or_else(|| "?".to_string());
+        let dst = self
+            .dst_ip
+            .map(|ip| {
+                if let Some(port) = self.dst_port {
+                    format!("{}:{}", ip, port)
+                } else {
+                    ip.to_string()
+                }
+            })
+            .unwrap_or_else(|| "?".to_string());
 
-        let flags = self.tcp_flags.map(|f| f.to_string_short()).unwrap_or_default();
+        let flags = self
+            .tcp_flags
+            .map(|f| f.to_string_short())
+            .unwrap_or_default();
 
         format!(
             "{} {} -> {} {} len={}{}",

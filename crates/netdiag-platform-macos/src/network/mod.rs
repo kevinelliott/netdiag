@@ -5,9 +5,9 @@ use netdiag_platform::NetworkProvider;
 use netdiag_types::{
     error::{Error, Result},
     network::{
-        DhcpInfo, DnsServer, DnsProtocol, DnsSource, Gateway, InterfaceFlags, InterfaceType,
-        IpSubnet, Ipv4Info, Ipv4Subnet, Ipv6Info, Ipv6Scope, IspInfo, MacAddress,
-        NetworkInterface, Route, RouteFlags, RouteType,
+        DhcpInfo, DnsProtocol, DnsServer, DnsSource, Gateway, InterfaceFlags, InterfaceType,
+        IpSubnet, Ipv4Info, Ipv4Subnet, Ipv6Info, Ipv6Scope, IspInfo, MacAddress, NetworkInterface,
+        Route, RouteFlags, RouteType,
     },
 };
 use std::net::IpAddr;
@@ -33,35 +33,39 @@ impl MacosNetworkProvider {
     fn convert_interface(iface: &netdev::Interface) -> NetworkInterface {
         let interface_type = Self::detect_interface_type(&iface.name);
 
-        let mac_address = iface.mac_addr.map(|mac| {
-            MacAddress::new(mac.octets())
-        });
+        let mac_address = iface.mac_addr.map(|mac| MacAddress::new(mac.octets()));
 
-        let ipv4_addresses: Vec<Ipv4Info> = iface.ipv4.iter().map(|net| {
-            Ipv4Info {
+        let ipv4_addresses: Vec<Ipv4Info> = iface
+            .ipv4
+            .iter()
+            .map(|net| Ipv4Info {
                 address: net.addr(),
                 subnet: IpSubnet::V4(Ipv4Subnet::new(net.addr(), net.prefix_len())),
                 broadcast: Some(net.broadcast()),
-            }
-        }).collect();
+            })
+            .collect();
 
-        let ipv6_addresses: Vec<Ipv6Info> = iface.ipv6.iter().map(|net| {
-            let addr = net.addr();
-            let scope = if addr.is_loopback() {
-                Ipv6Scope::Loopback
-            } else if addr.segments()[0] == 0xfe80 {
-                Ipv6Scope::LinkLocal
-            } else if addr.segments()[0] & 0xfe00 == 0xfc00 {
-                Ipv6Scope::UniqueLocal
-            } else {
-                Ipv6Scope::Global
-            };
-            Ipv6Info {
-                address: addr,
-                prefix_len: net.prefix_len(),
-                scope,
-            }
-        }).collect();
+        let ipv6_addresses: Vec<Ipv6Info> = iface
+            .ipv6
+            .iter()
+            .map(|net| {
+                let addr = net.addr();
+                let scope = if addr.is_loopback() {
+                    Ipv6Scope::Loopback
+                } else if addr.segments()[0] == 0xfe80 {
+                    Ipv6Scope::LinkLocal
+                } else if addr.segments()[0] & 0xfe00 == 0xfc00 {
+                    Ipv6Scope::UniqueLocal
+                } else {
+                    Ipv6Scope::Global
+                };
+                Ipv6Info {
+                    address: addr,
+                    prefix_len: net.prefix_len(),
+                    scope,
+                }
+            })
+            .collect();
 
         let flags = InterfaceFlags {
             up: iface.is_up(),
@@ -158,24 +162,38 @@ impl MacosNetworkProvider {
                 let octets = v4.octets();
                 match octets {
                     [8, 8, 8, 8] => (Some("Google DNS".to_string()), Some("Google".to_string())),
-                    [8, 8, 4, 4] => (Some("Google DNS Secondary".to_string()), Some("Google".to_string())),
-                    [1, 1, 1, 1] => (Some("Cloudflare DNS".to_string()), Some("Cloudflare".to_string())),
-                    [1, 0, 0, 1] => (Some("Cloudflare DNS Secondary".to_string()), Some("Cloudflare".to_string())),
+                    [8, 8, 4, 4] => (
+                        Some("Google DNS Secondary".to_string()),
+                        Some("Google".to_string()),
+                    ),
+                    [1, 1, 1, 1] => (
+                        Some("Cloudflare DNS".to_string()),
+                        Some("Cloudflare".to_string()),
+                    ),
+                    [1, 0, 0, 1] => (
+                        Some("Cloudflare DNS Secondary".to_string()),
+                        Some("Cloudflare".to_string()),
+                    ),
                     [9, 9, 9, 9] => (Some("Quad9 DNS".to_string()), Some("Quad9".to_string())),
                     [208, 67, 222, 222] => (Some("OpenDNS".to_string()), Some("Cisco".to_string())),
-                    [208, 67, 220, 220] => (Some("OpenDNS Secondary".to_string()), Some("Cisco".to_string())),
+                    [208, 67, 220, 220] => (
+                        Some("OpenDNS Secondary".to_string()),
+                        Some("Cisco".to_string()),
+                    ),
                     _ => (None, None),
                 }
             }
             IpAddr::V6(v6) => {
                 let segments = v6.segments();
                 match segments {
-                    [0x2001, 0x4860, 0x4860, _, _, _, _, 0x8888] => {
-                        (Some("Google DNS IPv6".to_string()), Some("Google".to_string()))
-                    }
-                    [0x2606, 0x4700, 0x4700, _, _, _, _, 0x1111] => {
-                        (Some("Cloudflare DNS IPv6".to_string()), Some("Cloudflare".to_string()))
-                    }
+                    [0x2001, 0x4860, 0x4860, _, _, _, _, 0x8888] => (
+                        Some("Google DNS IPv6".to_string()),
+                        Some("Google".to_string()),
+                    ),
+                    [0x2606, 0x4700, 0x4700, _, _, _, _, 0x1111] => (
+                        Some("Cloudflare DNS IPv6".to_string()),
+                        Some("Cloudflare".to_string()),
+                    ),
                     _ => (None, None),
                 }
             }
@@ -232,10 +250,8 @@ impl NetworkProvider for MacosNetworkProvider {
 
         // Get interfaces from netdev
         let interfaces = netdev::get_interfaces();
-        let mut result: Vec<NetworkInterface> = interfaces
-            .iter()
-            .map(Self::convert_interface)
-            .collect();
+        let mut result: Vec<NetworkInterface> =
+            interfaces.iter().map(Self::convert_interface).collect();
 
         // Mark default interface
         if let Ok(Some(gateway)) = self.get_gateway_from_netstat() {
@@ -303,7 +319,9 @@ impl NetworkProvider for MacosNetworkProvider {
                 let destination = if parts[0] == "default" {
                     None
                 } else {
-                    parts[0].split('/').next()
+                    parts[0]
+                        .split('/')
+                        .next()
                         .and_then(|s| s.parse::<IpAddr>().ok())
                 };
 

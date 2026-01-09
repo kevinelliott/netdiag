@@ -10,7 +10,7 @@ use netdiag_types::{
     error::Result,
     wifi::{
         AccessPoint, AccessPointCapabilities, Bssid, Channel, ChannelUtilization, SecurityType,
-        Ssid, WifiBand, WifiAuthState, WifiConnection, WifiConnectionState, WifiStandard,
+        Ssid, WifiAuthState, WifiBand, WifiConnection, WifiConnectionState, WifiStandard,
     },
     Error,
 };
@@ -108,7 +108,7 @@ impl IosWifiProvider {
             let access_point = AccessPoint {
                 ssid: Ssid::new(&ssid),
                 bssid: bssid.unwrap_or_else(|| Bssid::new([0; 6])),
-                rssi: -50, // Not available from CNCopyCurrentNetworkInfo
+                rssi: -50,          // Not available from CNCopyCurrentNetworkInfo
                 signal_quality: 75, // Estimated
                 channel: Channel::from_number(0, WifiBand::Band2_4GHz),
                 security: SecurityType::open(), // Not easily available

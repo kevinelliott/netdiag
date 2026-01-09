@@ -1,14 +1,14 @@
 //! Repository implementations for data access.
 
+mod dns;
 mod ping;
 mod session;
 mod traceroute;
-mod dns;
 
+pub use dns::DnsRepository;
 pub use ping::PingRepository;
 pub use session::SessionRepository;
 pub use traceroute::TracerouteRepository;
-pub use dns::DnsRepository;
 
 use crate::database::Database;
 

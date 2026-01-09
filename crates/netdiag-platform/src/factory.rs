@@ -53,19 +53,28 @@ struct StubNetworkProvider;
 
 #[async_trait::async_trait]
 impl NetworkProvider for StubNetworkProvider {
-    async fn list_interfaces(&self) -> netdiag_types::error::Result<Vec<netdiag_types::network::NetworkInterface>> {
+    async fn list_interfaces(
+        &self,
+    ) -> netdiag_types::error::Result<Vec<netdiag_types::network::NetworkInterface>> {
         Ok(Vec::new())
     }
 
-    async fn get_interface(&self, _name: &str) -> netdiag_types::error::Result<Option<netdiag_types::network::NetworkInterface>> {
+    async fn get_interface(
+        &self,
+        _name: &str,
+    ) -> netdiag_types::error::Result<Option<netdiag_types::network::NetworkInterface>> {
         Ok(None)
     }
 
-    async fn get_default_interface(&self) -> netdiag_types::error::Result<Option<netdiag_types::network::NetworkInterface>> {
+    async fn get_default_interface(
+        &self,
+    ) -> netdiag_types::error::Result<Option<netdiag_types::network::NetworkInterface>> {
         Ok(None)
     }
 
-    async fn get_default_route(&self) -> netdiag_types::error::Result<Option<netdiag_types::network::Route>> {
+    async fn get_default_route(
+        &self,
+    ) -> netdiag_types::error::Result<Option<netdiag_types::network::Route>> {
         Ok(None)
     }
 
@@ -73,19 +82,28 @@ impl NetworkProvider for StubNetworkProvider {
         Ok(Vec::new())
     }
 
-    async fn get_default_gateway(&self) -> netdiag_types::error::Result<Option<netdiag_types::network::Gateway>> {
+    async fn get_default_gateway(
+        &self,
+    ) -> netdiag_types::error::Result<Option<netdiag_types::network::Gateway>> {
         Ok(None)
     }
 
-    async fn get_dns_servers(&self) -> netdiag_types::error::Result<Vec<netdiag_types::network::DnsServer>> {
+    async fn get_dns_servers(
+        &self,
+    ) -> netdiag_types::error::Result<Vec<netdiag_types::network::DnsServer>> {
         Ok(Vec::new())
     }
 
-    async fn get_dhcp_info(&self, _interface: &str) -> netdiag_types::error::Result<Option<netdiag_types::network::DhcpInfo>> {
+    async fn get_dhcp_info(
+        &self,
+        _interface: &str,
+    ) -> netdiag_types::error::Result<Option<netdiag_types::network::DhcpInfo>> {
         Ok(None)
     }
 
-    async fn detect_isp(&self) -> netdiag_types::error::Result<Option<netdiag_types::network::IspInfo>> {
+    async fn detect_isp(
+        &self,
+    ) -> netdiag_types::error::Result<Option<netdiag_types::network::IspInfo>> {
         Ok(None)
     }
 
@@ -106,19 +124,30 @@ impl WifiProvider for StubWifiProvider {
         false
     }
 
-    async fn list_wifi_interfaces(&self) -> netdiag_types::error::Result<Vec<crate::traits::WifiInterface>> {
+    async fn list_wifi_interfaces(
+        &self,
+    ) -> netdiag_types::error::Result<Vec<crate::traits::WifiInterface>> {
         Ok(Vec::new())
     }
 
-    async fn scan_access_points(&self, _interface: &str) -> netdiag_types::error::Result<Vec<netdiag_types::wifi::AccessPoint>> {
+    async fn scan_access_points(
+        &self,
+        _interface: &str,
+    ) -> netdiag_types::error::Result<Vec<netdiag_types::wifi::AccessPoint>> {
         Err(netdiag_types::Error::unsupported("WiFi scanning", "stub"))
     }
 
-    async fn get_current_connection(&self, _interface: &str) -> netdiag_types::error::Result<Option<netdiag_types::wifi::WifiConnection>> {
+    async fn get_current_connection(
+        &self,
+        _interface: &str,
+    ) -> netdiag_types::error::Result<Option<netdiag_types::wifi::WifiConnection>> {
         Ok(None)
     }
 
-    async fn get_signal_strength(&self, _interface: &str) -> netdiag_types::error::Result<Option<i32>> {
+    async fn get_signal_strength(
+        &self,
+        _interface: &str,
+    ) -> netdiag_types::error::Result<Option<i32>> {
         Ok(None)
     }
 
@@ -126,11 +155,20 @@ impl WifiProvider for StubWifiProvider {
         Ok(None)
     }
 
-    async fn get_channel_utilization(&self, _channel: netdiag_types::wifi::Channel) -> netdiag_types::error::Result<netdiag_types::wifi::ChannelUtilization> {
-        Err(netdiag_types::Error::unsupported("Channel utilization", "stub"))
+    async fn get_channel_utilization(
+        &self,
+        _channel: netdiag_types::wifi::Channel,
+    ) -> netdiag_types::error::Result<netdiag_types::wifi::ChannelUtilization> {
+        Err(netdiag_types::Error::unsupported(
+            "Channel utilization",
+            "stub",
+        ))
     }
 
-    async fn analyze_channels(&self, _interface: &str) -> netdiag_types::error::Result<Vec<netdiag_types::wifi::ChannelUtilization>> {
+    async fn analyze_channels(
+        &self,
+        _interface: &str,
+    ) -> netdiag_types::error::Result<Vec<netdiag_types::wifi::ChannelUtilization>> {
         Ok(Vec::new())
     }
 
@@ -142,7 +180,10 @@ impl WifiProvider for StubWifiProvider {
         Ok(())
     }
 
-    async fn get_supported_standards(&self, _interface: &str) -> netdiag_types::error::Result<Vec<netdiag_types::wifi::WifiStandard>> {
+    async fn get_supported_standards(
+        &self,
+        _interface: &str,
+    ) -> netdiag_types::error::Result<Vec<netdiag_types::wifi::WifiStandard>> {
         Ok(Vec::new())
     }
 }
@@ -155,7 +196,10 @@ impl PrivilegeProvider for StubPrivilegeProvider {
         netdiag_types::system::PrivilegeLevel::User
     }
 
-    async fn request_elevation(&self, _request: &netdiag_types::system::ElevationRequest) -> netdiag_types::error::Result<bool> {
+    async fn request_elevation(
+        &self,
+        _request: &netdiag_types::system::ElevationRequest,
+    ) -> netdiag_types::error::Result<bool> {
         Ok(false)
     }
 
@@ -180,7 +224,9 @@ impl CaptureProvider for StubCaptureProvider {
         false
     }
 
-    async fn list_capture_interfaces(&self) -> netdiag_types::error::Result<Vec<crate::traits::CaptureInterface>> {
+    async fn list_capture_interfaces(
+        &self,
+    ) -> netdiag_types::error::Result<Vec<crate::traits::CaptureInterface>> {
         Ok(Vec::new())
     }
 
@@ -193,11 +239,17 @@ impl CaptureProvider for StubCaptureProvider {
         Err(netdiag_types::Error::unsupported("Packet capture", "stub"))
     }
 
-    async fn stop_capture(&self, _handle: netdiag_types::capture::CaptureHandle) -> netdiag_types::error::Result<netdiag_types::capture::CaptureStats> {
+    async fn stop_capture(
+        &self,
+        _handle: netdiag_types::capture::CaptureHandle,
+    ) -> netdiag_types::error::Result<netdiag_types::capture::CaptureStats> {
         Err(netdiag_types::Error::unsupported("Packet capture", "stub"))
     }
 
-    async fn get_capture_stats(&self, _handle: netdiag_types::capture::CaptureHandle) -> netdiag_types::error::Result<netdiag_types::capture::CaptureStats> {
+    async fn get_capture_stats(
+        &self,
+        _handle: netdiag_types::capture::CaptureHandle,
+    ) -> netdiag_types::error::Result<netdiag_types::capture::CaptureStats> {
         Err(netdiag_types::Error::unsupported("Packet capture", "stub"))
     }
 
@@ -218,15 +270,23 @@ impl AutofixProvider for StubAutofixProvider {
         false
     }
 
-    async fn create_rollback_point(&self, _description: &str) -> netdiag_types::error::Result<netdiag_types::system::RollbackId> {
+    async fn create_rollback_point(
+        &self,
+        _description: &str,
+    ) -> netdiag_types::error::Result<netdiag_types::system::RollbackId> {
         Err(netdiag_types::Error::unsupported("Autofix", "stub"))
     }
 
-    async fn rollback(&self, _id: &netdiag_types::system::RollbackId) -> netdiag_types::error::Result<()> {
+    async fn rollback(
+        &self,
+        _id: &netdiag_types::system::RollbackId,
+    ) -> netdiag_types::error::Result<()> {
         Err(netdiag_types::Error::unsupported("Autofix", "stub"))
     }
 
-    async fn list_rollback_points(&self) -> netdiag_types::error::Result<Vec<crate::traits::RollbackPoint>> {
+    async fn list_rollback_points(
+        &self,
+    ) -> netdiag_types::error::Result<Vec<crate::traits::RollbackPoint>> {
         Ok(Vec::new())
     }
 
@@ -238,11 +298,19 @@ impl AutofixProvider for StubAutofixProvider {
         Err(netdiag_types::Error::unsupported("Autofix", "stub"))
     }
 
-    async fn set_dns_servers(&self, _interface: &str, _servers: &[std::net::IpAddr]) -> netdiag_types::error::Result<()> {
+    async fn set_dns_servers(
+        &self,
+        _interface: &str,
+        _servers: &[std::net::IpAddr],
+    ) -> netdiag_types::error::Result<()> {
         Err(netdiag_types::Error::unsupported("Autofix", "stub"))
     }
 
-    async fn toggle_interface(&self, _interface: &str, _enable: bool) -> netdiag_types::error::Result<()> {
+    async fn toggle_interface(
+        &self,
+        _interface: &str,
+        _enable: bool,
+    ) -> netdiag_types::error::Result<()> {
         Err(netdiag_types::Error::unsupported("Autofix", "stub"))
     }
 
@@ -258,11 +326,16 @@ impl AutofixProvider for StubAutofixProvider {
         Err(netdiag_types::Error::unsupported("Autofix", "stub"))
     }
 
-    async fn get_available_fixes(&self) -> netdiag_types::error::Result<Vec<crate::traits::AutofixAction>> {
+    async fn get_available_fixes(
+        &self,
+    ) -> netdiag_types::error::Result<Vec<crate::traits::AutofixAction>> {
         Ok(Vec::new())
     }
 
-    async fn apply_fix(&self, _fix: &crate::traits::AutofixAction) -> netdiag_types::error::Result<crate::traits::FixResult> {
+    async fn apply_fix(
+        &self,
+        _fix: &crate::traits::AutofixAction,
+    ) -> netdiag_types::error::Result<crate::traits::FixResult> {
         Err(netdiag_types::Error::unsupported("Autofix", "stub"))
     }
 }
@@ -271,7 +344,9 @@ struct StubSystemInfoProvider;
 
 #[async_trait::async_trait]
 impl SystemInfoProvider for StubSystemInfoProvider {
-    async fn get_system_info(&self) -> netdiag_types::error::Result<netdiag_types::system::SystemInfo> {
+    async fn get_system_info(
+        &self,
+    ) -> netdiag_types::error::Result<netdiag_types::system::SystemInfo> {
         Ok(netdiag_types::system::SystemInfo {
             hostname: "unknown".to_string(),
             os_type: netdiag_types::system::OsType::current(),

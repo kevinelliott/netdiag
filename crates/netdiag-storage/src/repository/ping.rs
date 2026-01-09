@@ -170,13 +170,15 @@ impl PingRepository {
         .fetch_optional(&self.pool)
         .await?;
 
-        Ok(row.map(|(avg_rtt, avg_min, avg_max, avg_loss, count)| PingAverages {
-            avg_rtt_ms: avg_rtt,
-            avg_min_rtt_ms: avg_min,
-            avg_max_rtt_ms: avg_max,
-            avg_loss_percent: avg_loss,
-            sample_count: count as u64,
-        }))
+        Ok(row.map(
+            |(avg_rtt, avg_min, avg_max, avg_loss, count)| PingAverages {
+                avg_rtt_ms: avg_rtt,
+                avg_min_rtt_ms: avg_min,
+                avg_max_rtt_ms: avg_max,
+                avg_loss_percent: avg_loss,
+                sample_count: count as u64,
+            },
+        ))
     }
 
     /// Delete ping result.

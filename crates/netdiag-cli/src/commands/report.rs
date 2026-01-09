@@ -5,8 +5,8 @@ use color_eyre::eyre::Result;
 use console::style;
 use netdiag_connectivity::{DnsResolver, PingConfig, Pinger};
 use netdiag_reports::{
-    DiagnosticReport, DnsSummary, HtmlFormatter, InterfaceSummary, JsonFormatter, MarkdownFormatter,
-    PdfFormatter, ReportBuilder, ReportFormatter, TextFormatter,
+    DiagnosticReport, DnsSummary, HtmlFormatter, InterfaceSummary, JsonFormatter,
+    MarkdownFormatter, PdfFormatter, ReportBuilder, ReportFormatter, TextFormatter,
 };
 use std::fs;
 use std::time::Duration;

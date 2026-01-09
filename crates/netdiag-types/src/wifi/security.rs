@@ -144,7 +144,9 @@ impl std::fmt::Display for SecurityType {
 }
 
 /// WiFi authentication method.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Display, EnumString, Default)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Display, EnumString, Default,
+)]
 #[serde(rename_all = "lowercase")]
 pub enum WifiAuthentication {
     /// Open (no authentication)
@@ -163,7 +165,9 @@ pub enum WifiAuthentication {
 }
 
 /// WiFi encryption type.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Display, EnumString, Default)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Display, EnumString, Default,
+)]
 #[serde(rename_all = "lowercase")]
 pub enum WifiEncryption {
     /// No encryption
@@ -184,7 +188,9 @@ pub enum WifiEncryption {
 }
 
 /// Key management suite.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Display, EnumString, Default)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Display, EnumString, Default,
+)]
 #[serde(rename_all = "lowercase")]
 pub enum KeyManagement {
     /// No key management

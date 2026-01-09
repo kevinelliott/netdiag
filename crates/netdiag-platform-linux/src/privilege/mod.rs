@@ -77,15 +77,11 @@ impl PrivilegeProvider for LinuxPrivilegeProvider {
         }
 
         let result = match capability {
-            Capability::RawSockets => {
-                self.has_capability("CAP_NET_RAW")
-            }
+            Capability::RawSockets => self.has_capability("CAP_NET_RAW"),
             Capability::PromiscuousMode => {
                 self.has_capability("CAP_NET_RAW") || self.has_capability("CAP_NET_ADMIN")
             }
-            Capability::ModifyNetworkConfig => {
-                self.has_capability("CAP_NET_ADMIN")
-            }
+            Capability::ModifyNetworkConfig => self.has_capability("CAP_NET_ADMIN"),
             Capability::AccessSystemConfig => {
                 self.has_capability("CAP_DAC_OVERRIDE") || self.has_capability("CAP_SYS_ADMIN")
             }
@@ -93,9 +89,7 @@ impl PrivilegeProvider for LinuxPrivilegeProvider {
                 // Generally requires root on Linux
                 false
             }
-            Capability::ModifySystemFiles => {
-                self.has_capability("CAP_DAC_OVERRIDE")
-            }
+            Capability::ModifySystemFiles => self.has_capability("CAP_DAC_OVERRIDE"),
         };
 
         Ok(result)

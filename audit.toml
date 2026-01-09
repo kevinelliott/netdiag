@@ -1,0 +1,12 @@
+[advisories]
+# Ignore advisories for dependencies that are not directly exploitable in our use case
+# or are transitive dependencies we cannot easily update
+ignore = [
+    "RUSTSEC-2023-0071", # rsa crate - timing sidechannel (transitive dependency via reqwest)
+]
+
+# Don't warn about unmaintained crates - we'll address these in a separate PR
+unmaintained = "allow"
+unsound = "deny"
+yanked = "deny"
+notice = "allow"

@@ -109,9 +109,7 @@ impl AutofixProvider for LinuxAutofixProvider {
         }
 
         // Try nscd if available
-        let output = Command::new("nscd")
-            .args(["-i", "hosts"])
-            .output();
+        let output = Command::new("nscd").args(["-i", "hosts"]).output();
 
         if let Ok(out) = output {
             if out.status.success() {
@@ -196,9 +194,7 @@ impl AutofixProvider for LinuxAutofixProvider {
         }
 
         // Try dhclient
-        let release = Command::new("dhclient")
-            .args(["-r", interface])
-            .output();
+        let release = Command::new("dhclient").args(["-r", interface]).output();
 
         if let Ok(out) = release {
             if out.status.success() {
@@ -215,9 +211,7 @@ impl AutofixProvider for LinuxAutofixProvider {
         }
 
         // Try dhcpcd
-        let output = Command::new("dhcpcd")
-            .args(["-n", interface])
-            .output();
+        let output = Command::new("dhcpcd").args(["-n", interface]).output();
 
         if let Ok(out) = output {
             if out.status.success() {
@@ -233,7 +227,10 @@ impl AutofixProvider for LinuxAutofixProvider {
     }
 
     async fn set_dns_servers(&self, interface: &str, servers: &[IpAddr]) -> Result<()> {
-        debug!("Setting DNS servers for {} on Linux: {:?}", interface, servers);
+        debug!(
+            "Setting DNS servers for {} on Linux: {:?}",
+            interface, servers
+        );
 
         // Try NetworkManager first
         if self.is_networkmanager_running() {
@@ -284,9 +281,7 @@ impl AutofixProvider for LinuxAutofixProvider {
 
         // Reset connection tracking
         if std::path::Path::new("/proc/net/nf_conntrack").exists() {
-            let _ = Command::new("conntrack")
-                .args(["-F"])
-                .output();
+            let _ = Command::new("conntrack").args(["-F"]).output();
         }
 
         // Restart networking service

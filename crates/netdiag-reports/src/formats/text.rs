@@ -38,13 +38,24 @@ impl ReportFormatter for TextFormatter {
 
         // Header
         writeln!(output, "{}", self.separator()).unwrap();
-        writeln!(output, "{:^width$}", report.metadata.title, width = self.line_width).unwrap();
+        writeln!(
+            output,
+            "{:^width$}",
+            report.metadata.title,
+            width = self.line_width
+        )
+        .unwrap();
         writeln!(output, "{}", self.separator()).unwrap();
         writeln!(output).unwrap();
 
         // Metadata
         writeln!(output, "Report ID: {}", report.metadata.id).unwrap();
-        writeln!(output, "Generated: {}", report.metadata.generated_at.format("%Y-%m-%d %H:%M:%S UTC")).unwrap();
+        writeln!(
+            output,
+            "Generated: {}",
+            report.metadata.generated_at.format("%Y-%m-%d %H:%M:%S UTC")
+        )
+        .unwrap();
         writeln!(output, "Version: {}", report.metadata.version).unwrap();
         if let Some(ref hostname) = report.metadata.hostname {
             writeln!(output, "Hostname: {}", hostname).unwrap();
@@ -61,7 +72,13 @@ impl ReportFormatter for TextFormatter {
             writeln!(output, "{}", self.thin_separator()).unwrap();
             writeln!(output).unwrap();
 
-            writeln!(output, "Status: {} (Score: {}/100)", health.status.to_uppercase(), health.score).unwrap();
+            writeln!(
+                output,
+                "Status: {} (Score: {}/100)",
+                health.status.to_uppercase(),
+                health.score
+            )
+            .unwrap();
             writeln!(output).unwrap();
 
             if !health.issues.is_empty() {
@@ -91,7 +108,12 @@ impl ReportFormatter for TextFormatter {
             for iface in &report.interfaces {
                 let status = if iface.is_up { "UP" } else { "DOWN" };
                 let default_marker = if iface.is_default { " (default)" } else { "" };
-                writeln!(output, "{} [{}] - {}{}", iface.name, iface.interface_type, status, default_marker).unwrap();
+                writeln!(
+                    output,
+                    "{} [{}] - {}{}",
+                    iface.name, iface.interface_type, status, default_marker
+                )
+                .unwrap();
 
                 if let Some(ref mac) = iface.mac_address {
                     writeln!(output, "  MAC: {}", mac).unwrap();
@@ -116,7 +138,12 @@ impl ReportFormatter for TextFormatter {
 
             for dns in &report.dns_results {
                 let status = if dns.success { "OK" } else { "FAILED" };
-                writeln!(output, "{} -> {} ({:.1}ms)", dns.query, status, dns.duration_ms).unwrap();
+                writeln!(
+                    output,
+                    "{} -> {} ({:.1}ms)",
+                    dns.query, status, dns.duration_ms
+                )
+                .unwrap();
 
                 if !dns.addresses.is_empty() {
                     writeln!(output, "  Addresses: {}", dns.addresses.join(", ")).unwrap();
@@ -138,11 +165,22 @@ impl ReportFormatter for TextFormatter {
 
             for ping in &report.ping_results {
                 writeln!(output, "Target: {}", ping.target).unwrap();
-                writeln!(output, "  Packets: {} transmitted, {} received ({:.1}% loss)",
-                    ping.transmitted, ping.received, ping.loss_percent).unwrap();
+                writeln!(
+                    output,
+                    "  Packets: {} transmitted, {} received ({:.1}% loss)",
+                    ping.transmitted, ping.received, ping.loss_percent
+                )
+                .unwrap();
 
-                if let (Some(min), Some(avg), Some(max)) = (ping.min_rtt_ms, ping.avg_rtt_ms, ping.max_rtt_ms) {
-                    write!(output, "  RTT: min={:.1}ms avg={:.1}ms max={:.1}ms", min, avg, max).unwrap();
+                if let (Some(min), Some(avg), Some(max)) =
+                    (ping.min_rtt_ms, ping.avg_rtt_ms, ping.max_rtt_ms)
+                {
+                    write!(
+                        output,
+                        "  RTT: min={:.1}ms avg={:.1}ms max={:.1}ms",
+                        min, avg, max
+                    )
+                    .unwrap();
                     if let Some(stddev) = ping.stddev_ms {
                         write!(output, " stddev={:.1}ms", stddev).unwrap();
                     }
@@ -162,9 +200,17 @@ impl ReportFormatter for TextFormatter {
             writeln!(output).unwrap();
 
             for traceroute in &report.traceroute_results {
-                let status = if traceroute.reached { "reached" } else { "not reached" };
-                writeln!(output, "Target: {} ({}) - {} hops, {:.0}ms",
-                    traceroute.target, status, traceroute.hop_count, traceroute.duration_ms).unwrap();
+                let status = if traceroute.reached {
+                    "reached"
+                } else {
+                    "not reached"
+                };
+                writeln!(
+                    output,
+                    "Target: {} ({}) - {} hops, {:.0}ms",
+                    traceroute.target, status, traceroute.hop_count, traceroute.duration_ms
+                )
+                .unwrap();
                 writeln!(output, "Protocol: {}", traceroute.protocol).unwrap();
                 writeln!(output).unwrap();
 
@@ -180,14 +226,17 @@ impl ReportFormatter for TextFormatter {
                             None => addr.to_string(),
                         };
 
-                        let rtts: Vec<String> = hop.rtt_ms.iter()
+                        let rtts: Vec<String> = hop
+                            .rtt_ms
+                            .iter()
                             .map(|rtt| match rtt {
                                 Some(ms) => format!("{:.1} ms", ms),
                                 None => "*".to_string(),
                             })
                             .collect();
 
-                        writeln!(output, "{:>3}  {}  {}", hop.hop, display, rtts.join("  ")).unwrap();
+                        writeln!(output, "{:>3}  {}  {}", hop.hop, display, rtts.join("  "))
+                            .unwrap();
                     }
                 }
                 writeln!(output).unwrap();
