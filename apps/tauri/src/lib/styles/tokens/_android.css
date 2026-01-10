@@ -1,0 +1,68 @@
+/* Android design tokens - Material Design 3 */
+.platform-android {
+  /* Layout */
+  --tabbar-height: 80px;
+  --tabbar-content-height: 64px;
+
+  /* Border radius - Material 3 uses larger corners */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+  --card-radius: 16px;
+
+  /* Material 3 color tokens */
+  --md-sys-color-primary: #6750A4;
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #EADDFF;
+  --md-sys-color-surface: #FEF7FF;
+  --md-sys-color-on-surface: #1D1B20;
+  --md-sys-color-surface-container: #F3EDF7;
+  --md-sys-color-outline: #79747E;
+
+  /* Override accent with Material primary */
+  --accent: var(--md-sys-color-primary);
+
+  /* Tab bar */
+  --tabbar-bg: var(--md-sys-color-surface);
+  --tabbar-inactive: var(--md-sys-color-on-surface);
+  --tabbar-active: var(--md-sys-color-primary);
+
+  /* Elevation shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.15);
+
+  /* Typography - Roboto */
+  --font-size-tabbar-label: 12px;
+  --font-size-body: 16px;
+
+  /* Motion - Material 3 standard easing */
+  --transition-normal: 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Android dark mode */
+.platform-android.dark {
+  --md-sys-color-primary: #D0BCFF;
+  --md-sys-color-on-primary: #381E72;
+  --md-sys-color-surface: #141218;
+  --md-sys-color-on-surface: #E6E0E9;
+  --md-sys-color-surface-container: #211F26;
+  --tabbar-bg: var(--md-sys-color-surface-container);
+}
+
+/* Android ripple effect */
+.platform-android .tab-item:active {
+  background: rgba(103, 80, 164, 0.12);
+}
+
+/* Material 3 navigation indicator */
+.platform-android .tab-item.active::before {
+  content: '';
+  position: absolute;
+  width: 64px;
+  height: 32px;
+  background: var(--md-sys-color-primary-container);
+  border-radius: 16px;
+  z-index: -1;
+}

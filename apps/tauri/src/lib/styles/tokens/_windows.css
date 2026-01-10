@@ -1,0 +1,44 @@
+/* Windows design tokens - Fluent Design System */
+.platform-windows {
+  /* Layout */
+  --sidebar-width: 256px;
+  --titlebar-height: 32px;
+
+  /* Border radius - Windows uses sharper corners */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --card-radius: 8px;
+
+  /* Acrylic material */
+  --blur-amount: 30px;
+  --acrylic-bg: rgba(255, 255, 255, 0.7);
+  --acrylic-tint: rgba(255, 255, 255, 0.04);
+  --acrylic-fallback: #f3f3f3;
+
+  /* Reveal effect colors */
+  --reveal-border: rgba(255, 255, 255, 0.08);
+  --reveal-bg-hover: rgba(255, 255, 255, 0.06);
+
+  /* Typography - Segoe UI */
+  --font-size-sidebar: 14px;
+  --font-size-section-label: 12px;
+
+  /* Shadows - more pronounced on Windows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.14);
+}
+
+/* Windows dark mode */
+.platform-windows.dark {
+  --acrylic-bg: rgba(32, 32, 32, 0.8);
+  --acrylic-fallback: #202020;
+  --reveal-border: rgba(255, 255, 255, 0.12);
+  --reveal-bg-hover: rgba(255, 255, 255, 0.08);
+}
+
+/* Windows reveal hover effect */
+.platform-windows .nav-item:hover {
+  background: var(--reveal-bg-hover);
+  border-color: var(--reveal-border);
+}

@@ -1,16 +1,17 @@
 <script lang="ts">
   import { invoke } from '@tauri-apps/api/core';
+  import { tick } from 'svelte';
 
   interface SpeedTestResult {
-    download_mbps?: number;
-    upload_mbps?: number;
-    latency_ms?: number;
-    jitter_ms?: number;
+    download_mbps?: number | null;
+    upload_mbps?: number | null;
+    latency_ms?: number | null;
+    jitter_ms?: number | null;
     server_name: string;
-    server_location?: string;
+    server_location?: string | null;
     test_duration_secs: number;
-    buffer_bloat_grade?: string;
-    consistency_rating?: string;
+    buffer_bloat_grade?: string | null;
+    consistency_rating?: string | null;
   }
 
   let duration = $state(10);
@@ -21,6 +22,7 @@
   let loading = $state(false);
   let error = $state<string | null>(null);
   let testPhase = $state<string>('');
+  let resultCard: HTMLElement | null = null;
 
   async function runSpeedTest() {
     loading = true;
@@ -30,14 +32,28 @@
 
     try {
       testPhase = 'Running speed test...';
-      result = await invoke<SpeedTestResult>('run_speed_test', {
+      const response = await invoke<SpeedTestResult>('run_speed_test', {
         durationSecs: duration,
         connections,
         testDownload,
         testUpload,
       });
+      console.log('Speed test result:', response);
+
+      // Ensure we have a valid result
+      if (response) {
+        result = response;
+        // Wait for DOM update then scroll to results
+        await tick();
+        if (resultCard) {
+          resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } else {
+        error = 'Speed test completed but returned no data';
+      }
       testPhase = '';
     } catch (e) {
+      console.error('Speed test error:', e);
       error = e instanceof Error ? e.message : String(e);
       testPhase = '';
     } finally {
@@ -151,17 +167,17 @@
   {/if}
 
   {#if result && !loading}
-    <div class="card result-card">
+    <div class="card result-card" bind:this={resultCard}>
       <h2 class="card-title">Speed Test Results</h2>
       <p class="server-info">
-        Server: {result.server_name}
+        Server: {result.server_name || 'Unknown'}
         {#if result.server_location}
           ({result.server_location})
         {/if}
       </p>
 
       <div class="speed-display">
-        {#if result.download_mbps !== undefined}
+        {#if result.download_mbps != null}
           <div class="speed-block download">
             <span class="speed-label">Download</span>
             <span class="speed-value">{formatSpeed(result.download_mbps)}</span>
@@ -171,7 +187,7 @@
           </div>
         {/if}
 
-        {#if result.upload_mbps !== undefined}
+        {#if result.upload_mbps != null}
           <div class="speed-block upload">
             <span class="speed-label">Upload</span>
             <span class="speed-value">{formatSpeed(result.upload_mbps)}</span>
@@ -183,24 +199,26 @@
       </div>
 
       <div class="stats-grid">
-        {#if result.latency_ms !== undefined}
+        {#if result.latency_ms != null}
           <div class="stat">
             <span class="stat-label">Latency</span>
             <span class="stat-value">{result.latency_ms.toFixed(2)} ms</span>
           </div>
         {/if}
 
-        {#if result.jitter_ms !== undefined}
+        {#if result.jitter_ms != null}
           <div class="stat">
             <span class="stat-label">Jitter</span>
             <span class="stat-value">{result.jitter_ms.toFixed(2)} ms</span>
           </div>
         {/if}
 
-        <div class="stat">
-          <span class="stat-label">Test Duration</span>
-          <span class="stat-value">{result.test_duration_secs.toFixed(1)}s</span>
-        </div>
+        {#if result.test_duration_secs != null}
+          <div class="stat">
+            <span class="stat-label">Test Duration</span>
+            <span class="stat-value">{result.test_duration_secs.toFixed(1)}s</span>
+          </div>
+        {/if}
       </div>
 
       {#if result.buffer_bloat_grade || result.consistency_rating}

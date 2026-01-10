@@ -1,0 +1,23 @@
+/* Linux design tokens - GTK/GNOME inspired */
+.platform-linux {
+  /* Layout */
+  --sidebar-width: 240px;
+  --titlebar-height: 36px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --card-radius: 6px;
+
+  /* No blur effects - solid backgrounds for better compatibility */
+  --blur-amount: 0px;
+
+  /* Typography */
+  --font-size-sidebar: 14px;
+  --font-size-section-label: 12px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.12);
+}

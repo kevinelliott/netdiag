@@ -1,0 +1,41 @@
+/* macOS design tokens - Apple Human Interface Guidelines */
+.platform-macos {
+  /* Layout */
+  --sidebar-width: 220px;
+  --titlebar-height: 28px;
+
+  /* Border radius - macOS uses softer corners */
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --card-radius: 10px;
+
+  /* Vibrancy effects */
+  --blur-amount: 20px;
+  --vibrancy-bg: rgba(246, 246, 246, 0.75);
+  --vibrancy-border: rgba(0, 0, 0, 0.1);
+
+  /* Typography - San Francisco system font */
+  --font-size-sidebar: 13px;
+  --font-size-section-label: 11px;
+
+  /* Shadows - subtle on macOS */
+  --shadow-sm: 0 0.5px 1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* macOS dark mode */
+.platform-macos.dark {
+  --vibrancy-bg: rgba(30, 30, 30, 0.75);
+  --vibrancy-border: rgba(255, 255, 255, 0.1);
+}
+
+/* macOS sidebar styling */
+.platform-macos .sidebar {
+  padding-top: var(--titlebar-height);
+}
+
+/* Selection color */
+.platform-macos ::selection {
+  background: rgba(0, 122, 255, 0.3);
+}
