@@ -16,10 +16,64 @@
   <a href="#contributing">Contributing</a>
 </p>
 
+<!-- CI & Build Status -->
+<p align="center">
+  <a href="https://github.com/kevinelliott/netdiag/actions/workflows/ci.yml">
+    <img src="https://github.com/kevinelliott/netdiag/actions/workflows/ci.yml/badge.svg" alt="CI" />
+  </a>
+  <a href="https://github.com/kevinelliott/netdiag/actions/workflows/release.yml">
+    <img src="https://github.com/kevinelliott/netdiag/actions/workflows/release.yml/badge.svg" alt="Release" />
+  </a>
+  <a href="https://codecov.io/gh/kevinelliott/netdiag">
+    <img src="https://codecov.io/gh/kevinelliott/netdiag/branch/main/graph/badge.svg" alt="Code Coverage" />
+  </a>
+  <a href="https://github.com/kevinelliott/netdiag/actions/workflows/security.yml">
+    <img src="https://github.com/kevinelliott/netdiag/actions/workflows/security.yml/badge.svg" alt="Security Audit" />
+  </a>
+</p>
+
+<!-- Package & Version -->
+<p align="center">
+  <a href="https://crates.io/crates/netdiag-cli">
+    <img src="https://img.shields.io/crates/v/netdiag-cli.svg" alt="Crates.io" />
+  </a>
+  <a href="https://crates.io/crates/netdiag-cli">
+    <img src="https://img.shields.io/crates/d/netdiag-cli.svg" alt="Downloads" />
+  </a>
+  <a href="https://github.com/kevinelliott/netdiag/releases/latest">
+    <img src="https://img.shields.io/github/v/release/kevinelliott/netdiag?include_prereleases" alt="Latest Release" />
+  </a>
+  <a href="https://docs.rs/netdiag-cli">
+    <img src="https://img.shields.io/docsrs/netdiag-cli" alt="docs.rs" />
+  </a>
+</p>
+
+<!-- Project Info -->
 <p align="center">
   <img src="https://img.shields.io/badge/rust-1.75+-orange.svg" alt="Rust 1.75+" />
-  <img src="https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg" alt="License" />
+  <a href="https://github.com/kevinelliott/netdiag/blob/main/LICENSE-MIT">
+    <img src="https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg" alt="License" />
+  </a>
   <img src="https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20iOS%20%7C%20Android-lightgrey.svg" alt="Platforms" />
+</p>
+
+<!-- Community & Activity -->
+<p align="center">
+  <a href="https://github.com/kevinelliott/netdiag/stargazers">
+    <img src="https://img.shields.io/github/stars/kevinelliott/netdiag?style=flat" alt="GitHub Stars" />
+  </a>
+  <a href="https://github.com/kevinelliott/netdiag/network/members">
+    <img src="https://img.shields.io/github/forks/kevinelliott/netdiag?style=flat" alt="GitHub Forks" />
+  </a>
+  <a href="https://github.com/kevinelliott/netdiag/issues">
+    <img src="https://img.shields.io/github/issues/kevinelliott/netdiag" alt="GitHub Issues" />
+  </a>
+  <a href="https://github.com/kevinelliott/netdiag/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/kevinelliott/netdiag" alt="Contributors" />
+  </a>
+  <a href="https://github.com/kevinelliott/netdiag/commits/main">
+    <img src="https://img.shields.io/github/last-commit/kevinelliott/netdiag" alt="Last Commit" />
+  </a>
 </p>
 
 ---
