@@ -286,12 +286,14 @@ impl VoipRating {
 impl PingStats {
     /// Creates new ping statistics from results.
     #[must_use]
+    #[allow(clippy::cast_possible_truncation)]
+    #[allow(clippy::cast_precision_loss)]
     pub fn from_results(target: IpAddr, results: Vec<PingResult>, duration: Duration) -> Self {
         let transmitted = results.len() as u32;
         let received = results.iter().filter(|r| r.success).count() as u32;
         let lost = transmitted - received;
         let loss_percent = if transmitted > 0 {
-            (lost as f64 / transmitted as f64) * 100.0
+            (f64::from(lost) / f64::from(transmitted)) * 100.0
         } else {
             0.0
         };
@@ -304,6 +306,7 @@ impl PingStats {
             let min = *rtts.iter().min().unwrap();
             let max = *rtts.iter().max().unwrap();
             let sum: Duration = rtts.iter().sum();
+            #[allow(clippy::cast_possible_truncation)]
             let avg = sum / rtts.len() as u32;
 
             // Calculate standard deviation

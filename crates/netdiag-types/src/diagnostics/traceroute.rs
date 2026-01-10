@@ -48,6 +48,11 @@ impl TracerouteResult {
     }
 
     /// Finds hops where latency increases significantly.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `curr` is less than `prev` when both are `Some`, which should never happen
+    /// as latency should only increase along the path.
     #[must_use]
     pub fn latency_jumps(&self, threshold_ms: u64) -> Vec<(&TracerouteHop, Duration)> {
         let mut jumps = Vec::new();
