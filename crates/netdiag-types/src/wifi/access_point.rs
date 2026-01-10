@@ -142,6 +142,7 @@ impl std::fmt::Display for Bssid {
 }
 
 /// Access point capabilities.
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AccessPointCapabilities {
     /// Supports WMM (`WiFi` Multimedia)

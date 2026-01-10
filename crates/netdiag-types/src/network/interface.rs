@@ -155,6 +155,7 @@ impl InterfaceType {
 }
 
 /// Interface status flags.
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct InterfaceFlags {
     /// Interface is up

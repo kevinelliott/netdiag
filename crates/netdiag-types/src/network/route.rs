@@ -29,7 +29,7 @@ impl Route {
     pub fn is_default(&self) -> bool {
         self.destination.is_none()
             || (self.prefix_len == 0
-                && self.destination.map_or(false, |d| {
+                && self.destination.is_some_and(|d| {
                     d == IpAddr::V4(std::net::Ipv4Addr::UNSPECIFIED)
                         || d == IpAddr::V6(std::net::Ipv6Addr::UNSPECIFIED)
                 }))
@@ -37,6 +37,7 @@ impl Route {
 }
 
 /// Route flags.
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct RouteFlags {
     /// Route is up

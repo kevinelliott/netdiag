@@ -25,19 +25,15 @@ impl Channel {
     #[must_use]
     pub fn from_number(number: u8, band: WifiBand) -> Self {
         let frequency = match band {
-            WifiBand::Band2_4GHz => 2407 + (number as u32 * 5),
+            WifiBand::Band2_4GHz => 2407 + (u32::from(number) * 5),
             WifiBand::Band5GHz => {
-                if number >= 36 && number <= 64 {
-                    5000 + (number as u32 * 5)
-                } else if number >= 100 && number <= 144 {
-                    5000 + (number as u32 * 5)
-                } else if number >= 149 && number <= 165 {
-                    5000 + (number as u32 * 5)
+                if (36..=64).contains(&number) || (100..=165).contains(&number) {
+                    5000 + (u32::from(number) * 5)
                 } else {
                     5000
                 }
             }
-            WifiBand::Band6GHz => 5950 + (number as u32 * 5),
+            WifiBand::Band6GHz => 5950 + (u32::from(number) * 5),
         };
 
         Self {
@@ -53,13 +49,16 @@ impl Channel {
     /// Creates a channel from a frequency.
     #[must_use]
     pub fn from_frequency(frequency: u32) -> Self {
-        let (number, band) = if frequency >= 2400 && frequency <= 2500 {
+        let (number, band) = if (2400..=2500).contains(&frequency) {
+            #[allow(clippy::cast_possible_truncation)]
             let number = ((frequency - 2407) / 5) as u8;
             (number, WifiBand::Band2_4GHz)
-        } else if frequency >= 5000 && frequency <= 5900 {
+        } else if (5000..=5900).contains(&frequency) {
+            #[allow(clippy::cast_possible_truncation)]
             let number = ((frequency - 5000) / 5) as u8;
             (number, WifiBand::Band5GHz)
-        } else if frequency >= 5925 && frequency <= 7125 {
+        } else if (5925..=7125).contains(&frequency) {
+            #[allow(clippy::cast_possible_truncation)]
             let number = ((frequency - 5950) / 5) as u8;
             (number, WifiBand::Band6GHz)
         } else {
