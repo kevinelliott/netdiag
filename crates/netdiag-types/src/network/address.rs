@@ -73,7 +73,7 @@ impl FromStr for MacAddress {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let parts: Vec<&str> = s.split(|c| c == ':' || c == '-').collect();
+        let parts: Vec<&str> = s.split([':', '-']).collect();
         if parts.len() != 6 {
             return Err(format!("Invalid MAC address format: {s}"));
         }
@@ -111,9 +111,9 @@ impl Ipv4Subnet {
     #[must_use]
     pub fn netmask(&self) -> Ipv4Addr {
         if self.prefix_len == 0 {
-            Ipv4Addr::new(0, 0, 0, 0)
+            Ipv4Addr::UNSPECIFIED
         } else if self.prefix_len >= 32 {
-            Ipv4Addr::new(255, 255, 255, 255)
+            Ipv4Addr::BROADCAST
         } else {
             let mask = !((1u32 << (32 - self.prefix_len)) - 1);
             Ipv4Addr::from(mask)

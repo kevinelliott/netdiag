@@ -1,9 +1,9 @@
-//! WiFi access point types.
+//! `WiFi` access point types.
 
 use super::{Channel, SecurityType, WifiStandard};
 use serde::{Deserialize, Serialize};
 
-/// Represents a WiFi access point.
+/// Represents a `WiFi` access point.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AccessPoint {
     /// SSID (network name)
@@ -18,7 +18,7 @@ pub struct AccessPoint {
     pub channel: Channel,
     /// Security type
     pub security: SecurityType,
-    /// WiFi standard (802.11a/b/g/n/ac/ax)
+    /// `WiFi` standard (802.11a/b/g/n/ac/ax)
     pub wifi_standard: WifiStandard,
     /// Is this network hidden?
     pub is_hidden: bool,
@@ -142,11 +142,12 @@ impl std::fmt::Display for Bssid {
 }
 
 /// Access point capabilities.
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct AccessPointCapabilities {
-    /// Supports WMM (WiFi Multimedia)
+    /// Supports WMM (`WiFi` Multimedia)
     pub wmm: bool,
-    /// Supports WPS (WiFi Protected Setup)
+    /// Supports WPS (`WiFi` Protected Setup)
     pub wps: bool,
     /// Is an infrastructure (AP) mode
     pub infrastructure: bool,
@@ -174,7 +175,7 @@ pub struct AccessPointCapabilities {
     pub dot11v: bool,
 }
 
-/// WiFi connection information.
+/// `WiFi` connection information.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WifiConnection {
     /// Connected access point
@@ -197,7 +198,7 @@ pub struct WifiConnection {
     pub last_roam: Option<chrono::DateTime<chrono::Utc>>,
 }
 
-/// WiFi connection state.
+/// `WiFi` connection state.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, strum::Display, strum::EnumString,
 )]
@@ -218,7 +219,7 @@ pub enum WifiConnectionState {
     Failed,
 }
 
-/// WiFi authentication state.
+/// `WiFi` authentication state.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, strum::Display, strum::EnumString,
 )]

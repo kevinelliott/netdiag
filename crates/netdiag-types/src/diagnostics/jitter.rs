@@ -138,6 +138,7 @@ impl PacketLossStats {
 
         for (i, &success) in results.iter().enumerate() {
             if !success {
+                #[allow(clippy::cast_possible_truncation)]
                 loss_pattern.push(i as u32);
                 current_burst += 1;
             } else {
