@@ -104,7 +104,7 @@ pub enum Ipv6Scope {
 pub enum InterfaceType {
     /// Ethernet (wired)
     Ethernet,
-    /// WiFi (802.11)
+    /// `WiFi` (802.11)
     Wifi,
     /// Loopback interface
     Loopback,
@@ -122,7 +122,7 @@ pub enum InterfaceType {
     Cellular,
     /// Bluetooth PAN
     Bluetooth,
-    /// MoCA (Multimedia over Coax Alliance)
+    /// `MoCA` (Multimedia over Coax Alliance)
     Moca,
     /// Powerline adapter
     Powerline,

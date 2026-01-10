@@ -323,7 +323,9 @@ impl PingStats {
                     .windows(2)
                     .map(|w| (w[1].as_secs_f64() - w[0].as_secs_f64()).abs())
                     .sum();
-                Some(Duration::from_secs_f64(sum_diff / (rtts.len() - 1) as f64))
+                #[allow(clippy::cast_precision_loss)]
+                let len_minus_one = (rtts.len() - 1) as f64;
+                Some(Duration::from_secs_f64(sum_diff / len_minus_one))
             } else {
                 None
             };
