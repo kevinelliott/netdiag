@@ -1,80 +1,26 @@
-<p align="center">
-  <img src="docs/images/logo.png" alt="NetDiag Logo" width="120" height="120" />
-</p>
+# NetDiag
 
-<h1 align="center">NetDiag</h1>
+**A comprehensive, cross-platform network diagnostics toolkit**
 
-<p align="center">
-  <strong>A comprehensive, cross-platform network diagnostics toolkit</strong>
-</p>
+[![CI](https://github.com/kevinelliott/netdiag/actions/workflows/ci.yml/badge.svg)](https://github.com/kevinelliott/netdiag/actions/workflows/ci.yml)
+[![Release](https://github.com/kevinelliott/netdiag/actions/workflows/release.yml/badge.svg)](https://github.com/kevinelliott/netdiag/actions/workflows/release.yml)
+[![Security Audit](https://github.com/kevinelliott/netdiag/actions/workflows/security.yml/badge.svg)](https://github.com/kevinelliott/netdiag/actions/workflows/security.yml)
+[![codecov](https://codecov.io/gh/kevinelliott/netdiag/branch/main/graph/badge.svg)](https://codecov.io/gh/kevinelliott/netdiag)
 
-<p align="center">
-  <a href="#features">Features</a> •
-  <a href="#installation">Installation</a> •
-  <a href="#quick-start">Quick Start</a> •
-  <a href="#documentation">Documentation</a> •
-  <a href="#contributing">Contributing</a>
-</p>
+[![Crates.io](https://img.shields.io/crates/v/netdiag-cli.svg)](https://crates.io/crates/netdiag-cli)
+[![Downloads](https://img.shields.io/crates/d/netdiag-cli.svg)](https://crates.io/crates/netdiag-cli)
+[![docs.rs](https://img.shields.io/docsrs/netdiag-cli)](https://docs.rs/netdiag-cli)
+[![Latest Release](https://img.shields.io/github/v/release/kevinelliott/netdiag?include_prereleases)](https://github.com/kevinelliott/netdiag/releases/latest)
 
-<!-- CI & Build Status -->
-<p align="center">
-  <a href="https://github.com/kevinelliott/netdiag/actions/workflows/ci.yml">
-    <img src="https://github.com/kevinelliott/netdiag/actions/workflows/ci.yml/badge.svg" alt="CI" />
-  </a>
-  <a href="https://github.com/kevinelliott/netdiag/actions/workflows/release.yml">
-    <img src="https://github.com/kevinelliott/netdiag/actions/workflows/release.yml/badge.svg" alt="Release" />
-  </a>
-  <a href="https://codecov.io/gh/kevinelliott/netdiag">
-    <img src="https://codecov.io/gh/kevinelliott/netdiag/branch/main/graph/badge.svg" alt="Code Coverage" />
-  </a>
-  <a href="https://github.com/kevinelliott/netdiag/actions/workflows/security.yml">
-    <img src="https://github.com/kevinelliott/netdiag/actions/workflows/security.yml/badge.svg" alt="Security Audit" />
-  </a>
-</p>
+[![Rust 1.75+](https://img.shields.io/badge/rust-1.75+-orange.svg)](https://www.rust-lang.org/)
+[![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](https://github.com/kevinelliott/netdiag/blob/main/LICENSE-MIT)
+[![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20iOS%20%7C%20Android-lightgrey.svg)](#platform-support)
 
-<!-- Package & Version -->
-<p align="center">
-  <a href="https://crates.io/crates/netdiag-cli">
-    <img src="https://img.shields.io/crates/v/netdiag-cli.svg" alt="Crates.io" />
-  </a>
-  <a href="https://crates.io/crates/netdiag-cli">
-    <img src="https://img.shields.io/crates/d/netdiag-cli.svg" alt="Downloads" />
-  </a>
-  <a href="https://github.com/kevinelliott/netdiag/releases/latest">
-    <img src="https://img.shields.io/github/v/release/kevinelliott/netdiag?include_prereleases" alt="Latest Release" />
-  </a>
-  <a href="https://docs.rs/netdiag-cli">
-    <img src="https://img.shields.io/docsrs/netdiag-cli" alt="docs.rs" />
-  </a>
-</p>
-
-<!-- Project Info -->
-<p align="center">
-  <img src="https://img.shields.io/badge/rust-1.75+-orange.svg" alt="Rust 1.75+" />
-  <a href="https://github.com/kevinelliott/netdiag/blob/main/LICENSE-MIT">
-    <img src="https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg" alt="License" />
-  </a>
-  <img src="https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20iOS%20%7C%20Android-lightgrey.svg" alt="Platforms" />
-</p>
-
-<!-- Community & Activity -->
-<p align="center">
-  <a href="https://github.com/kevinelliott/netdiag/stargazers">
-    <img src="https://img.shields.io/github/stars/kevinelliott/netdiag?style=flat" alt="GitHub Stars" />
-  </a>
-  <a href="https://github.com/kevinelliott/netdiag/network/members">
-    <img src="https://img.shields.io/github/forks/kevinelliott/netdiag?style=flat" alt="GitHub Forks" />
-  </a>
-  <a href="https://github.com/kevinelliott/netdiag/issues">
-    <img src="https://img.shields.io/github/issues/kevinelliott/netdiag" alt="GitHub Issues" />
-  </a>
-  <a href="https://github.com/kevinelliott/netdiag/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/kevinelliott/netdiag" alt="Contributors" />
-  </a>
-  <a href="https://github.com/kevinelliott/netdiag/commits/main">
-    <img src="https://img.shields.io/github/last-commit/kevinelliott/netdiag" alt="Last Commit" />
-  </a>
-</p>
+[![GitHub Stars](https://img.shields.io/github/stars/kevinelliott/netdiag?style=flat)](https://github.com/kevinelliott/netdiag/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/kevinelliott/netdiag?style=flat)](https://github.com/kevinelliott/netdiag/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/kevinelliott/netdiag)](https://github.com/kevinelliott/netdiag/issues)
+[![Contributors](https://img.shields.io/github/contributors/kevinelliott/netdiag)](https://github.com/kevinelliott/netdiag/graphs/contributors)
+[![Last Commit](https://img.shields.io/github/last-commit/kevinelliott/netdiag)](https://github.com/kevinelliott/netdiag/commits/main)
 
 ---
 
@@ -88,6 +34,24 @@ NetDiag is a modern, feature-rich network diagnostics tool that provides deep vi
 - **Comprehensive**: Ping, traceroute, DNS, WiFi, speed tests, packet capture, and more
 - **Intelligent**: Network path analysis, VoIP quality metrics, buffer bloat detection
 - **Automated**: Auto-fix capabilities with rollback, continuous monitoring daemon
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Interfaces](#interfaces)
+- [Architecture](#architecture)
+- [Platform Support](#platform-support)
+- [Configuration](#configuration)
+- [Daemon Service](#daemon-service)
+- [Auto-Fix](#auto-fix)
+- [Development](#development)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
@@ -175,16 +139,7 @@ Generate detailed reports in multiple formats:
 
 ## Screenshots
 
-<p align="center">
-  <em>Screenshots coming soon</em>
-</p>
-
-<!--
-<p align="center">
-  <img src="docs/images/dashboard.png" alt="Dashboard" width="400" />
-  <img src="docs/images/traceroute.png" alt="Traceroute" width="400" />
-</p>
--->
+*Screenshots coming soon*
 
 ---
 
@@ -441,23 +396,23 @@ netdiag/
 
 | Feature | macOS | Linux | Windows | iOS | Android |
 |---------|:-----:|:-----:|:-------:|:---:|:-------:|
-| **CLI** | ✅ | ✅ | ✅ | - | - |
-| **TUI** | ✅ | ✅ | ✅ | - | - |
-| **GUI** | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Ping (ICMP)** | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Traceroute** | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **DNS Lookup** | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **WiFi Status** | ✅ | ✅ | ✅ | ✅¹ | ✅¹ |
-| **WiFi Scan** | ✅ | ✅ | ✅ | ❌² | ✅³ |
-| **Speed Test** | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Packet Capture** | ✅⁴ | ✅⁴ | ✅⁴ | ❌ | ❌ |
-| **Auto-Fix** | ✅ | ✅ | ✅ | ❌ | ❌ |
-| **Daemon** | ✅ | ✅ | ✅ | ❌ | ❌ |
+| **CLI** | Yes | Yes | Yes | - | - |
+| **TUI** | Yes | Yes | Yes | - | - |
+| **GUI** | Yes | Yes | Yes | Yes | Yes |
+| **Ping (ICMP)** | Yes | Yes | Yes | Yes | Yes |
+| **Traceroute** | Yes | Yes | Yes | Yes | Yes |
+| **DNS Lookup** | Yes | Yes | Yes | Yes | Yes |
+| **WiFi Status** | Yes | Yes | Yes | Yes[^1] | Yes[^1] |
+| **WiFi Scan** | Yes | Yes | Yes | No[^2] | Yes[^3] |
+| **Speed Test** | Yes | Yes | Yes | Yes | Yes |
+| **Packet Capture** | Yes[^4] | Yes[^4] | Yes[^4] | No | No |
+| **Auto-Fix** | Yes | Yes | Yes | No | No |
+| **Daemon** | Yes | Yes | Yes | No | No |
 
-¹ Requires entitlements/permissions
-² iOS restricts WiFi scanning API to certain app categories
-³ Limited to 4 scans per 2 minutes, requires location permission
-⁴ Requires root/administrator privileges
+[^1]: Requires entitlements/permissions
+[^2]: iOS restricts WiFi scanning API to certain app categories
+[^3]: Limited to 4 scans per 2 minutes, requires location permission
+[^4]: Requires root/administrator privileges
 
 ### Platform-Specific Notes
 
@@ -774,13 +729,13 @@ We welcome contributions of all kinds! Please see [CONTRIBUTING.md](CONTRIBUTING
 
 ### Areas for Contribution
 
-- 🐛 Bug fixes and stability improvements
-- 🖥️ Platform-specific implementations
-- 📖 Documentation improvements
-- ⚡ Performance optimizations
-- 🆕 New diagnostic features
-- 🎨 UI/UX improvements
-- 🌍 Internationalization
+- Bug fixes and stability improvements
+- Platform-specific implementations
+- Documentation improvements
+- Performance optimizations
+- New diagnostic features
+- UI/UX improvements
+- Internationalization
 
 ---
 
@@ -796,8 +751,9 @@ NetDiag is dual-licensed under your choice of:
 ## Author
 
 **Kevin Elliott**
-Email: kevin@kevinelliott.net
-GitHub: [@kevinelliott](https://github.com/kevinelliott)
+
+- Email: kevin@kevinelliott.net
+- GitHub: [@kevinelliott](https://github.com/kevinelliott)
 
 ---
 
@@ -808,9 +764,3 @@ GitHub: [@kevinelliott](https://github.com/kevinelliott)
 - [Ratatui](https://ratatui.rs/) - Terminal UI library
 - [Hickory DNS](https://github.com/hickory-dns/hickory-dns) - DNS resolver
 - [libpcap](https://www.tcpdump.org/) - Packet capture library
-
----
-
-<p align="center">
-  Made with ❤️ for the network troubleshooting community
-</p>
