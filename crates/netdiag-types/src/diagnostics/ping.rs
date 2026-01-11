@@ -98,7 +98,7 @@ pub struct PingStats {
     pub duration: Duration,
     /// Latency percentiles for detailed analysis
     pub latency_percentiles: Option<LatencyPercentiles>,
-    /// VoIP quality metrics
+    /// `VoIP` quality metrics
     pub voip_quality: Option<VoipQuality>,
 }
 
@@ -131,6 +131,11 @@ impl LatencyPercentiles {
         sorted.sort();
 
         let percentile = |p: f64| -> Duration {
+            #[allow(
+                clippy::cast_possible_truncation,
+                clippy::cast_sign_loss,
+                clippy::cast_precision_loss
+            )]
             let idx = ((p / 100.0) * (sorted.len() - 1) as f64).round() as usize;
             sorted[idx.min(sorted.len() - 1)]
         };
@@ -153,7 +158,7 @@ impl LatencyPercentiles {
     }
 }
 
-/// VoIP quality metrics based on ITU-T E-model.
+/// `VoIP` quality metrics based on ITU-T E-model.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VoipQuality {
     /// Mean Opinion Score (1.0-5.0)
@@ -168,7 +173,7 @@ pub struct VoipQuality {
     pub impact: VoipImpact,
 }
 
-/// Breakdown of factors affecting VoIP quality.
+/// Breakdown of factors affecting `VoIP` quality.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VoipImpact {
     /// Delay impairment factor
@@ -180,7 +185,7 @@ pub struct VoipImpact {
 }
 
 impl VoipQuality {
-    /// Calculates VoIP quality from ping statistics.
+    /// Calculates `VoIP` quality from ping statistics.
     ///
     /// Uses a simplified E-model based on:
     /// - One-way delay (RTT/2)
@@ -245,7 +250,7 @@ impl VoipQuality {
     }
 }
 
-/// VoIP quality rating based on MOS score.
+/// `VoIP` quality rating based on MOS score.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, strum::Display)]
 #[serde(rename_all = "lowercase")]
 pub enum VoipRating {
@@ -285,13 +290,20 @@ impl VoipRating {
 
 impl PingStats {
     /// Creates new ping statistics from results.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the RTTs vector is empty when calculating min/max, which should never happen
+    /// since we check `rtts.is_empty()` before accessing these values.
     #[must_use]
+    #[allow(clippy::cast_possible_truncation)]
+    #[allow(clippy::cast_precision_loss)]
     pub fn from_results(target: IpAddr, results: Vec<PingResult>, duration: Duration) -> Self {
         let transmitted = results.len() as u32;
         let received = results.iter().filter(|r| r.success).count() as u32;
         let lost = transmitted - received;
         let loss_percent = if transmitted > 0 {
-            (lost as f64 / transmitted as f64) * 100.0
+            (f64::from(lost) / f64::from(transmitted)) * 100.0
         } else {
             0.0
         };
@@ -304,6 +316,7 @@ impl PingStats {
             let min = *rtts.iter().min().unwrap();
             let max = *rtts.iter().max().unwrap();
             let sum: Duration = rtts.iter().sum();
+            #[allow(clippy::cast_possible_truncation)]
             let avg = sum / rtts.len() as u32;
 
             // Calculate standard deviation
@@ -323,7 +336,9 @@ impl PingStats {
                     .windows(2)
                     .map(|w| (w[1].as_secs_f64() - w[0].as_secs_f64()).abs())
                     .sum();
-                Some(Duration::from_secs_f64(sum_diff / (rtts.len() - 1) as f64))
+                #[allow(clippy::cast_precision_loss)]
+                let len_minus_one = (rtts.len() - 1) as f64;
+                Some(Duration::from_secs_f64(sum_diff / len_minus_one))
             } else {
                 None
             };

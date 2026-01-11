@@ -1,4 +1,4 @@
-//! WiFi-related types.
+//! `WiFi`-related types.
 
 mod access_point;
 mod channel;

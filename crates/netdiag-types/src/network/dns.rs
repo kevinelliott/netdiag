@@ -50,11 +50,11 @@ pub enum DnsProtocol {
     Udp,
     /// Plain DNS over TCP
     Tcp,
-    /// DNS over TLS (DoT)
+    /// DNS over TLS (`DoT`)
     DoT,
-    /// DNS over HTTPS (DoH)
+    /// DNS over HTTPS (`DoH`)
     DoH,
-    /// DNS over QUIC (DoQ)
+    /// DNS over QUIC (`DoQ`)
     DoQ,
 }
 

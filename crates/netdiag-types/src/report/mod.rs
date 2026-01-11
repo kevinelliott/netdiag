@@ -225,7 +225,7 @@ pub enum RecommendationPriority {
 pub enum RecommendationCategory {
     /// Network configuration
     Network,
-    /// WiFi settings
+    /// `WiFi` settings
     Wifi,
     /// DNS configuration
     Dns,

@@ -1,9 +1,9 @@
-//! WiFi security types.
+//! `WiFi` security types.
 
 use serde::{Deserialize, Serialize};
 use strum::{Display, EnumString};
 
-/// WiFi security type.
+/// `WiFi` security type.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SecurityType {
     /// Authentication method
@@ -88,10 +88,9 @@ impl SecurityType {
         match (&self.authentication, &self.encryption) {
             (WifiAuthentication::Open, WifiEncryption::None) => 0,
             (WifiAuthentication::Wep, _) => 1,
-            (WifiAuthentication::Wpa, _) => 2,
             (WifiAuthentication::Wpa2, _) => 3,
             (WifiAuthentication::Wpa3, _) => 4,
-            _ => 2,
+            _ => 2, // WPA and others default to level 2
         }
     }
 
@@ -143,7 +142,7 @@ impl std::fmt::Display for SecurityType {
     }
 }
 
-/// WiFi authentication method.
+/// `WiFi` authentication method.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Display, EnumString, Default,
 )]
@@ -164,7 +163,7 @@ pub enum WifiAuthentication {
     Owe,
 }
 
-/// WiFi encryption type.
+/// `WiFi` encryption type.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Display, EnumString, Default,
 )]

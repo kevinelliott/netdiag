@@ -38,14 +38,21 @@ impl TracerouteResult {
         self.hops
             .iter()
             .filter(|h| {
-                h.avg_rtt
-                    .map(|rtt| rtt.as_millis() as u64 > threshold_ms)
-                    .unwrap_or(false)
+                h.avg_rtt.is_some_and(|rtt| {
+                    #[allow(clippy::cast_possible_truncation)]
+                    let millis = rtt.as_millis() as u64;
+                    millis > threshold_ms
+                })
             })
             .collect()
     }
 
     /// Finds hops where latency increases significantly.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `curr` is less than `prev` when both are `Some`, which should never happen
+    /// as latency should only increase along the path.
     #[must_use]
     pub fn latency_jumps(&self, threshold_ms: u64) -> Vec<(&TracerouteHop, Duration)> {
         let mut jumps = Vec::new();
@@ -54,8 +61,10 @@ impl TracerouteResult {
         for hop in &self.hops {
             if let (Some(prev), Some(curr)) = (prev_rtt, hop.avg_rtt) {
                 if curr > prev {
-                    let diff = curr - prev;
-                    if diff.as_millis() as u64 > threshold_ms {
+                    let diff = curr.checked_sub(prev).unwrap();
+                    #[allow(clippy::cast_possible_truncation)]
+                    let diff_millis = diff.as_millis() as u64;
+                    if diff_millis > threshold_ms {
                         jumps.push((hop, diff));
                     }
                 }
@@ -118,7 +127,9 @@ impl TracerouteHop {
 
         if !rtts.is_empty() {
             let sum: Duration = rtts.iter().sum();
-            self.avg_rtt = Some(sum / rtts.len() as u32);
+            #[allow(clippy::cast_possible_truncation)]
+            let len = rtts.len() as u32;
+            self.avg_rtt = Some(sum / len);
         }
     }
 }

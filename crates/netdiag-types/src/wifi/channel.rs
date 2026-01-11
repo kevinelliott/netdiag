@@ -1,9 +1,9 @@
-//! WiFi channel types.
+//! `WiFi` channel types.
 
 use serde::{Deserialize, Serialize};
 use strum::{Display, EnumString};
 
-/// WiFi channel information.
+/// `WiFi` channel information.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Channel {
     /// Channel number
@@ -25,19 +25,15 @@ impl Channel {
     #[must_use]
     pub fn from_number(number: u8, band: WifiBand) -> Self {
         let frequency = match band {
-            WifiBand::Band2_4GHz => 2407 + (number as u32 * 5),
+            WifiBand::Band2_4GHz => 2407 + (u32::from(number) * 5),
             WifiBand::Band5GHz => {
-                if number >= 36 && number <= 64 {
-                    5000 + (number as u32 * 5)
-                } else if number >= 100 && number <= 144 {
-                    5000 + (number as u32 * 5)
-                } else if number >= 149 && number <= 165 {
-                    5000 + (number as u32 * 5)
+                if (36..=64).contains(&number) || (100..=165).contains(&number) {
+                    5000 + (u32::from(number) * 5)
                 } else {
                     5000
                 }
             }
-            WifiBand::Band6GHz => 5950 + (number as u32 * 5),
+            WifiBand::Band6GHz => 5950 + (u32::from(number) * 5),
         };
 
         Self {
@@ -53,13 +49,16 @@ impl Channel {
     /// Creates a channel from a frequency.
     #[must_use]
     pub fn from_frequency(frequency: u32) -> Self {
-        let (number, band) = if frequency >= 2400 && frequency <= 2500 {
+        let (number, band) = if (2400..=2500).contains(&frequency) {
+            #[allow(clippy::cast_possible_truncation)]
             let number = ((frequency - 2407) / 5) as u8;
             (number, WifiBand::Band2_4GHz)
-        } else if frequency >= 5000 && frequency <= 5900 {
+        } else if (5000..=5900).contains(&frequency) {
+            #[allow(clippy::cast_possible_truncation)]
             let number = ((frequency - 5000) / 5) as u8;
             (number, WifiBand::Band5GHz)
-        } else if frequency >= 5925 && frequency <= 7125 {
+        } else if (5925..=7125).contains(&frequency) {
+            #[allow(clippy::cast_possible_truncation)]
             let number = ((frequency - 5950) / 5) as u8;
             (number, WifiBand::Band6GHz)
         } else {
@@ -108,7 +107,7 @@ impl std::fmt::Display for Channel {
     }
 }
 
-/// WiFi frequency band.
+/// `WiFi` frequency band.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Display, EnumString)]
 #[serde(rename_all = "lowercase")]
 pub enum WifiBand {
@@ -120,13 +119,13 @@ pub enum WifiBand {
     #[strum(serialize = "5GHz")]
     #[serde(rename = "5ghz")]
     Band5GHz,
-    /// 6 GHz band (WiFi 6E)
+    /// 6 GHz band (`WiFi` 6E)
     #[strum(serialize = "6GHz")]
     #[serde(rename = "6ghz")]
     Band6GHz,
 }
 
-/// WiFi channel width.
+/// `WiFi` channel width.
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Display, EnumString, Default,
 )]
@@ -145,7 +144,7 @@ pub enum ChannelWidth {
     /// 160 MHz
     #[strum(serialize = "160MHz")]
     Mhz160,
-    /// 320 MHz (WiFi 7)
+    /// 320 MHz (`WiFi` 7)
     #[strum(serialize = "320MHz")]
     Mhz320,
 }
@@ -176,7 +175,7 @@ pub enum SecondaryChannelPosition {
     None,
 }
 
-/// WiFi standard (802.11 variant).
+/// `WiFi` standard (802.11 variant).
 #[derive(
     Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize, Display, EnumString, Default,
 )]
@@ -191,17 +190,17 @@ pub enum WifiStandard {
     /// 802.11g (2.4 GHz, up to 54 Mbps)
     #[strum(serialize = "802.11g")]
     Dot11g,
-    /// 802.11n (WiFi 4, up to 600 Mbps)
+    /// 802.11n (`WiFi` 4, up to 600 Mbps)
     #[strum(serialize = "802.11n")]
     Dot11n,
-    /// 802.11ac (WiFi 5, up to 3.5 Gbps)
+    /// 802.11ac (`WiFi` 5, up to 3.5 Gbps)
     #[strum(serialize = "802.11ac")]
     Dot11ac,
-    /// 802.11ax (WiFi 6/6E, up to 9.6 Gbps)
+    /// 802.11ax (`WiFi` 6/6E, up to 9.6 Gbps)
     #[default]
     #[strum(serialize = "802.11ax")]
     Dot11ax,
-    /// 802.11be (WiFi 7, up to 46 Gbps)
+    /// 802.11be (`WiFi` 7, up to 46 Gbps)
     #[strum(serialize = "802.11be")]
     Dot11be,
     /// Unknown standard
@@ -210,7 +209,7 @@ pub enum WifiStandard {
 }
 
 impl WifiStandard {
-    /// Returns the marketing name (WiFi 4, 5, 6, etc.)
+    /// Returns the marketing name (`WiFi` 4, 5, 6, etc.)
     #[must_use]
     pub const fn marketing_name(&self) -> Option<&'static str> {
         match self {
