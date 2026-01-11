@@ -131,7 +131,11 @@ impl LatencyPercentiles {
         sorted.sort();
 
         let percentile = |p: f64| -> Duration {
-            #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss, clippy::cast_precision_loss)]
+            #[allow(
+                clippy::cast_possible_truncation,
+                clippy::cast_sign_loss,
+                clippy::cast_precision_loss
+            )]
             let idx = ((p / 100.0) * (sorted.len() - 1) as f64).round() as usize;
             sorted[idx.min(sorted.len() - 1)]
         };
