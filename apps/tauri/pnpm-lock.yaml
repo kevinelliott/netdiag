@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@tauri-apps/plugin-os':
+        specifier: ^2.3.2
+        version: 2.3.2
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^7.0.0
@@ -398,6 +402,9 @@ packages:
 
   '@tauri-apps/api@2.9.1':
     resolution: {integrity: sha512-IGlhP6EivjXHepbBic618GOmiWe4URJiIeZFlB7x3czM0yDHHYviH1Xvoiv4FefdkQtn6v7TuwWCRfOGdnVUGw==}
+
+  '@tauri-apps/plugin-os@2.3.2':
+    resolution: {integrity: sha512-n+nXWeuSeF9wcEsSPmRnBEGrRgOy6jjkSU+UVCOV8YUGKb2erhDOxis7IqRXiRVHhY8XMKks00BJ0OAdkpf6+A==}
 
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
@@ -875,6 +882,10 @@ snapshots:
       vitefu: 1.1.1(vite@7.3.1)
 
   '@tauri-apps/api@2.9.1': {}
+
+  '@tauri-apps/plugin-os@2.3.2':
+    dependencies:
+      '@tauri-apps/api': 2.9.1
 
   '@types/cookie@0.6.0': {}
 
